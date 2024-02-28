@@ -5,7 +5,7 @@ import (
 )
 
 type PhotoService interface {
-	CreatePhoto(ctx context.Context, request CreatePhotoRequest) error
+	CreatePhoto(ctx context.Context, request *CreatePhotoRequest) error
 	UpdatePhoto(ctx context.Context, request *UpdatePhotoRequest) error
 	DeletePhoto(ctx context.Context, request *DeletePhotoRequest) error
 }

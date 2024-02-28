@@ -69,5 +69,7 @@ create table if not exists field
     id serial primary key,
     document_id int references document(id) on delete cascade,
     type int references document_field_types(id) on delete cascade,
-    value text
+    value text,
+
+    unique (document_id, type)
 );
