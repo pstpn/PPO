@@ -1,7 +1,15 @@
 package service
 
 type Service struct {
-	InfoCard InfoCardService
-	Field    FieldService
-	Change   ChangeService
+	Auth           AuthService
+	CompanyService CompanyService
+	Employee       EmployeeService
+	InfoCard       InfoCardService
+	Document       DocumentService
+	Field          FieldService
+	Photo          PhotoService
+}
+
+// ServiceImpl TODO
+type ServiceImpl struct {
 }

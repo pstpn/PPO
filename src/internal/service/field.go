@@ -2,16 +2,19 @@ package service
 
 import (
 	"context"
-
-	"course/internal/model"
 )
 
 type FieldService interface {
-	UpdateCardField(ctx *context.Context, request *UpdateCardFieldRequest) error
+	CreateCardField(ctx context.Context, request CreateCardFieldRequest) error
+	DeleteCardField(ctx context.Context, request *DeleteCardFieldRequest) error
 }
 
-type UpdateCardFieldRequest struct {
+type CreateCardFieldRequest struct {
 	InfoCardID int64
-	Field      *model.FieldType
+	Type       int64
 	Value      string
+}
+
+type DeleteCardFieldRequest struct {
+	FieldID int64
 }

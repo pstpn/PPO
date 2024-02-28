@@ -50,18 +50,18 @@ create table if not exists info_card
     created_date date default now()
 );
 
-create table if not exists photo
-(
-    id serial primary key,
-    key text
-);
-
 create table if not exists document
 (
     id serial primary key,
     info_card_id int references info_card(id),
-    type int references document_types(id) on delete cascade,
-    photo int references photo(id) on delete cascade
+    type int references document_types(id) on delete cascade
+);
+
+create table if not exists photo
+(
+    id serial primary key,
+    document_id int references document(id) on delete cascade,
+    key text
 );
 
 create table if not exists field
