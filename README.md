@@ -67,10 +67,10 @@
 
 ## Описание типа приложения и выбранного технологического стека
 
-- Тип приложения - WebMPA
+- Тип приложения - WebSPA
 - Технологический стек:
   - Backend - Go
-  - Frontend - HTML + SvelteJS + StimulusJS + Bulma CSS
+  - Frontend - Vue.js
   - Database - PostgreSQL + MongoDB
 
 ## Верхнеуровневое разбиение на компоненты
