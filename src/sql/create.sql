@@ -1,10 +1,3 @@
-create table if not exists company_posts
-(
-    id serial primary key,
-    post text,
-    is_admin boolean
-);
-
 create table if not exists document_types
 (
     id serial primary key,
@@ -27,19 +20,12 @@ create table if not exists company
 create table if not exists employee
 (
     id serial primary key,
-    phone_number text,
+    phone_number text unique,
     full_name text,
     company_id int references company(id) on delete cascade,
-    post int references company_posts(id) on delete cascade,
-    date_of_birth date
-);
-
-create table if not exists credentials
-(
-    id serial primary key,
-    employee_id int references employee(id) on delete cascade unique,
+    post text,
     password text,
-    created_date date default now()
+    date_of_birth date
 );
 
 create table if not exists info_card
@@ -72,4 +58,19 @@ create table if not exists field
     value text,
 
     unique (document_id, type)
+);
+
+create table if not exists checkpoint
+(
+    id serial primary key,
+    phone text
+);
+
+create table if not exists passage
+(
+    id serial primary key,
+    checkpoint_id int references checkpoint(id),
+    document_id int references document(id),
+    type text,
+    time timestamp
 );

@@ -36,9 +36,11 @@ type EmployeeID int64
 
 type Employee struct {
 	ID          *EmployeeID
+	FullName    string
 	PhoneNumber string
 	CompanyID   *CompanyID
 	Post        *PostType
+	Password    string
 	DateOfBirth *time.Time
 }
 
@@ -53,9 +55,14 @@ type InfoCard struct {
 
 type PhotoID int64
 
+type PhotoKey string
+
+type PhotoData []byte
+
 type Photo struct {
-	ID  *PhotoID
-	Key string
+	PhotoID  PhotoID
+	PhotoKey PhotoKey
+	Data     PhotoData
 }
 
 type DocumentType int64

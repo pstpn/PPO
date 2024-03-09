@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"course/internal/model"
+	storage "course/internal/storage/postgres"
 )
 
 type CompanyService interface {
@@ -15,17 +17,16 @@ type GetCompanyRequest struct {
 	CompanyID int64
 }
 
-// CompanyServiceImpl TODO
-type CompanyServiceImpl struct {
-	logger *log.Logger
-	//storage CompanyRepository
+type companyServiceImpl struct {
+	logger         *log.Logger
+	companyStorage storage.CompanyStorage
 }
 
-//func (c *CompanyServiceImpl) GetCompany(ctx context.Context, request *GetCompanyRequest) (*model.Company, error) {
-//	company, err := c.storage.GetCompanyByID(ctx, request)
-//	if err != nil {
-//		return nil, fmt.Errorf("get company by ID: %w", err)
-//	}
-//
-//	return company, nil
-//}
+func (c *companyServiceImpl) GetCompany(ctx context.Context, request *GetCompanyRequest) (*model.Company, error) {
+	company, err := c.companyStorage.GetByID(ctx, request)
+	if err != nil {
+		return nil, fmt.Errorf("get company: %w", err)
+	}
+
+	return company, nil
+}
