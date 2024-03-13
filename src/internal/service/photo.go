@@ -5,15 +5,16 @@ import (
 	"fmt"
 
 	"course/internal/model"
+	"course/internal/service/dto"
 	"course/internal/storage"
 	"course/pkg/logger"
 )
 
 type PhotoService interface {
-	CreatePhoto(ctx context.Context, request *CreatePhotoRequest) error
-	GetPhoto(ctx context.Context, request *GetPhotoRequest) (*model.Photo, error)
-	UpdatePhoto(ctx context.Context, request *UpdatePhotoRequest) error
-	DeletePhoto(ctx context.Context, request *DeletePhotoRequest) error
+	CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) error
+	GetPhoto(ctx context.Context, request *dto.GetPhotoRequest) (*model.Photo, error)
+	UpdatePhoto(ctx context.Context, request *dto.UpdatePhotoRequest) error
+	DeletePhoto(ctx context.Context, request *dto.DeletePhotoRequest) error
 }
 
 type photoServiceImpl struct {
@@ -21,12 +22,7 @@ type photoServiceImpl struct {
 	photoStorage storage.PhotoStorage
 }
 
-type CreatePhotoRequest struct {
-	DocumentID int64
-	Data       []byte
-}
-
-func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *CreatePhotoRequest) error {
+func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) error {
 	// TODO: Crop face from document
 
 	key, err := p.photoStorage.Save(ctx, request.Data)
@@ -42,11 +38,7 @@ func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *CreatePhoto
 	return nil
 }
 
-type GetPhotoRequest struct {
-	DocumentID int64
-}
-
-func (p *photoServiceImpl) GetPhoto(ctx context.Context, request *GetPhotoRequest) (*model.Photo, error) {
+func (p *photoServiceImpl) GetPhoto(ctx context.Context, request *dto.GetPhotoRequest) (*model.Photo, error) {
 	meta, err := p.photoStorage.GetKey(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("get photo key: %w", err)
@@ -63,13 +55,8 @@ func (p *photoServiceImpl) GetPhoto(ctx context.Context, request *GetPhotoReques
 	}, nil
 }
 
-type UpdatePhotoRequest struct {
-	DocumentID int64
-	Data       []byte
-}
-
-func (p *photoServiceImpl) UpdatePhoto(ctx context.Context, request *UpdatePhotoRequest) error {
-	meta, err := p.photoStorage.GetKey(ctx, &GetPhotoRequest{DocumentID: request.DocumentID})
+func (p *photoServiceImpl) UpdatePhoto(ctx context.Context, request *dto.UpdatePhotoRequest) error {
+	meta, err := p.photoStorage.GetKey(ctx, &dto.GetPhotoRequest{DocumentID: request.DocumentID})
 	if err != nil {
 		return fmt.Errorf("get photo key: %w", err)
 	}
@@ -82,12 +69,8 @@ func (p *photoServiceImpl) UpdatePhoto(ctx context.Context, request *UpdatePhoto
 	return nil
 }
 
-type DeletePhotoRequest struct {
-	DocumentID int64
-}
-
-func (p *photoServiceImpl) DeletePhoto(ctx context.Context, request *DeletePhotoRequest) error {
-	meta, err := p.photoStorage.GetKey(ctx, &GetPhotoRequest{DocumentID: request.DocumentID})
+func (p *photoServiceImpl) DeletePhoto(ctx context.Context, request *dto.DeletePhotoRequest) error {
+	meta, err := p.photoStorage.GetKey(ctx, &dto.GetPhotoRequest{DocumentID: request.DocumentID})
 	if err != nil {
 		return fmt.Errorf("get photo key: %w", err)
 	}

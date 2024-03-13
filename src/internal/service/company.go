@@ -6,11 +6,12 @@ import (
 	"log"
 
 	"course/internal/model"
-	storage "course/internal/storage/postgres"
+	"course/internal/service/dto"
+	"course/internal/storage"
 )
 
 type CompanyService interface {
-	GetCompany(ctx context.Context, request *GetCompanyRequest) (*model.Company, error)
+	GetCompany(ctx context.Context, request *dto.GetCompanyRequest) (*model.Company, error)
 }
 
 type companyServiceImpl struct {
@@ -18,11 +19,7 @@ type companyServiceImpl struct {
 	companyStorage storage.CompanyStorage
 }
 
-type GetCompanyRequest struct {
-	CompanyID int64
-}
-
-func (c *companyServiceImpl) GetCompany(ctx context.Context, request *GetCompanyRequest) (*model.Company, error) {
+func (c *companyServiceImpl) GetCompany(ctx context.Context, request *dto.GetCompanyRequest) (*model.Company, error) {
 	company, err := c.companyStorage.GetByID(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("get company: %w", err)

@@ -3,16 +3,16 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"course/internal/model"
-	storage "course/internal/storage/postgres"
+	"course/internal/service/dto"
+	"course/internal/storage"
 	"course/pkg/logger"
 )
 
 type CheckpointService interface {
-	CreatePassage(ctx context.Context, request *CreatePassageRequest) error
-	ListPassages(ctx context.Context, request *ListPassagesRequest) ([]*model.Passage, error)
+	CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) error
+	ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error)
 }
 
 type checkpointServiceImpl struct {
@@ -20,14 +20,7 @@ type checkpointServiceImpl struct {
 	checkpointStorage storage.CheckpointStorage
 }
 
-type CreatePassageRequest struct {
-	CheckpointID int64
-	DocumentID   int64
-	Type         string
-	Time         *time.Time
-}
-
-func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *CreatePassageRequest) error {
+func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) error {
 	err := c.checkpointStorage.CreatePassage(ctx, request)
 	if err != nil {
 		return fmt.Errorf("create passage: %w", err)
@@ -36,11 +29,7 @@ func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *Crea
 	return nil
 }
 
-type ListPassagesRequest struct {
-	CheckpointID int64
-}
-
-func (c *checkpointServiceImpl) ListPassages(ctx context.Context, request *ListPassagesRequest) ([]*model.Passage, error) {
+func (c *checkpointServiceImpl) ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error) {
 	passages, err := c.checkpointStorage.ListPassages(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("list passages: %w", err)

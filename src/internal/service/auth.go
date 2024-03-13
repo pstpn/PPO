@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 
-	storage "course/internal/storage/postgres"
+	"course/internal/service/dto"
+	"course/internal/storage"
 	"course/pkg/logger"
 )
 
 type AuthService interface {
-	RegisterEmployee(ctx context.Context, request *RegisterEmployeeRequest) error
-	LoginEmployee(ctx context.Context, request *LoginEmployeeRequest) error
+	RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) error
+	LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) error
 }
 
 type authServiceImpl struct {
@@ -20,16 +20,7 @@ type authServiceImpl struct {
 	employeeStorage storage.EmployeeStorage
 }
 
-type RegisterEmployeeRequest struct {
-	PhoneNumber string
-	FullName    string
-	CompanyID   int64
-	Post        int64
-	Password    string
-	DateOfBirth *time.Time
-}
-
-func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *RegisterEmployeeRequest) error {
+func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return fmt.Errorf("encrypt password: %w", err)
@@ -44,12 +35,7 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *Registe
 	return nil
 }
 
-type LoginEmployeeRequest struct {
-	PhoneNumber string
-	Password    string
-}
-
-func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *LoginEmployeeRequest) error {
+func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) error {
 	user, err := a.employeeStorage.GetByPhone(ctx, &GetEmployeeRequest{PhoneNumber: request.PhoneNumber})
 	if err != nil {
 		return fmt.Errorf("get user by phone number: %w", err)

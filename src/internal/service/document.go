@@ -5,15 +5,16 @@ import (
 	"fmt"
 
 	"course/internal/model"
-	storage "course/internal/storage/postgres"
+	"course/internal/service/dto"
+	"course/internal/storage"
 	"course/pkg/logger"
 )
 
 type DocumentService interface {
-	CreateDocument(ctx context.Context, request *CreateDocumentRequest) error
-	GetDocument(ctx context.Context, request *GetDocumentRequest) (*model.Document, error)
-	ListEmployeeDocuments(ctx context.Context, request *ListEmployeeDocumentsRequest) ([]*model.Document, error)
-	DeleteDocument(ctx context.Context, request *DeleteDocumentRequest) error
+	CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) error
+	GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error)
+	ListEmployeeDocuments(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error)
+	DeleteDocument(ctx context.Context, request *dto.DeleteDocumentRequest) error
 }
 
 type documentServiceImpl struct {
@@ -21,12 +22,7 @@ type documentServiceImpl struct {
 	documentStorage storage.DocumentStorage
 }
 
-type CreateDocumentRequest struct {
-	InfoCardID   int64
-	DocumentType int64
-}
-
-func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *CreateDocumentRequest) error {
+func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) error {
 	err := d.documentStorage.Create(ctx, request)
 	if err != nil {
 		return fmt.Errorf("create document: %w", err)
@@ -35,11 +31,7 @@ func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *Creat
 	return nil
 }
 
-type GetDocumentRequest struct {
-	DocumentID int64
-}
-
-func (d *documentServiceImpl) GetDocument(ctx context.Context, request *GetDocumentRequest) (*model.Document, error) {
+func (d *documentServiceImpl) GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
 	document, err := d.documentStorage.GetByID(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("get document: %w", err)
@@ -48,11 +40,7 @@ func (d *documentServiceImpl) GetDocument(ctx context.Context, request *GetDocum
 	return document, nil
 }
 
-type ListEmployeeDocumentsRequest struct {
-	EmployeeID int64
-}
-
-func (d *documentServiceImpl) ListEmployeeDocuments(ctx context.Context, request *ListEmployeeDocumentsRequest) ([]*model.Document, error) {
+func (d *documentServiceImpl) ListEmployeeDocuments(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
 	documents, err := d.documentStorage.List(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("list employee documents: %w", err)
@@ -61,11 +49,7 @@ func (d *documentServiceImpl) ListEmployeeDocuments(ctx context.Context, request
 	return documents, nil
 }
 
-type DeleteDocumentRequest struct {
-	DocumentID int64
-}
-
-func (d *documentServiceImpl) DeleteDocument(ctx context.Context, request *DeleteDocumentRequest) error {
+func (d *documentServiceImpl) DeleteDocument(ctx context.Context, request *dto.DeleteDocumentRequest) error {
 	err := d.documentStorage.Delete(ctx, request)
 	if err != nil {
 		return fmt.Errorf("delete document: %w", err)

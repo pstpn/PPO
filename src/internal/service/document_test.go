@@ -69,7 +69,9 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 		want    []*model.Document
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Incorrect request",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

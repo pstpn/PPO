@@ -5,14 +5,15 @@ import (
 	"fmt"
 
 	"course/internal/model"
-	storage "course/internal/storage/postgres"
+	"course/internal/service/dto"
+	"course/internal/storage"
 	"course/pkg/logger"
 )
 
 type EmployeeService interface {
-	GetEmployee(ctx context.Context, request *GetEmployeeRequest) (*model.Employee, error)
-	ListAllEmployees(ctx context.Context, request *ListAllEmployeesRequest) ([]*model.Employee, error)
-	DeleteEmployee(ctx context.Context, request *DeleteEmployeeRequest) error
+	GetEmployee(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error)
+	ListAllEmployees(ctx context.Context, request *dto.ListAllEmployeesRequest) ([]*model.Employee, error)
+	DeleteEmployee(ctx context.Context, request *dto.DeleteEmployeeRequest) error
 }
 
 type employeeServiceImpl struct {
@@ -20,11 +21,7 @@ type employeeServiceImpl struct {
 	employeeStorage storage.EmployeeStorage
 }
 
-type GetEmployeeRequest struct {
-	PhoneNumber string
-}
-
-func (e *employeeServiceImpl) GetEmployee(ctx context.Context, request *GetEmployeeRequest) (*model.Employee, error) {
+func (e *employeeServiceImpl) GetEmployee(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
 	employee, err := e.employeeStorage.GetByPhone(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("get employee: %w", err)
@@ -33,11 +30,7 @@ func (e *employeeServiceImpl) GetEmployee(ctx context.Context, request *GetEmplo
 	return employee, nil
 }
 
-// ListAllEmployeesRequest TODO: pagination, sort, filter
-type ListAllEmployeesRequest struct {
-}
-
-func (e *employeeServiceImpl) ListAllEmployees(ctx context.Context, request *ListAllEmployeesRequest) ([]*model.Employee, error) {
+func (e *employeeServiceImpl) ListAllEmployees(ctx context.Context, request *dto.ListAllEmployeesRequest) ([]*model.Employee, error) {
 	employees, err := e.employeeStorage.ListAll(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("list all employees: %w", err)
@@ -46,11 +39,7 @@ func (e *employeeServiceImpl) ListAllEmployees(ctx context.Context, request *Lis
 	return employees, nil
 }
 
-type DeleteEmployeeRequest struct {
-	EmployeeID int64
-}
-
-func (e *employeeServiceImpl) DeleteEmployee(ctx context.Context, request *DeleteEmployeeRequest) error {
+func (e *employeeServiceImpl) DeleteEmployee(ctx context.Context, request *dto.DeleteEmployeeRequest) error {
 	err := e.employeeStorage.Delete(ctx, request)
 	if err != nil {
 		return fmt.Errorf("delete employee: %w", err)
