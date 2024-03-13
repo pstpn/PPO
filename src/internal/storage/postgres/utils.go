@@ -1,1 +1,1 @@
-package storage
+package postgres

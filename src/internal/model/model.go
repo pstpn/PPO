@@ -128,11 +128,18 @@ type Field struct {
 	Value      string
 }
 
-type CredentialsID int64
+type CheckpointID int64
 
-type Credentials struct {
-	ID          *CredentialsID
-	EmployeeID  *EmployeeID
-	Password    string
-	CreatedDate *time.Time
+type PassageType int64
+
+const (
+	Entrance PassageType = iota
+	Exit
+)
+
+type Passage struct {
+	CheckpointID *CheckpointID
+	DocumentID   *DocumentID
+	Type         *PassageType
+	Time         *time.Time
 }

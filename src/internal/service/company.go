@@ -13,13 +13,13 @@ type CompanyService interface {
 	GetCompany(ctx context.Context, request *GetCompanyRequest) (*model.Company, error)
 }
 
-type GetCompanyRequest struct {
-	CompanyID int64
-}
-
 type companyServiceImpl struct {
 	logger         *log.Logger
 	companyStorage storage.CompanyStorage
+}
+
+type GetCompanyRequest struct {
+	CompanyID int64
 }
 
 func (c *companyServiceImpl) GetCompany(ctx context.Context, request *GetCompanyRequest) (*model.Company, error) {
