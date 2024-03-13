@@ -9,10 +9,10 @@ import (
 )
 
 type PhotoStorage interface {
-	Save(ctx context.Context, request *service.CreatePhotoRequest, photoKey *model.PhotoKey) error
-	Get(ctx context.Context, request *service.GetPhotoRequest) (*model.PhotoKey, error)
-	Update(ctx context.Context, request *service.UpdatePhotoRequest, photoKey *model.PhotoKey) error
-	Delete(ctx context.Context, request *service.DeletePhotoRequest) error
+	SaveKey(ctx context.Context, documentID *model.DocumentID, photoKey *model.PhotoKey) error
+	GetKey(ctx context.Context, request *service.GetPhotoRequest) (*model.PhotoMeta, error)
+	UpdateKey(ctx context.Context, documentID *model.DocumentID, photoKey *model.PhotoKey) error
+	DeleteKey(ctx context.Context, request *service.DeletePhotoRequest) error
 }
 
 type photoStorageImpl struct {

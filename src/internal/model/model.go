@@ -57,12 +57,19 @@ type PhotoID int64
 
 type PhotoKey string
 
-type PhotoData []byte
+func ToPhotoKey(key string) *PhotoKey {
+	photoKey := PhotoKey(key)
+	return &photoKey
+}
+
+type PhotoMeta struct {
+	PhotoID  *PhotoID
+	PhotoKey *PhotoKey
+}
 
 type Photo struct {
-	PhotoID  PhotoID
-	PhotoKey PhotoKey
-	Data     PhotoData
+	Meta *PhotoMeta
+	Data []byte
 }
 
 type DocumentType int64
@@ -84,6 +91,11 @@ func (d *DocumentType) String() string {
 }
 
 type DocumentID int64
+
+func ToDocumentID(id int64) *DocumentID {
+	documentID := DocumentID(id)
+	return &documentID
+}
 
 type Document struct {
 	ID         *DocumentID
