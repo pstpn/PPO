@@ -43,7 +43,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		storages storages
 	}{
 		{
-			name: "incorrect companyID",
+			name: "incorrect company ID",
 			a: &authServiceImpl{
 				logger:          nil,
 				employeeStorage: employeeMockStorage,
@@ -126,12 +126,12 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		},
 	}
 
-	for i, tt := range tests {
+	for _, tt := range tests {
 		employeeMockStorage.
 			On("Register",
-				tests[i].storages.employeeStorage.storageArgs.ctx,
-				tests[i].storages.employeeStorage.storageArgs.request).
-			Return(tests[i].storages.employeeStorage.storageReturn.err).
+				tt.storages.employeeStorage.storageArgs.ctx,
+				tt.storages.employeeStorage.storageArgs.request).
+			Return(tt.storages.employeeStorage.storageReturn.err).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.a.RegisterEmployee(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
@@ -319,15 +319,15 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		},
 	}
 
-	for i, tt := range tests {
+	for _, tt := range tests {
 		employeeMockStorage.
 			On("GetByPhone",
-				tests[i].storages.employeeStorage.storageArgs.ctx,
-				tests[i].storages.employeeStorage.storageArgs.request,
+				tt.storages.employeeStorage.storageArgs.ctx,
+				tt.storages.employeeStorage.storageArgs.request,
 			).
 			Return(
-				tests[i].storages.employeeStorage.storageReturn.employee,
-				tests[i].storages.employeeStorage.storageReturn.err,
+				tt.storages.employeeStorage.storageReturn.employee,
+				tt.storages.employeeStorage.storageReturn.err,
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
