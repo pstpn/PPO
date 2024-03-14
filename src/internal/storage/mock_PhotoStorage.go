@@ -122,13 +122,13 @@ func (_m *MockPhotoStorage) Save(ctx context.Context, data []byte) (*model.Photo
 	return r0, r1
 }
 
-// SaveKey provides a mock function with given fields: ctx, documentID, photoKey
-func (_m *MockPhotoStorage) SaveKey(ctx context.Context, documentID *model.DocumentID, photoKey *model.PhotoKey) error {
-	ret := _m.Called(ctx, documentID, photoKey)
+// SaveKey provides a mock function with given fields: ctx, request
+func (_m *MockPhotoStorage) SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) error {
+	ret := _m.Called(ctx, request)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.DocumentID, *model.PhotoKey) error); ok {
-		r0 = rf(ctx, documentID, photoKey)
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoKeyRequest) error); ok {
+		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -150,13 +150,13 @@ func (_m *MockPhotoStorage) Update(ctx context.Context, key *model.PhotoKey, dat
 	return r0
 }
 
-// UpdateKey provides a mock function with given fields: ctx, documentID, photoKey
-func (_m *MockPhotoStorage) UpdateKey(ctx context.Context, documentID *model.DocumentID, photoKey *model.PhotoKey) error {
-	ret := _m.Called(ctx, documentID, photoKey)
+// UpdateKey provides a mock function with given fields: ctx, request
+func (_m *MockPhotoStorage) UpdateKey(ctx context.Context, request *dto.UpdatePhotoKeyRequest) error {
+	ret := _m.Called(ctx, request)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.DocumentID, *model.PhotoKey) error); ok {
-		r0 = rf(ctx, documentID, photoKey)
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.UpdatePhotoKeyRequest) error); ok {
+		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Error(0)
 	}

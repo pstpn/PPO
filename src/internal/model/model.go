@@ -9,6 +9,11 @@ const (
 	DefaultEmployee
 )
 
+func ToPostType(post int64) *PostType {
+	postType := PostType(post)
+	return &postType
+}
+
 func (p *PostType) String() string {
 	switch *p {
 	case SecurityEmployee:
@@ -26,6 +31,11 @@ func (p *PostType) IsAdmin() bool {
 
 type CompanyID int64
 
+func ToCompanyID(id int64) *CompanyID {
+	companyID := CompanyID(id)
+	return &companyID
+}
+
 type Company struct {
 	ID   *CompanyID
 	Name string
@@ -33,6 +43,11 @@ type Company struct {
 }
 
 type EmployeeID int64
+
+func ToEmployeeID(id int64) *EmployeeID {
+	employeeID := EmployeeID(id)
+	return &employeeID
+}
 
 type Employee struct {
 	ID          *EmployeeID
@@ -46,6 +61,11 @@ type Employee struct {
 
 type InfoCardID int64
 
+func ToInfoCardID(id int64) *InfoCardID {
+	infoCardID := InfoCardID(id)
+	return &infoCardID
+}
+
 type InfoCard struct {
 	ID                *InfoCardID
 	CreatedEmployeeID *EmployeeID
@@ -54,6 +74,11 @@ type InfoCard struct {
 }
 
 type PhotoID int64
+
+func ToPhotoID(id int64) *PhotoID {
+	photoID := PhotoID(id)
+	return &photoID
+}
 
 type PhotoKey string
 
@@ -78,6 +103,11 @@ const (
 	Passport DocumentType = iota
 	DrivingLicense
 )
+
+func ToDocumentType(document int64) *DocumentType {
+	documentType := DocumentType(document)
+	return &documentType
+}
 
 func (d *DocumentType) String() string {
 	switch *d {
@@ -106,11 +136,21 @@ type Document struct {
 
 type FieldID int64
 
+func ToFieldID(id int64) *FieldID {
+	fieldID := FieldID(id)
+	return &fieldID
+}
+
 type FieldType int64
 
 const (
 	DateOfRelease FieldType = iota
 )
+
+func ToFieldType(field int64) *FieldType {
+	fieldType := FieldType(field)
+	return &fieldType
+}
 
 func (f *FieldType) String() string {
 	switch *f {

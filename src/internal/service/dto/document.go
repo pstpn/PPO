@@ -8,6 +8,7 @@ type CreateDocumentRequest struct {
 type GetDocumentRequest struct {
 	DocumentID int64
 }
+
 type ListEmployeeDocumentsRequest struct {
 	EmployeeID int64
 }

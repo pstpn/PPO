@@ -84,7 +84,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 			},
 		},
 		{
-			name: "success register",
+			name: "success",
 			a: &authServiceImpl{
 				logger:          nil,
 				employeeStorage: employeeMockStorage,
@@ -267,7 +267,7 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 			},
 		},
 		{
-			name: "success login",
+			name: "success",
 			a: &authServiceImpl{
 				logger:          nil,
 				employeeStorage: employeeMockStorage,

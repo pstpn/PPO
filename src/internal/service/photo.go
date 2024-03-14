@@ -30,7 +30,10 @@ func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreateP
 		return fmt.Errorf("save photo: %w", err)
 	}
 
-	err = p.photoStorage.SaveKey(ctx, model.ToDocumentID(request.DocumentID), key)
+	err = p.photoStorage.SaveKey(ctx, &dto.CreatePhotoKeyRequest{
+		DocumentID: model.ToDocumentID(request.DocumentID),
+		Key:        key,
+	})
 	if err != nil {
 		return fmt.Errorf("save photo key: %w", err)
 	}

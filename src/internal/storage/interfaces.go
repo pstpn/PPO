@@ -9,9 +9,9 @@ import (
 
 //go:generate mockery --all --inpackage
 type PhotoKeyStorage interface {
-	SaveKey(ctx context.Context, documentID *model.DocumentID, photoKey *model.PhotoKey) error
+	SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) error
 	GetKey(ctx context.Context, request *dto.GetPhotoRequest) (*model.PhotoMeta, error)
-	UpdateKey(ctx context.Context, documentID *model.DocumentID, photoKey *model.PhotoKey) error
+	UpdateKey(ctx context.Context, request *dto.UpdatePhotoKeyRequest) error
 	DeleteKey(ctx context.Context, request *dto.DeletePhotoRequest) error
 }
 
