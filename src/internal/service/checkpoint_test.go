@@ -2,16 +2,16 @@ package service
 
 import (
 	"context"
+	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
-
-	"course/internal/model"
 )
 
 func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *CreatePassageRequest
+		request *dto.CreatePassageRequest
 	}
 	tests := []struct {
 		name    string
@@ -21,7 +21,6 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.c.CreatePassage(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
@@ -34,7 +33,7 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *ListPassagesRequest
+		request *dto.ListPassagesRequest
 	}
 	tests := []struct {
 		name    string

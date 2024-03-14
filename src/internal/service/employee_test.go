@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
 )
@@ -10,7 +11,7 @@ import (
 func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *GetEmployeeRequest
+		request *dto.GetEmployeeRequest
 	}
 	tests := []struct {
 		name    string
@@ -38,7 +39,7 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 func Test_employeeServiceImpl_ListAllEmployees(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *ListAllEmployeesRequest
+		request *dto.ListAllEmployeesRequest
 	}
 	tests := []struct {
 		name    string
@@ -66,7 +67,7 @@ func Test_employeeServiceImpl_ListAllEmployees(t *testing.T) {
 func Test_employeeServiceImpl_DeleteEmployee(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *DeleteEmployeeRequest
+		request *dto.DeleteEmployeeRequest
 	}
 	tests := []struct {
 		name    string

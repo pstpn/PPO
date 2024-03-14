@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
 )
@@ -10,7 +11,7 @@ import (
 func Test_companyServiceImpl_GetCompany(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *GetCompanyRequest
+		request *dto.GetCompanyRequest
 	}
 	tests := []struct {
 		name    string

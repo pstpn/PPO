@@ -26,8 +26,14 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 		return fmt.Errorf("encrypt password: %w", err)
 	}
 
-	request.Password = string(hashedPassword)
-	err = a.employeeStorage.Register(ctx, request)
+	err = a.employeeStorage.Register(ctx, &dto.RegisterEmployeeRequest{
+		PhoneNumber: request.PhoneNumber,
+		FullName:    request.FullName,
+		CompanyID:   request.CompanyID,
+		Post:        request.Post,
+		Password:    string(hashedPassword),
+		DateOfBirth: request.DateOfBirth,
+	})
 	if err != nil {
 		return fmt.Errorf("create employee: %w", err)
 	}
@@ -36,7 +42,7 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 }
 
 func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) error {
-	user, err := a.employeeStorage.GetByPhone(ctx, &GetEmployeeRequest{PhoneNumber: request.PhoneNumber})
+	user, err := a.employeeStorage.GetByPhone(ctx, &dto.GetEmployeeRequest{PhoneNumber: request.PhoneNumber})
 	if err != nil {
 		return fmt.Errorf("get user by phone number: %w", err)
 	}

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
 )
@@ -10,7 +11,7 @@ import (
 func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *CreatePhotoRequest
+		request *dto.CreatePhotoRequest
 	}
 	tests := []struct {
 		name    string
@@ -32,7 +33,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *GetPhotoRequest
+		request *dto.GetPhotoRequest
 	}
 	tests := []struct {
 		name    string
@@ -60,7 +61,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 func Test_photoServiceImpl_UpdatePhoto(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *UpdatePhotoRequest
+		request *dto.UpdatePhotoRequest
 	}
 	tests := []struct {
 		name    string
@@ -82,7 +83,7 @@ func Test_photoServiceImpl_UpdatePhoto(t *testing.T) {
 func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *DeletePhotoRequest
+		request *dto.DeletePhotoRequest
 	}
 	tests := []struct {
 		name    string

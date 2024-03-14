@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
 )
@@ -10,7 +11,7 @@ import (
 func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *CreateCardFieldRequest
+		request *dto.CreateCardFieldRequest
 	}
 	tests := []struct {
 		name    string
@@ -32,7 +33,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *GetCardFieldRequest
+		request *dto.GetCardFieldRequest
 	}
 	tests := []struct {
 		name    string
@@ -60,7 +61,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *ListCardFieldsRequest
+		request *dto.ListCardFieldsRequest
 	}
 	tests := []struct {
 		name    string
@@ -88,7 +89,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *DeleteCardFieldRequest
+		request *dto.DeleteCardFieldRequest
 	}
 	tests := []struct {
 		name    string

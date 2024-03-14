@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
 )
@@ -10,7 +11,7 @@ import (
 func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *CreateInfoCardRequest
+		request *dto.CreateInfoCardRequest
 	}
 	tests := []struct {
 		name    string
@@ -32,7 +33,7 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 func Test_infoCardServiceImpl_ValidateInfoCard(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *ValidateInfoCardRequest
+		request *dto.ValidateInfoCardRequest
 	}
 	tests := []struct {
 		name    string
@@ -54,7 +55,7 @@ func Test_infoCardServiceImpl_ValidateInfoCard(t *testing.T) {
 func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *GetInfoCardRequest
+		request *dto.GetInfoCardRequest
 	}
 	tests := []struct {
 		name    string
@@ -82,7 +83,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 func Test_infoCardServiceImpl_ListInfoCards(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *ListInfoCardsRequest
+		request *dto.ListInfoCardsRequest
 	}
 	tests := []struct {
 		name    string
@@ -110,7 +111,7 @@ func Test_infoCardServiceImpl_ListInfoCards(t *testing.T) {
 func Test_infoCardServiceImpl_DeleteInfoCard(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *DeleteInfoCardRequest
+		request *dto.DeleteInfoCardRequest
 	}
 	tests := []struct {
 		name    string

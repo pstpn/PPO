@@ -7,7 +7,7 @@ import (
 type CreatePassageRequest struct {
 	CheckpointID int64
 	DocumentID   int64
-	Type         string
+	Type         int64
 	Time         *time.Time
 }
 

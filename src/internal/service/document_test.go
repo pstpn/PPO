@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"course/internal/model"
+	"course/internal/service/dto"
 	"reflect"
 	"testing"
 )
@@ -10,7 +11,7 @@ import (
 func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *CreateDocumentRequest
+		request *dto.CreateDocumentRequest
 	}
 	tests := []struct {
 		name    string
@@ -32,7 +33,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 func Test_documentServiceImpl_GetDocument(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *GetDocumentRequest
+		request *dto.GetDocumentRequest
 	}
 	tests := []struct {
 		name    string
@@ -60,7 +61,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *ListEmployeeDocumentsRequest
+		request *dto.ListEmployeeDocumentsRequest
 	}
 	tests := []struct {
 		name    string
@@ -69,9 +70,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 		want    []*model.Document
 		wantErr bool
 	}{
-		{
-			name: "Incorrect request",
-		},
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,7 +89,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 func Test_documentServiceImpl_DeleteDocument(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		request *DeleteDocumentRequest
+		request *dto.DeleteDocumentRequest
 	}
 	tests := []struct {
 		name    string
