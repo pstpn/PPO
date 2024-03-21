@@ -8,7 +8,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
+	"course/internal/storage/mocks"
 )
 
 func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
@@ -28,7 +28,7 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 		}
 	}
 
-	checkpointMockStorage := storage.NewMockCheckpointStorage(t)
+	checkpointMockStorage := mocks.NewCheckpointStorage(t)
 	tests := []struct {
 		name    string
 		c       *checkpointServiceImpl
@@ -157,7 +157,7 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 		}
 	}
 
-	checkpointMockStorage := storage.NewMockCheckpointStorage(t)
+	checkpointMockStorage := mocks.NewCheckpointStorage(t)
 	tests := []struct {
 		name    string
 		c       *checkpointServiceImpl

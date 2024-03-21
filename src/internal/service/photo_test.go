@@ -8,7 +8,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
+	"course/internal/storage/mocks"
 )
 
 func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
@@ -41,7 +41,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		}
 	}
 
-	photoMockStorage := storage.NewMockPhotoStorage(t)
+	photoMockStorage := mocks.NewPhotoStorage(t)
 	tests := []struct {
 		name    string
 		p       *photoServiceImpl
@@ -314,7 +314,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 		}
 	}
 
-	photoMockStorage := storage.NewMockPhotoStorage(t)
+	photoMockStorage := mocks.NewPhotoStorage(t)
 	tests := []struct {
 		name    string
 		p       *photoServiceImpl
@@ -612,7 +612,7 @@ func Test_photoServiceImpl_UpdatePhoto(t *testing.T) {
 		}
 	}
 
-	photoMockStorage := storage.NewMockPhotoStorage(t)
+	photoMockStorage := mocks.NewPhotoStorage(t)
 	tests := []struct {
 		name    string
 		p       *photoServiceImpl
@@ -908,7 +908,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 		}
 	}
 
-	photoMockStorage := storage.NewMockPhotoStorage(t)
+	photoMockStorage := mocks.NewPhotoStorage(t)
 	tests := []struct {
 		name    string
 		p       *photoServiceImpl

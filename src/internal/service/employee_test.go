@@ -8,7 +8,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
+	"course/internal/storage/mocks"
 )
 
 func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
@@ -29,7 +29,7 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 		}
 	}
 
-	employeeMockStorage := storage.NewMockEmployeeStorage(t)
+	employeeMockStorage := mocks.NewEmployeeStorage(t)
 	tests := []struct {
 		name    string
 		e       *employeeServiceImpl
@@ -169,7 +169,7 @@ func Test_employeeServiceImpl_ListAllEmployees(t *testing.T) {
 		}
 	}
 
-	employeeMockStorage := storage.NewMockEmployeeStorage(t)
+	employeeMockStorage := mocks.NewEmployeeStorage(t)
 	tests := []struct {
 		name    string
 		e       *employeeServiceImpl
@@ -312,7 +312,7 @@ func Test_employeeServiceImpl_DeleteEmployee(t *testing.T) {
 		}
 	}
 
-	employeeMockStorage := storage.NewMockEmployeeStorage(t)
+	employeeMockStorage := mocks.NewEmployeeStorage(t)
 	tests := []struct {
 		name    string
 		e       *employeeServiceImpl

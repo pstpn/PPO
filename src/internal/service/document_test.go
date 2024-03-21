@@ -8,7 +8,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
+	"course/internal/storage/mocks"
 )
 
 func Test_documentServiceImpl_CreateDocument(t *testing.T) {
@@ -28,7 +28,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 		}
 	}
 
-	documentMockStorage := storage.NewMockDocumentStorage(t)
+	documentMockStorage := mocks.NewDocumentStorage(t)
 	tests := []struct {
 		name    string
 		d       *documentServiceImpl
@@ -149,7 +149,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 		}
 	}
 
-	documentMockStorage := storage.NewMockDocumentStorage(t)
+	documentMockStorage := mocks.NewDocumentStorage(t)
 	tests := []struct {
 		name    string
 		d       *documentServiceImpl
@@ -283,7 +283,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 		}
 	}
 
-	documentMockStorage := storage.NewMockDocumentStorage(t)
+	documentMockStorage := mocks.NewDocumentStorage(t)
 	tests := []struct {
 		name    string
 		d       *documentServiceImpl
@@ -420,7 +420,7 @@ func Test_documentServiceImpl_DeleteDocument(t *testing.T) {
 		}
 	}
 
-	documentMockStorage := storage.NewMockDocumentStorage(t)
+	documentMockStorage := mocks.NewDocumentStorage(t)
 	tests := []struct {
 		name    string
 		d       *documentServiceImpl

@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
+	"course/internal/storage/mocks"
 	"fmt"
 	"reflect"
 	"testing"
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
 )
 
 func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
@@ -28,7 +28,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 		}
 	}
 
-	fieldMockStorage := storage.NewMockFieldStorage(t)
+	fieldMockStorage := mocks.NewFieldStorage(t)
 	tests := []struct {
 		name    string
 		f       *fieldServiceImpl
@@ -153,7 +153,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 		}
 	}
 
-	fieldMockStorage := storage.NewMockFieldStorage(t)
+	fieldMockStorage := mocks.NewFieldStorage(t)
 	tests := []struct {
 		name    string
 		f       *fieldServiceImpl
@@ -299,7 +299,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 		}
 	}
 
-	fieldMockStorage := storage.NewMockFieldStorage(t)
+	fieldMockStorage := mocks.NewFieldStorage(t)
 	tests := []struct {
 		name    string
 		f       *fieldServiceImpl
@@ -436,7 +436,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 		}
 	}
 
-	fieldMockStorage := storage.NewMockFieldStorage(t)
+	fieldMockStorage := mocks.NewFieldStorage(t)
 	tests := []struct {
 		name    string
 		f       *fieldServiceImpl

@@ -8,7 +8,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
+	"course/internal/storage/mocks"
 )
 
 func Test_companyServiceImpl_GetCompany(t *testing.T) {
@@ -29,7 +29,7 @@ func Test_companyServiceImpl_GetCompany(t *testing.T) {
 		}
 	}
 
-	companyMockStorage := storage.NewMockCompanyStorage(t)
+	companyMockStorage := mocks.NewCompanyStorage(t)
 	tests := []struct {
 		name    string
 		c       *companyServiceImpl

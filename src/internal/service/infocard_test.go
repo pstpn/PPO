@@ -8,7 +8,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/internal/storage"
+	"course/internal/storage/mocks"
 )
 
 func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
@@ -28,7 +28,7 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 		}
 	}
 
-	infoCardMockStorage := storage.NewMockInfoCardStorage(t)
+	infoCardMockStorage := mocks.NewInfoCardStorage(t)
 	tests := []struct {
 		name    string
 		i       *infoCardServiceImpl
@@ -152,7 +152,7 @@ func Test_infoCardServiceImpl_ValidateInfoCard(t *testing.T) {
 		}
 	}
 
-	infoCardMockStorage := storage.NewMockInfoCardStorage(t)
+	infoCardMockStorage := mocks.NewInfoCardStorage(t)
 	tests := []struct {
 		name    string
 		i       *infoCardServiceImpl
@@ -273,7 +273,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 		}
 	}
 
-	infoCardMockStorage := storage.NewMockInfoCardStorage(t)
+	infoCardMockStorage := mocks.NewInfoCardStorage(t)
 	tests := []struct {
 		name    string
 		i       *infoCardServiceImpl
@@ -407,7 +407,7 @@ func Test_infoCardServiceImpl_ListInfoCards(t *testing.T) {
 		}
 	}
 
-	infoCardMockStorage := storage.NewMockInfoCardStorage(t)
+	infoCardMockStorage := mocks.NewInfoCardStorage(t)
 	tests := []struct {
 		name    string
 		i       *infoCardServiceImpl
@@ -544,7 +544,7 @@ func Test_infoCardServiceImpl_DeleteInfoCard(t *testing.T) {
 		}
 	}
 
-	infoCardMockStorage := storage.NewMockInfoCardStorage(t)
+	infoCardMockStorage := mocks.NewInfoCardStorage(t)
 	tests := []struct {
 		name    string
 		i       *infoCardServiceImpl
