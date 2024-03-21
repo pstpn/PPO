@@ -1,0 +1,11 @@
+drop table if exists company CASCADE;
+drop table if exists company_posts CASCADE;
+drop table if exists document CASCADE;
+drop table if exists document_types CASCADE;
+drop table if exists document_field_types CASCADE;
+drop table if exists employee CASCADE;
+drop table if exists field CASCADE;
+drop table if exists info_card CASCADE;
+drop table if exists photo CASCADE;
+drop table if exists checkpoint CASCADE;
+drop table if exists passage CASCADE;
