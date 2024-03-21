@@ -63,7 +63,7 @@ create table if not exists field
 create table if not exists checkpoint
 (
     id serial primary key,
-    phone text
+    phone_number text
 );
 
 create table if not exists passage
