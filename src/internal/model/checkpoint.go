@@ -21,6 +21,17 @@ func ToPassageType(passage int64) *PassageType {
 	return &passageType
 }
 
+func (p *PassageType) String() string {
+	switch *p {
+	case Entrance:
+		return "Вход"
+	case Exit:
+		return "Выход"
+	default:
+		return "Неизвестно"
+	}
+}
+
 type Passage struct {
 	CheckpointID *CheckpointID
 	DocumentID   *DocumentID

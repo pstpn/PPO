@@ -1,15 +1,3 @@
-create table if not exists document_types
-(
-    id serial primary key,
-    type text
-);
-
-create table if not exists document_field_types
-(
-    id serial primary key,
-    type text
-);
-
 create table if not exists company
 (
     id serial primary key,
@@ -40,7 +28,7 @@ create table if not exists document
 (
     id serial primary key,
     info_card_id int references info_card(id),
-    type int references document_types(id) on delete cascade
+    type text
 );
 
 create table if not exists photo
@@ -54,7 +42,7 @@ create table if not exists field
 (
     id serial primary key,
     document_id int references document(id) on delete cascade,
-    type int references document_field_types(id) on delete cascade,
+    type text,
     value text,
 
     unique (document_id, type)
