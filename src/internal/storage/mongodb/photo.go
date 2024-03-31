@@ -18,7 +18,7 @@ func NewPhotoDataStorage(db *mongo.Client) storage.PhotoDataStorage {
 }
 
 func (p photoDataStorageImpl) Save(ctx context.Context, data []byte) (*model.PhotoKey, error) {
-
+	return nil, nil
 }
 
 func (p photoDataStorageImpl) Get(ctx context.Context, key *model.PhotoKey) ([]byte, error) {

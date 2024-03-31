@@ -1,5 +1,7 @@
 package postgres
 
+import "fmt"
+
 const (
 	checkpointTable = "checkpoint"
 	companyTable    = "company"
@@ -31,3 +33,17 @@ const (
 	checkpointIdField      = "checkpoint_id"
 	timeField              = "time"
 )
+
+func fullColName(tableName, columnName string) string {
+	return fmt.Sprintf("%s.%s", tableName, columnName)
+}
+
+func on(baseTable, targetTable, baseColumn, targetColumn string) string {
+	return fmt.Sprintf("%s on %s.%s=%s.%s",
+		targetTable,
+		baseTable,
+		baseColumn,
+		targetTable,
+		targetColumn,
+	)
+}

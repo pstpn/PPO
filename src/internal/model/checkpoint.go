@@ -9,6 +9,13 @@ func ToCheckpointID(id int64) *CheckpointID {
 	return &checkpointID
 }
 
+type PassageID int64
+
+func ToPassageID(id int64) *PassageID {
+	passageID := PassageID(id)
+	return &passageID
+}
+
 type PassageType int64
 
 const (
@@ -33,6 +40,7 @@ func (p *PassageType) String() string {
 }
 
 type Passage struct {
+	ID           *PassageID
 	CheckpointID *CheckpointID
 	DocumentID   *DocumentID
 	Type         *PassageType

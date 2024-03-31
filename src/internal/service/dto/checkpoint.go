@@ -11,6 +11,14 @@ type CreatePassageRequest struct {
 	Time         *time.Time
 }
 
+type GetPassageRequest struct {
+	PassageID int64
+}
+
 type ListPassagesRequest struct {
-	CheckpointID int64
+	InfoCardID int64
+}
+
+type DeletePassageRequest struct {
+	PassageID int64
 }

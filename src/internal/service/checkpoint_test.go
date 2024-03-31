@@ -175,7 +175,7 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.ListPassagesRequest{CheckpointID: -1},
+				request: &dto.ListPassagesRequest{InfoCardID: -1},
 			},
 			wantErr: true,
 
@@ -189,14 +189,14 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.ListPassagesRequest{CheckpointID: -1},
+						request: &dto.ListPassagesRequest{InfoCardID: -1},
 					},
 					storageReturn: struct {
 						passages []*model.Passage
 						err      error
 					}{
 						passages: nil,
-						err:      fmt.Errorf("incorrect checkpointID"),
+						err:      fmt.Errorf("incorrect InfoCardID"),
 					},
 				},
 			},
@@ -209,10 +209,11 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.ListPassagesRequest{CheckpointID: 1},
+				request: &dto.ListPassagesRequest{InfoCardID: 1},
 			},
 			want: []*model.Passage{
 				{
+					ID:           model.ToPassageID(1),
 					CheckpointID: model.ToCheckpointID(1),
 					DocumentID:   model.ToDocumentID(1),
 					Type:         model.ToPassageType(1),
@@ -231,7 +232,7 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.ListPassagesRequest{CheckpointID: 1},
+						request: &dto.ListPassagesRequest{InfoCardID: 1},
 					},
 					storageReturn: struct {
 						passages []*model.Passage
@@ -239,6 +240,7 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 					}{
 						passages: []*model.Passage{
 							{
+								ID:           model.ToPassageID(1),
 								CheckpointID: model.ToCheckpointID(1),
 								DocumentID:   model.ToDocumentID(1),
 								Type:         model.ToPassageType(1),

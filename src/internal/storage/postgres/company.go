@@ -27,15 +27,12 @@ func (c *companyStorageImpl) GetByID(ctx context.Context, request *dto.GetCompan
 			cityField,
 		).
 		From(companyTable).
-		Where(
-			squirrel.Eq{idField: request.CompanyID},
-		)
+		Where(squirrel.Eq{idField: request.CompanyID})
 
 	sql, args, err := query.ToSql()
 	if err != nil {
 		return nil, err
 	}
-
 	row := c.Pool.QueryRow(ctx, sql, args...)
 
 	var company model.Company
