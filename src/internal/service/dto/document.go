@@ -12,6 +12,7 @@ type GetDocumentRequest struct {
 type ListEmployeeDocumentsRequest struct {
 	EmployeeID int64
 }
+
 type DeleteDocumentRequest struct {
 	DocumentID int64
 }

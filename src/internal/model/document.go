@@ -34,5 +34,4 @@ type Document struct {
 	ID         *DocumentID
 	InfoCardID *InfoCardID
 	Type       *DocumentType
-	PhotoID    *PhotoID
 }
