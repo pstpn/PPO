@@ -90,7 +90,10 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 				PhoneNumber: "123",
 				CompanyID:   model.ToCompanyID(1),
 				Post:        model.ToPostType(1),
-				Password:    "OHiuoup98u",
+				Password: &model.Password{
+					Value:    "OHiuoup98u",
+					IsHashed: true,
+				},
 				DateOfBirth: nil,
 			},
 			wantErr: false,
@@ -117,7 +120,10 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 							PhoneNumber: "123",
 							CompanyID:   model.ToCompanyID(1),
 							Post:        model.ToPostType(1),
-							Password:    "OHiuoup98u",
+							Password: &model.Password{
+								Value:    "OHiuoup98u",
+								IsHashed: true,
+							},
 							DateOfBirth: nil,
 						},
 						err: nil,
@@ -146,150 +152,6 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("employeeServiceImpl.GetEmployee() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_employeeServiceImpl_ListAllEmployees(t *testing.T) {
-	ctx := context.TODO()
-
-	type args struct {
-		ctx     context.Context
-		request *dto.ListAllEmployeesRequest
-	}
-
-	type storages struct {
-		employeeStorage struct {
-			storageArgs   args
-			storageReturn struct {
-				employees []*model.Employee
-				err       error
-			}
-		}
-	}
-
-	employeeMockStorage := mocks.NewEmployeeStorage(t)
-	tests := []struct {
-		name    string
-		e       *employeeServiceImpl
-		args    args
-		want    []*model.Employee
-		wantErr bool
-
-		storages storages
-	}{
-		{
-			name: "incorrect request",
-			e: &employeeServiceImpl{
-				logger:          nil,
-				employeeStorage: employeeMockStorage,
-			},
-			args: args{
-				ctx:     ctx,
-				request: &dto.ListAllEmployeesRequest{},
-			},
-			want:    nil,
-			wantErr: true,
-
-			storages: storages{
-				employeeStorage: struct {
-					storageArgs   args
-					storageReturn struct {
-						employees []*model.Employee
-						err       error
-					}
-				}{
-					storageArgs: args{
-						ctx:     ctx,
-						request: &dto.ListAllEmployeesRequest{},
-					},
-					storageReturn: struct {
-						employees []*model.Employee
-						err       error
-					}{
-						employees: nil,
-						err:       fmt.Errorf("incorrect request"),
-					},
-				},
-			},
-		},
-		{
-			name: "success",
-			e: &employeeServiceImpl{
-				logger:          nil,
-				employeeStorage: employeeMockStorage,
-			},
-			args: args{
-				ctx:     ctx,
-				request: &dto.ListAllEmployeesRequest{},
-			},
-			want: []*model.Employee{
-				{
-					ID:          model.ToEmployeeID(1),
-					FullName:    "Stepa Stepan Stepanovich",
-					PhoneNumber: "123",
-					CompanyID:   model.ToCompanyID(1),
-					Post:        model.ToPostType(1),
-					Password:    "OHiuoup98u",
-					DateOfBirth: nil,
-				},
-			},
-			wantErr: false,
-
-			storages: storages{
-				employeeStorage: struct {
-					storageArgs   args
-					storageReturn struct {
-						employees []*model.Employee
-						err       error
-					}
-				}{
-					storageArgs: args{
-						ctx:     ctx,
-						request: &dto.ListAllEmployeesRequest{},
-					},
-					storageReturn: struct {
-						employees []*model.Employee
-						err       error
-					}{
-						employees: []*model.Employee{
-							{
-								ID:          model.ToEmployeeID(1),
-								FullName:    "Stepa Stepan Stepanovich",
-								PhoneNumber: "123",
-								CompanyID:   model.ToCompanyID(1),
-								Post:        model.ToPostType(1),
-								Password:    "OHiuoup98u",
-								DateOfBirth: nil,
-							},
-						},
-						err: nil,
-					},
-				},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		employeeMockStorage.
-			On("ListAll",
-				tt.storages.employeeStorage.storageArgs.ctx,
-				tt.storages.employeeStorage.storageArgs.request,
-			).
-			Return(
-				tt.storages.employeeStorage.storageReturn.employees,
-				tt.storages.employeeStorage.storageReturn.err,
-			).
-			Once()
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.e.ListAllEmployees(tt.args.ctx, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("employeeServiceImpl.ListAllEmployees() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("employeeServiceImpl.ListAllEmployees() = %v, want %v", got, tt.want)
 			}
 		})
 	}

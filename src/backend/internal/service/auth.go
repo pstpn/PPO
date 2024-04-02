@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 
+	"course/internal/model"
 	"course/internal/service/dto"
 	"course/internal/storage"
 	"course/pkg/logger"
@@ -21,7 +22,7 @@ type authServiceImpl struct {
 }
 
 func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password.Value), bcrypt.DefaultCost)
 	if err != nil {
 		return fmt.Errorf("encrypt password: %w", err)
 	}
@@ -31,7 +32,10 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 		FullName:    request.FullName,
 		CompanyID:   request.CompanyID,
 		Post:        request.Post,
-		Password:    string(hashedPassword),
+		Password: &model.Password{
+			Value:    string(hashedPassword),
+			IsHashed: true,
+		},
 		DateOfBirth: request.DateOfBirth,
 	})
 	if err != nil {
@@ -47,5 +51,5 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 		return fmt.Errorf("get user by phone number: %w", err)
 	}
 
-	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
+	return bcrypt.CompareHashAndPassword([]byte(user.Password.Value), []byte(request.Password))
 }

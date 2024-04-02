@@ -12,7 +12,6 @@ import (
 
 type EmployeeService interface {
 	GetEmployee(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error)
-	ListAllEmployees(ctx context.Context, request *dto.ListAllEmployeesRequest) ([]*model.Employee, error)
 	DeleteEmployee(ctx context.Context, request *dto.DeleteEmployeeRequest) error
 }
 
@@ -28,15 +27,6 @@ func (e *employeeServiceImpl) GetEmployee(ctx context.Context, request *dto.GetE
 	}
 
 	return employee, nil
-}
-
-func (e *employeeServiceImpl) ListAllEmployees(ctx context.Context, request *dto.ListAllEmployeesRequest) ([]*model.Employee, error) {
-	employees, err := e.employeeStorage.ListAll(ctx, request)
-	if err != nil {
-		return nil, fmt.Errorf("list all employees: %w", err)
-	}
-
-	return employees, nil
 }
 
 func (e *employeeServiceImpl) DeleteEmployee(ctx context.Context, request *dto.DeleteEmployeeRequest) error {

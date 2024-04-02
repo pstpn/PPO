@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"course/internal/model"
 	"time"
 )
 
@@ -9,7 +10,7 @@ type RegisterEmployeeRequest struct {
 	FullName    string
 	CompanyID   int64
 	Post        int64
-	Password    string
+	Password    *model.Password
 	DateOfBirth *time.Time
 }
 

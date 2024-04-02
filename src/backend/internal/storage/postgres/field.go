@@ -5,5 +5,5 @@ import (
 )
 
 type fieldStorageImpl struct {
-	db *postgres.Postgres
+	*postgres.Postgres
 }

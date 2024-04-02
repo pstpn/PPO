@@ -36,12 +36,17 @@ func ToEmployeeID(id int64) *EmployeeID {
 	return &employeeID
 }
 
+type Password struct {
+	Value    string
+	IsHashed bool
+}
+
 type Employee struct {
 	ID          *EmployeeID
 	FullName    string
 	PhoneNumber string
 	CompanyID   *CompanyID
 	Post        *PostType
-	Password    string
+	Password    *Password
 	DateOfBirth *time.Time
 }
