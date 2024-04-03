@@ -12,7 +12,7 @@ import (
 )
 
 type AuthService interface {
-	RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) error
+	RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) (*model.Employee, error)
 	LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) error
 }
 
@@ -21,13 +21,13 @@ type authServiceImpl struct {
 	employeeStorage storage.EmployeeStorage
 }
 
-func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
+func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) (*model.Employee, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password.Value), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("encrypt password: %w", err)
+		return nil, fmt.Errorf("encrypt password: %w", err)
 	}
 
-	err = a.employeeStorage.Register(ctx, &dto.RegisterEmployeeRequest{
+	employee, err := a.employeeStorage.Register(ctx, &dto.RegisterEmployeeRequest{
 		PhoneNumber: request.PhoneNumber,
 		FullName:    request.FullName,
 		CompanyID:   request.CompanyID,
@@ -39,10 +39,10 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 		DateOfBirth: request.DateOfBirth,
 	})
 	if err != nil {
-		return fmt.Errorf("create employee: %w", err)
+		return nil, fmt.Errorf("create employee: %w", err)
 	}
 
-	return nil
+	return employee, nil
 }
 
 func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) error {

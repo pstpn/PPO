@@ -26,7 +26,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 				request *dto.CreatePhotoKeyRequest
 			}
 			storageReturn struct {
-				err error
+				photoMeta *model.PhotoMeta
+				err       error
 			}
 		}
 		photoStorage struct {
@@ -46,6 +47,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		name    string
 		p       *photoServiceImpl
 		args    args
+		want    *model.PhotoMeta
 		wantErr bool
 
 		storages storages
@@ -63,6 +65,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					Data:       nil,
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
@@ -72,7 +75,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 						request *dto.CreatePhotoKeyRequest
 					}
 					storageReturn struct {
-						err error
+						photoMeta *model.PhotoMeta
+						err       error
 					}
 				}{
 					storageArgs: struct {
@@ -86,9 +90,11 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						photoMeta *model.PhotoMeta
+						err       error
 					}{
-						err: nil,
+						photoMeta: nil,
+						err:       nil,
 					},
 				},
 				photoStorage: struct {
@@ -134,6 +140,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					Data:       nil,
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
@@ -143,7 +150,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 						request *dto.CreatePhotoKeyRequest
 					}
 					storageReturn struct {
-						err error
+						photoMeta *model.PhotoMeta
+						err       error
 					}
 				}{
 					storageArgs: struct {
@@ -157,9 +165,11 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						photoMeta *model.PhotoMeta
+						err       error
 					}{
-						err: fmt.Errorf("incorrect documentID"),
+						photoMeta: nil,
+						err:       fmt.Errorf("incorrect documentID"),
 					},
 				},
 				photoStorage: struct {
@@ -205,6 +215,11 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					Data:       []byte{'s'},
 				},
 			},
+			want: &model.PhotoMeta{
+				ID:         model.ToPhotoID(1),
+				DocumentID: model.ToDocumentID(2),
+				PhotoKey:   model.ToPhotoKey("soso"),
+			},
 			wantErr: false,
 
 			storages: storages{
@@ -214,7 +229,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 						request *dto.CreatePhotoKeyRequest
 					}
 					storageReturn struct {
-						err error
+						photoMeta *model.PhotoMeta
+						err       error
 					}
 				}{
 					storageArgs: struct {
@@ -228,8 +244,14 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						photoMeta *model.PhotoMeta
+						err       error
 					}{
+						photoMeta: &model.PhotoMeta{
+							ID:         model.ToPhotoID(1),
+							DocumentID: model.ToDocumentID(2),
+							PhotoKey:   model.ToPhotoKey("soso"),
+						},
 						err: nil,
 					},
 				},
@@ -282,11 +304,17 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 				tt.storages.photoKeyStorage.storageArgs.request,
 			).
 			Return(
+				tt.storages.photoKeyStorage.storageReturn.photoMeta,
 				tt.storages.photoKeyStorage.storageReturn.err,
 			).Maybe()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.p.CreatePhoto(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+			got, err := tt.p.CreatePhoto(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("photoServiceImpl.CreatePhoto() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("photoServiceImpl.CreatePhoto() = %v, want %v", got, tt.want)
 			}
 		})
 	}

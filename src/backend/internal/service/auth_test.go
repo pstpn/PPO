@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
@@ -28,7 +29,8 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 				request string
 			}
 			storageReturn struct {
-				err error
+				employee *model.Employee
+				err      error
 			}
 		}
 	}
@@ -38,6 +40,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		name    string
 		a       *authServiceImpl
 		args    args
+		want    *model.Employee
 		wantErr bool
 
 		storages storages
@@ -62,6 +65,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 					DateOfBirth: nil,
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
@@ -71,7 +75,8 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 						request string
 					}
 					storageReturn struct {
-						err error
+						employee *model.Employee
+						err      error
 					}
 				}{
 					storageArgs: struct {
@@ -79,9 +84,11 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 						request string
 					}{ctx: ctx, request: mock.Anything},
 					storageReturn: struct {
-						err error
+						employee *model.Employee
+						err      error
 					}{
-						err: fmt.Errorf("incorrect companyID"),
+						employee: nil,
+						err:      fmt.Errorf("incorrect companyID"),
 					},
 				},
 			},
@@ -106,6 +113,18 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 					DateOfBirth: nil,
 				},
 			},
+			want: &model.Employee{
+				ID:          model.ToEmployeeID(1),
+				FullName:    "Stepa Stepan Stepanovich",
+				PhoneNumber: "3123124",
+				CompanyID:   model.ToCompanyID(1),
+				Post:        model.ToPostType(1),
+				Password: &model.Password{
+					Value:    "123",
+					IsHashed: true,
+				},
+				DateOfBirth: nil,
+			},
 			wantErr: false,
 
 			storages: storages{
@@ -115,7 +134,8 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 						request string
 					}
 					storageReturn struct {
-						err error
+						employee *model.Employee
+						err      error
 					}
 				}{
 					storageArgs: struct {
@@ -123,8 +143,21 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 						request string
 					}{ctx: ctx, request: mock.Anything},
 					storageReturn: struct {
-						err error
+						employee *model.Employee
+						err      error
 					}{
+						employee: &model.Employee{
+							ID:          model.ToEmployeeID(1),
+							FullName:    "Stepa Stepan Stepanovich",
+							PhoneNumber: "3123124",
+							CompanyID:   model.ToCompanyID(1),
+							Post:        model.ToPostType(1),
+							Password: &model.Password{
+								Value:    "123",
+								IsHashed: true,
+							},
+							DateOfBirth: nil,
+						},
 						err: nil,
 					},
 				},
@@ -137,11 +170,18 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 			On("Register",
 				tt.storages.employeeStorage.storageArgs.ctx,
 				tt.storages.employeeStorage.storageArgs.request).
-			Return(tt.storages.employeeStorage.storageReturn.err).
+			Return(
+				tt.storages.employeeStorage.storageReturn.employee,
+				tt.storages.employeeStorage.storageReturn.err).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.a.RegisterEmployee(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+			got, err := tt.a.RegisterEmployee(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("authServiceImpl.RegisterEmployee() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("authServiceImpl.RegisterEmployee() = %v, want %v", got, tt.want)
 			}
 		})
 	}

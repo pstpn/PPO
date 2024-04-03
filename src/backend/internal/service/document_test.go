@@ -23,7 +23,8 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 		documentStorage struct {
 			storageArgs   args
 			storageReturn struct {
-				err error
+				document *model.Document
+				err      error
 			}
 		}
 	}
@@ -33,6 +34,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 		name    string
 		d       *documentServiceImpl
 		args    args
+		want    *model.Document
 		wantErr bool
 
 		storages storages
@@ -50,13 +52,15 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 					DocumentType: 1,
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
 				documentStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						document *model.Document
+						err      error
 					}
 				}{
 					storageArgs: args{
@@ -67,9 +71,11 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						document *model.Document
+						err      error
 					}{
-						err: fmt.Errorf("incorrect infoardID"),
+						document: nil,
+						err:      fmt.Errorf("incorrect infoardID"),
 					},
 				},
 			},
@@ -87,13 +93,19 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 					DocumentType: 1,
 				},
 			},
+			want: &model.Document{
+				ID:         model.ToDocumentID(1),
+				InfoCardID: model.ToInfoCardID(1),
+				Type:       model.ToDocumentType(1),
+			},
 			wantErr: false,
 
 			storages: storages{
 				documentStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						document *model.Document
+						err      error
 					}
 				}{
 					storageArgs: args{
@@ -104,8 +116,14 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						document *model.Document
+						err      error
 					}{
+						document: &model.Document{
+							ID:         model.ToDocumentID(1),
+							InfoCardID: model.ToInfoCardID(1),
+							Type:       model.ToDocumentType(1),
+						},
 						err: nil,
 					},
 				},
@@ -120,12 +138,18 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 				tt.storages.documentStorage.storageArgs.request,
 			).
 			Return(
+				tt.storages.documentStorage.storageReturn.document,
 				tt.storages.documentStorage.storageReturn.err,
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.d.CreateDocument(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+			got, err := tt.d.CreateDocument(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("documentServiceImpl.CreateDocument() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("documentServiceImpl.CreateDocument() = %v, want %v", got, tt.want)
 			}
 		})
 	}

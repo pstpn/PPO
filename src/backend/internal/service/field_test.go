@@ -23,7 +23,8 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 		fieldStorage struct {
 			storageArgs   args
 			storageReturn struct {
-				err error
+				field *model.Field
+				err   error
 			}
 		}
 	}
@@ -33,6 +34,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 		name    string
 		f       *fieldServiceImpl
 		args    args
+		want    *model.Field
 		wantErr bool
 
 		storages storages
@@ -51,13 +53,15 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 					Value:      "ok",
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
 				fieldStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						field *model.Field
+						err   error
 					}
 				}{
 					storageArgs: args{
@@ -69,9 +73,11 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						field *model.Field
+						err   error
 					}{
-						err: fmt.Errorf("incorrect documentID"),
+						field: nil,
+						err:   fmt.Errorf("incorrect documentID"),
 					},
 				},
 			},
@@ -90,13 +96,20 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 					Value:      "ok",
 				},
 			},
+			want: &model.Field{
+				ID:         model.ToFieldID(1),
+				DocumentID: model.ToDocumentID(1),
+				Type:       model.ToFieldType(1),
+				Value:      "ok",
+			},
 			wantErr: false,
 
 			storages: storages{
 				fieldStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						field *model.Field
+						err   error
 					}
 				}{
 					storageArgs: args{
@@ -108,8 +121,15 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						field *model.Field
+						err   error
 					}{
+						field: &model.Field{
+							ID:         model.ToFieldID(1),
+							DocumentID: model.ToDocumentID(1),
+							Type:       model.ToFieldType(1),
+							Value:      "ok",
+						},
 						err: nil,
 					},
 				},
@@ -124,12 +144,18 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 				tt.storages.fieldStorage.storageArgs.request,
 			).
 			Return(
+				tt.storages.fieldStorage.storageReturn.field,
 				tt.storages.fieldStorage.storageReturn.err,
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.f.CreateCardField(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+			got, err := tt.f.CreateCardField(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("fieldServiceImpl.CreateCardField() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("fieldServiceImpl.CreateCardField() = %v, want %v", got, tt.want)
 			}
 		})
 	}

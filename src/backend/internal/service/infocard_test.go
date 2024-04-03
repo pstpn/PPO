@@ -23,7 +23,8 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 		infoCardStorage struct {
 			storageArgs   args
 			storageReturn struct {
-				err error
+				infoCard *model.InfoCard
+				err      error
 			}
 		}
 	}
@@ -33,6 +34,7 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 		name    string
 		i       *infoCardServiceImpl
 		args    args
+		want    *model.InfoCard
 		wantErr bool
 
 		storages storages
@@ -51,13 +53,15 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 					CreatedDate: nil,
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
 				infoCardStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						infoCard *model.InfoCard
+						err      error
 					}
 				}{
 					storageArgs: args{
@@ -69,9 +73,11 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						infoCard *model.InfoCard
+						err      error
 					}{
-						err: fmt.Errorf("incorrect employeeID"),
+						infoCard: nil,
+						err:      fmt.Errorf("incorrect employeeID"),
 					},
 				},
 			},
@@ -90,13 +96,20 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 					CreatedDate: nil,
 				},
 			},
+			want: &model.InfoCard{
+				ID:                model.ToInfoCardID(1),
+				CreatedEmployeeID: model.ToEmployeeID(1),
+				IsConfirmed:       false,
+				CreatedDate:       nil,
+			},
 			wantErr: false,
 
 			storages: storages{
 				infoCardStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						infoCard *model.InfoCard
+						err      error
 					}
 				}{
 					storageArgs: args{
@@ -108,8 +121,15 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						infoCard *model.InfoCard
+						err      error
 					}{
+						infoCard: &model.InfoCard{
+							ID:                model.ToInfoCardID(1),
+							CreatedEmployeeID: model.ToEmployeeID(1),
+							IsConfirmed:       false,
+							CreatedDate:       nil,
+						},
 						err: nil,
 					},
 				},
@@ -124,12 +144,18 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 				tt.storages.infoCardStorage.storageArgs.request,
 			).
 			Return(
+				tt.storages.infoCardStorage.storageReturn.infoCard,
 				tt.storages.infoCardStorage.storageReturn.err,
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.i.CreateInfoCard(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+			got, err := tt.i.CreateInfoCard(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("infoCardServiceImpl.CreateInfoCard() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("infoCardServiceImpl.CreateInfoCard() = %v, want %v", got, tt.want)
 			}
 		})
 	}

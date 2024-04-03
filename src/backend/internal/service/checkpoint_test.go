@@ -23,7 +23,8 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 		checkpointStorage struct {
 			storageArgs   args
 			storageReturn struct {
-				err error
+				passage *model.Passage
+				err     error
 			}
 		}
 	}
@@ -33,6 +34,7 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 		name    string
 		c       *checkpointServiceImpl
 		args    args
+		want    *model.Passage
 		wantErr bool
 
 		storages storages
@@ -52,13 +54,15 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 					Time:         nil,
 				},
 			},
+			want:    nil,
 			wantErr: true,
 
 			storages: storages{
 				checkpointStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						passage *model.Passage
+						err     error
 					}
 				}{
 					storageArgs: args{
@@ -71,9 +75,11 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						passage *model.Passage
+						err     error
 					}{
-						err: fmt.Errorf("incorrect checkpointID"),
+						passage: nil,
+						err:     fmt.Errorf("incorrect checkpointID"),
 					},
 				},
 			},
@@ -93,13 +99,21 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 					Time:         nil,
 				},
 			},
+			want: &model.Passage{
+				ID:           model.ToPassageID(1),
+				CheckpointID: model.ToCheckpointID(1),
+				DocumentID:   model.ToDocumentID(1),
+				Type:         model.ToPassageType(1),
+				Time:         nil,
+			},
 			wantErr: false,
 
 			storages: storages{
 				checkpointStorage: struct {
 					storageArgs   args
 					storageReturn struct {
-						err error
+						passage *model.Passage
+						err     error
 					}
 				}{
 					storageArgs: args{
@@ -112,8 +126,16 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 						},
 					},
 					storageReturn: struct {
-						err error
+						passage *model.Passage
+						err     error
 					}{
+						passage: &model.Passage{
+							ID:           model.ToPassageID(1),
+							CheckpointID: model.ToCheckpointID(1),
+							DocumentID:   model.ToDocumentID(1),
+							Type:         model.ToPassageType(1),
+							Time:         nil,
+						},
 						err: nil,
 					},
 				},
@@ -128,12 +150,18 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 				tt.storages.checkpointStorage.storageArgs.request,
 			).
 			Return(
+				tt.storages.checkpointStorage.storageReturn.passage,
 				tt.storages.checkpointStorage.storageReturn.err,
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.c.CreatePassage(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+			got, err := tt.c.CreatePassage(tt.args.ctx, tt.args.request)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("checkpointServiceImpl.CreatePassage() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("checkpointServiceImpl.CreatePassage() = %v, want %v", got, tt.want)
 			}
 		})
 	}
