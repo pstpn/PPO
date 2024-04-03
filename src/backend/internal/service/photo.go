@@ -13,7 +13,6 @@ import (
 type PhotoService interface {
 	CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) error
 	GetPhoto(ctx context.Context, request *dto.GetPhotoRequest) (*model.Photo, error)
-	UpdatePhoto(ctx context.Context, request *dto.UpdatePhotoRequest) error
 	DeletePhoto(ctx context.Context, request *dto.DeletePhotoRequest) error
 }
 
@@ -25,7 +24,7 @@ type photoServiceImpl struct {
 func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) error {
 	// TODO: Crop face from document
 
-	key, err := p.photoStorage.Save(ctx, request.Data)
+	key, err := p.photoStorage.Save(ctx, request)
 	if err != nil {
 		return fmt.Errorf("save photo: %w", err)
 	}
@@ -56,20 +55,6 @@ func (p *photoServiceImpl) GetPhoto(ctx context.Context, request *dto.GetPhotoRe
 		Meta: meta,
 		Data: data,
 	}, nil
-}
-
-func (p *photoServiceImpl) UpdatePhoto(ctx context.Context, request *dto.UpdatePhotoRequest) error {
-	meta, err := p.photoStorage.GetKey(ctx, &dto.GetPhotoRequest{DocumentID: request.DocumentID})
-	if err != nil {
-		return fmt.Errorf("get photo key: %w", err)
-	}
-
-	err = p.photoStorage.Update(ctx, meta.PhotoKey, request.Data)
-	if err != nil {
-		return fmt.Errorf("update photo by key: %w", err)
-	}
-
-	return nil
 }
 
 func (p *photoServiceImpl) DeletePhoto(ctx context.Context, request *dto.DeletePhotoRequest) error {

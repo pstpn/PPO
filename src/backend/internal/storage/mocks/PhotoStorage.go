@@ -112,9 +112,9 @@ func (_m *PhotoStorage) GetKey(ctx context.Context, request *dto.GetPhotoRequest
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: ctx, data
-func (_m *PhotoStorage) Save(ctx context.Context, data []byte) (*model.PhotoKey, error) {
-	ret := _m.Called(ctx, data)
+// Save provides a mock function with given fields: ctx, request
+func (_m *PhotoStorage) Save(ctx context.Context, request *dto.CreatePhotoRequest) (*model.PhotoKey, error) {
+	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Save")
@@ -122,19 +122,19 @@ func (_m *PhotoStorage) Save(ctx context.Context, data []byte) (*model.PhotoKey,
 
 	var r0 *model.PhotoKey
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, []byte) (*model.PhotoKey, error)); ok {
-		return rf(ctx, data)
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoRequest) (*model.PhotoKey, error)); ok {
+		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, []byte) *model.PhotoKey); ok {
-		r0 = rf(ctx, data)
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoRequest) *model.PhotoKey); ok {
+		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.PhotoKey)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, []byte) error); ok {
-		r1 = rf(ctx, data)
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.CreatePhotoRequest) error); ok {
+		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -152,42 +152,6 @@ func (_m *PhotoStorage) SaveKey(ctx context.Context, request *dto.CreatePhotoKey
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoKeyRequest) error); ok {
-		r0 = rf(ctx, request)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// Update provides a mock function with given fields: ctx, key, data
-func (_m *PhotoStorage) Update(ctx context.Context, key *model.PhotoKey, data []byte) error {
-	ret := _m.Called(ctx, key, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Update")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.PhotoKey, []byte) error); ok {
-		r0 = rf(ctx, key, data)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// UpdateKey provides a mock function with given fields: ctx, request
-func (_m *PhotoStorage) UpdateKey(ctx context.Context, request *dto.UpdatePhotoKeyRequest) error {
-	ret := _m.Called(ctx, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateKey")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.UpdatePhotoKeyRequest) error); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Error(0)

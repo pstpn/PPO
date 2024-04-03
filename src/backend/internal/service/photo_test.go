@@ -31,8 +31,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		}
 		photoStorage struct {
 			storageArgs struct {
-				ctx  context.Context
-				data []byte
+				ctx     context.Context
+				request *dto.CreatePhotoRequest
 			}
 			storageReturn struct {
 				photoKey *model.PhotoKey
@@ -59,7 +59,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 			args: args{
 				ctx: ctx,
 				request: &dto.CreatePhotoRequest{
-					DocumentID: -1,
+					DocumentID: 1,
 					Data:       nil,
 				},
 			},
@@ -88,13 +88,13 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					storageReturn: struct {
 						err error
 					}{
-						err: fmt.Errorf("incorrect documentID"),
+						err: nil,
 					},
 				},
 				photoStorage: struct {
 					storageArgs struct {
-						ctx  context.Context
-						data []byte
+						ctx     context.Context
+						request *dto.CreatePhotoRequest
 					}
 					storageReturn struct {
 						photoKey *model.PhotoKey
@@ -102,11 +102,14 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					}
 				}{
 					storageArgs: struct {
-						ctx  context.Context
-						data []byte
+						ctx     context.Context
+						request *dto.CreatePhotoRequest
 					}{
-						ctx:  ctx,
-						data: nil,
+						ctx: ctx,
+						request: &dto.CreatePhotoRequest{
+							DocumentID: 1,
+							Data:       nil,
+						},
 					},
 					storageReturn: struct {
 						photoKey *model.PhotoKey
@@ -161,8 +164,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 				},
 				photoStorage: struct {
 					storageArgs struct {
-						ctx  context.Context
-						data []byte
+						ctx     context.Context
+						request *dto.CreatePhotoRequest
 					}
 					storageReturn struct {
 						photoKey *model.PhotoKey
@@ -170,11 +173,14 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					}
 				}{
 					storageArgs: struct {
-						ctx  context.Context
-						data []byte
+						ctx     context.Context
+						request *dto.CreatePhotoRequest
 					}{
-						ctx:  ctx,
-						data: nil,
+						ctx: ctx,
+						request: &dto.CreatePhotoRequest{
+							DocumentID: -1,
+							Data:       nil,
+						},
 					},
 					storageReturn: struct {
 						photoKey *model.PhotoKey
@@ -229,8 +235,8 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 				},
 				photoStorage: struct {
 					storageArgs struct {
-						ctx  context.Context
-						data []byte
+						ctx     context.Context
+						request *dto.CreatePhotoRequest
 					}
 					storageReturn struct {
 						photoKey *model.PhotoKey
@@ -238,11 +244,14 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 					}
 				}{
 					storageArgs: struct {
-						ctx  context.Context
-						data []byte
+						ctx     context.Context
+						request *dto.CreatePhotoRequest
 					}{
-						ctx:  ctx,
-						data: []byte{'s'},
+						ctx: ctx,
+						request: &dto.CreatePhotoRequest{
+							DocumentID: 2,
+							Data:       []byte{'s'},
+						},
 					},
 					storageReturn: struct {
 						photoKey *model.PhotoKey
@@ -260,7 +269,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		photoMockStorage.
 			On("Save",
 				tt.storages.photoStorage.storageArgs.ctx,
-				tt.storages.photoStorage.storageArgs.data,
+				tt.storages.photoStorage.storageArgs.request,
 			).
 			Return(
 				tt.storages.photoStorage.storageReturn.photoKey,
@@ -576,292 +585,6 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("photoServiceImpl.GetPhoto() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_photoServiceImpl_UpdatePhoto(t *testing.T) {
-	ctx := context.TODO()
-
-	type args struct {
-		ctx     context.Context
-		request *dto.UpdatePhotoRequest
-	}
-
-	type storages struct {
-		photoKeyStorage struct {
-			storageArgs struct {
-				ctx     context.Context
-				request *dto.GetPhotoRequest
-			}
-			storageReturn struct {
-				meta *model.PhotoMeta
-				err  error
-			}
-		}
-		photoStorage struct {
-			storageArgs struct {
-				ctx  context.Context
-				key  *model.PhotoKey
-				data []byte
-			}
-			storageReturn struct {
-				err error
-			}
-		}
-	}
-
-	photoMockStorage := mocks.NewPhotoStorage(t)
-	tests := []struct {
-		name    string
-		p       *photoServiceImpl
-		args    args
-		wantErr bool
-
-		storages storages
-	}{
-		{
-			name: "incorrect document ID",
-			p: &photoServiceImpl{
-				logger:       nil,
-				photoStorage: photoMockStorage,
-			},
-			args: args{
-				ctx: ctx,
-				request: &dto.UpdatePhotoRequest{
-					DocumentID: -1,
-					Data:       []byte{'b'},
-				},
-			},
-			wantErr: true,
-
-			storages: storages{
-				photoKeyStorage: struct {
-					storageArgs struct {
-						ctx     context.Context
-						request *dto.GetPhotoRequest
-					}
-					storageReturn struct {
-						meta *model.PhotoMeta
-						err  error
-					}
-				}{
-					storageArgs: struct {
-						ctx     context.Context
-						request *dto.GetPhotoRequest
-					}{
-						ctx: ctx,
-						request: &dto.GetPhotoRequest{
-							DocumentID: -1,
-						},
-					},
-					storageReturn: struct {
-						meta *model.PhotoMeta
-						err  error
-					}{
-						meta: nil,
-						err:  fmt.Errorf("incorrect documentID"),
-					},
-				},
-				photoStorage: struct {
-					storageArgs struct {
-						ctx  context.Context
-						key  *model.PhotoKey
-						data []byte
-					}
-					storageReturn struct {
-						err error
-					}
-				}{
-					storageArgs: struct {
-						ctx  context.Context
-						key  *model.PhotoKey
-						data []byte
-					}{
-						ctx:  ctx,
-						key:  nil,
-						data: []byte{'b'},
-					},
-					storageReturn: struct {
-						err error
-					}{
-						err: nil,
-					},
-				},
-			},
-		},
-		{
-			name: "incorrect photo key",
-			p: &photoServiceImpl{
-				logger:       nil,
-				photoStorage: photoMockStorage,
-			},
-			args: args{
-				ctx: ctx,
-				request: &dto.UpdatePhotoRequest{
-					DocumentID: 1,
-					Data:       []byte{'b'},
-				},
-			},
-			wantErr: true,
-
-			storages: storages{
-				photoKeyStorage: struct {
-					storageArgs struct {
-						ctx     context.Context
-						request *dto.GetPhotoRequest
-					}
-					storageReturn struct {
-						meta *model.PhotoMeta
-						err  error
-					}
-				}{
-					storageArgs: struct {
-						ctx     context.Context
-						request *dto.GetPhotoRequest
-					}{
-						ctx: ctx,
-						request: &dto.GetPhotoRequest{
-							DocumentID: 1,
-						},
-					},
-					storageReturn: struct {
-						meta *model.PhotoMeta
-						err  error
-					}{
-						meta: &model.PhotoMeta{
-							ID:       model.ToPhotoID(-1),
-							PhotoKey: model.ToPhotoKey("fofo"),
-						},
-						err: nil,
-					},
-				},
-				photoStorage: struct {
-					storageArgs struct {
-						ctx  context.Context
-						key  *model.PhotoKey
-						data []byte
-					}
-					storageReturn struct {
-						err error
-					}
-				}{
-					storageArgs: struct {
-						ctx  context.Context
-						key  *model.PhotoKey
-						data []byte
-					}{
-						ctx:  ctx,
-						key:  model.ToPhotoKey("fofo"),
-						data: []byte{'b'},
-					},
-					storageReturn: struct {
-						err error
-					}{
-						err: fmt.Errorf("incorrect photo key"),
-					},
-				},
-			},
-		},
-		{
-			name: "success",
-			p: &photoServiceImpl{
-				logger:       nil,
-				photoStorage: photoMockStorage,
-			},
-			args: args{
-				ctx: ctx,
-				request: &dto.UpdatePhotoRequest{
-					DocumentID: 1,
-					Data:       []byte{'c'},
-				},
-			},
-			wantErr: false,
-
-			storages: storages{
-				photoKeyStorage: struct {
-					storageArgs struct {
-						ctx     context.Context
-						request *dto.GetPhotoRequest
-					}
-					storageReturn struct {
-						meta *model.PhotoMeta
-						err  error
-					}
-				}{
-					storageArgs: struct {
-						ctx     context.Context
-						request *dto.GetPhotoRequest
-					}{
-						ctx: ctx,
-						request: &dto.GetPhotoRequest{
-							DocumentID: 1,
-						},
-					},
-					storageReturn: struct {
-						meta *model.PhotoMeta
-						err  error
-					}{
-						meta: &model.PhotoMeta{
-							ID:       model.ToPhotoID(1),
-							PhotoKey: model.ToPhotoKey("fofo"),
-						},
-						err: nil,
-					},
-				},
-				photoStorage: struct {
-					storageArgs struct {
-						ctx  context.Context
-						key  *model.PhotoKey
-						data []byte
-					}
-					storageReturn struct {
-						err error
-					}
-				}{
-					storageArgs: struct {
-						ctx  context.Context
-						key  *model.PhotoKey
-						data []byte
-					}{
-						ctx:  ctx,
-						key:  model.ToPhotoKey("fofo"),
-						data: []byte{'c'},
-					},
-					storageReturn: struct {
-						err error
-					}{
-						err: nil,
-					},
-				},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		photoMockStorage.
-			On("GetKey",
-				tt.storages.photoKeyStorage.storageArgs.ctx,
-				tt.storages.photoKeyStorage.storageArgs.request,
-			).
-			Return(
-				tt.storages.photoKeyStorage.storageReturn.meta,
-				tt.storages.photoKeyStorage.storageReturn.err,
-			).
-			Once()
-		photoMockStorage.
-			On("Update",
-				tt.storages.photoStorage.storageArgs.ctx,
-				tt.storages.photoStorage.storageArgs.key,
-				tt.storages.photoStorage.storageArgs.data,
-			).
-			Return(
-				tt.storages.photoStorage.storageReturn.err,
-			).Maybe()
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.p.UpdatePhoto(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
-				t.Errorf("photoServiceImpl.UpdatePhoto() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

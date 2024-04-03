@@ -72,24 +72,6 @@ func (p *photoMetaStorageImpl) GetKey(ctx context.Context, request *dto.GetPhoto
 	return &photoMeta, nil
 }
 
-func (p *photoMetaStorageImpl) UpdateKey(ctx context.Context, request *dto.UpdatePhotoKeyRequest) error {
-	query := p.Builder.
-		Update(photoTable).
-		Set(keyField, request.Key).
-		Where(squirrel.Eq{documentIdField: request.DocumentID})
-
-	sql, args, err := query.ToSql()
-	if err != nil {
-		return err
-	}
-	_, err = p.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (p *photoMetaStorageImpl) DeleteKey(ctx context.Context, request *dto.DeletePhotoRequest) error {
 	query := p.Builder.
 		Delete(photoTable).
