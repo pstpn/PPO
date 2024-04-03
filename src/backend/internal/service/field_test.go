@@ -16,7 +16,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		request *dto.CreateCardFieldRequest
+		request *dto.CreateDocumentFieldRequest
 	}
 
 	type storages struct {
@@ -38,15 +38,15 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 		storages storages
 	}{
 		{
-			name: "incorrect info card ID",
+			name: "incorrect document ID",
 			f: &fieldServiceImpl{
 				logger:       nil,
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
 				ctx: ctx,
-				request: &dto.CreateCardFieldRequest{
-					InfoCardID: -1,
+				request: &dto.CreateDocumentFieldRequest{
+					DocumentID: -1,
 					Type:       1,
 					Value:      "ok",
 				},
@@ -62,8 +62,8 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx: ctx,
-						request: &dto.CreateCardFieldRequest{
-							InfoCardID: -1,
+						request: &dto.CreateDocumentFieldRequest{
+							DocumentID: -1,
 							Type:       1,
 							Value:      "ok",
 						},
@@ -71,7 +71,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 					storageReturn: struct {
 						err error
 					}{
-						err: fmt.Errorf("incorrect infocardID"),
+						err: fmt.Errorf("incorrect documentID"),
 					},
 				},
 			},
@@ -84,8 +84,8 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				request: &dto.CreateCardFieldRequest{
-					InfoCardID: 1,
+				request: &dto.CreateDocumentFieldRequest{
+					DocumentID: 1,
 					Type:       1,
 					Value:      "ok",
 				},
@@ -101,8 +101,8 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx: ctx,
-						request: &dto.CreateCardFieldRequest{
-							InfoCardID: 1,
+						request: &dto.CreateDocumentFieldRequest{
+							DocumentID: 1,
 							Type:       1,
 							Value:      "ok",
 						},
@@ -140,7 +140,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		request *dto.GetCardFieldRequest
+		request *dto.GetDocumentFieldRequest
 	}
 
 	type storages struct {
@@ -164,15 +164,15 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 		storages storages
 	}{
 		{
-			name: "incorrect info card ID",
+			name: "incorrect document ID",
 			f: &fieldServiceImpl{
 				logger:       nil,
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
 				ctx: ctx,
-				request: &dto.GetCardFieldRequest{
-					InfoCardID: -1,
+				request: &dto.GetDocumentFieldRequest{
+					DocumentID: -1,
 					FieldType:  1,
 				},
 			},
@@ -189,8 +189,8 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx: ctx,
-						request: &dto.GetCardFieldRequest{
-							InfoCardID: -1,
+						request: &dto.GetDocumentFieldRequest{
+							DocumentID: -1,
 							FieldType:  1,
 						},
 					},
@@ -199,7 +199,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 						err   error
 					}{
 						field: nil,
-						err:   fmt.Errorf("incorrect infocardID"),
+						err:   fmt.Errorf("incorrect documentID"),
 					},
 				},
 			},
@@ -212,8 +212,8 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				request: &dto.GetCardFieldRequest{
-					InfoCardID: 1,
+				request: &dto.GetDocumentFieldRequest{
+					DocumentID: 1,
 					FieldType:  1,
 				},
 			},
@@ -235,8 +235,8 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx: ctx,
-						request: &dto.GetCardFieldRequest{
-							InfoCardID: 1,
+						request: &dto.GetDocumentFieldRequest{
+							DocumentID: 1,
 							FieldType:  1,
 						},
 					},
@@ -286,7 +286,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		request *dto.ListCardFieldsRequest
+		request *dto.ListDocumentFieldsRequest
 	}
 
 	type storages struct {
@@ -310,14 +310,14 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 		storages storages
 	}{
 		{
-			name: "incorrect info card ID",
+			name: "incorrect document ID",
 			f: &fieldServiceImpl{
 				logger:       nil,
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.ListCardFieldsRequest{InfoCardID: -1},
+				request: &dto.ListDocumentFieldsRequest{DocumentID: -1},
 			},
 			want:    nil,
 			wantErr: true,
@@ -332,14 +332,14 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.ListCardFieldsRequest{InfoCardID: -1},
+						request: &dto.ListDocumentFieldsRequest{DocumentID: -1},
 					},
 					storageReturn: struct {
 						fields []*model.Field
 						err    error
 					}{
 						fields: nil,
-						err:    fmt.Errorf("incorrect infocardID"),
+						err:    fmt.Errorf("incorrect documentID"),
 					},
 				},
 			},
@@ -352,7 +352,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.ListCardFieldsRequest{InfoCardID: 1},
+				request: &dto.ListDocumentFieldsRequest{DocumentID: 1},
 			},
 			want: []*model.Field{
 				{
@@ -374,7 +374,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.ListCardFieldsRequest{InfoCardID: 1},
+						request: &dto.ListDocumentFieldsRequest{DocumentID: 1},
 					},
 					storageReturn: struct {
 						fields []*model.Field
@@ -424,7 +424,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		request *dto.DeleteCardFieldRequest
+		request *dto.DeleteDocumentFieldRequest
 	}
 
 	type storages struct {
@@ -453,7 +453,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.DeleteCardFieldRequest{FieldID: -1},
+				request: &dto.DeleteDocumentFieldRequest{FieldID: -1},
 			},
 			wantErr: true,
 
@@ -466,7 +466,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.DeleteCardFieldRequest{FieldID: -1},
+						request: &dto.DeleteDocumentFieldRequest{FieldID: -1},
 					},
 					storageReturn: struct {
 						err error
@@ -484,7 +484,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.DeleteCardFieldRequest{FieldID: 1},
+				request: &dto.DeleteDocumentFieldRequest{FieldID: 1},
 			},
 			wantErr: false,
 
@@ -497,7 +497,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.DeleteCardFieldRequest{FieldID: 1},
+						request: &dto.DeleteDocumentFieldRequest{FieldID: 1},
 					},
 					storageReturn: struct {
 						err error

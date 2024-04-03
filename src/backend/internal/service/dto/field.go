@@ -1,19 +1,20 @@
 package dto
 
-type CreateCardFieldRequest struct {
-	InfoCardID int64
+type CreateDocumentFieldRequest struct {
+	DocumentID int64
 	Type       int64
 	Value      string
 }
 
-type GetCardFieldRequest struct {
-	InfoCardID int64
+type GetDocumentFieldRequest struct {
+	DocumentID int64
 	FieldType  int64
 }
-type ListCardFieldsRequest struct {
-	InfoCardID int64
+
+type ListDocumentFieldsRequest struct {
+	DocumentID int64
 }
 
-type DeleteCardFieldRequest struct {
+type DeleteDocumentFieldRequest struct {
 	FieldID int64
 }

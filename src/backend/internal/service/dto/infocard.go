@@ -2,6 +2,8 @@ package dto
 
 import (
 	"time"
+
+	"course/pkg/storage/postgres"
 )
 
 type CreateInfoCardRequest struct {
@@ -19,8 +21,8 @@ type GetInfoCardRequest struct {
 	InfoCardID int64
 }
 
-// ListInfoCardsRequest TODO: pagination, sort, filter
 type ListInfoCardsRequest struct {
+	Pagination *postgres.Pagination
 }
 
 type DeleteInfoCardRequest struct {

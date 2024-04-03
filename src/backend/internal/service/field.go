@@ -11,10 +11,10 @@ import (
 )
 
 type FieldService interface {
-	CreateCardField(ctx context.Context, request *dto.CreateCardFieldRequest) error
-	GetCardField(ctx context.Context, request *dto.GetCardFieldRequest) (*model.Field, error)
-	ListCardFields(ctx context.Context, request *dto.ListCardFieldsRequest) ([]*model.Field, error)
-	DeleteCardField(ctx context.Context, request *dto.DeleteCardFieldRequest) error
+	CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) error
+	GetCardField(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error)
+	ListCardFields(ctx context.Context, request *dto.ListDocumentFieldsRequest) ([]*model.Field, error)
+	DeleteCardField(ctx context.Context, request *dto.DeleteDocumentFieldRequest) error
 }
 
 type fieldServiceImpl struct {
@@ -22,7 +22,7 @@ type fieldServiceImpl struct {
 	fieldStorage storage.FieldStorage
 }
 
-func (f *fieldServiceImpl) CreateCardField(ctx context.Context, request *dto.CreateCardFieldRequest) error {
+func (f *fieldServiceImpl) CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) error {
 	err := f.fieldStorage.Create(ctx, request)
 	if err != nil {
 		return fmt.Errorf("create info card field: %w", err)
@@ -31,7 +31,7 @@ func (f *fieldServiceImpl) CreateCardField(ctx context.Context, request *dto.Cre
 	return nil
 }
 
-func (f *fieldServiceImpl) GetCardField(ctx context.Context, request *dto.GetCardFieldRequest) (*model.Field, error) {
+func (f *fieldServiceImpl) GetCardField(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error) {
 	field, err := f.fieldStorage.Get(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("get info card field: %w", err)
@@ -40,7 +40,7 @@ func (f *fieldServiceImpl) GetCardField(ctx context.Context, request *dto.GetCar
 	return field, nil
 }
 
-func (f *fieldServiceImpl) ListCardFields(ctx context.Context, request *dto.ListCardFieldsRequest) ([]*model.Field, error) {
+func (f *fieldServiceImpl) ListCardFields(ctx context.Context, request *dto.ListDocumentFieldsRequest) ([]*model.Field, error) {
 	fields, err := f.fieldStorage.ListCardFields(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("list info card fields: %w", err)
@@ -49,7 +49,7 @@ func (f *fieldServiceImpl) ListCardFields(ctx context.Context, request *dto.List
 	return fields, nil
 }
 
-func (f *fieldServiceImpl) DeleteCardField(ctx context.Context, request *dto.DeleteCardFieldRequest) error {
+func (f *fieldServiceImpl) DeleteCardField(ctx context.Context, request *dto.DeleteDocumentFieldRequest) error {
 	err := f.fieldStorage.Delete(ctx, request)
 	if err != nil {
 		return fmt.Errorf("delete info card field: %w", err)

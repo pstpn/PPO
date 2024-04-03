@@ -17,7 +17,7 @@ type FieldStorage struct {
 }
 
 // Create provides a mock function with given fields: ctx, request
-func (_m *FieldStorage) Create(ctx context.Context, request *dto.CreateCardFieldRequest) error {
+func (_m *FieldStorage) Create(ctx context.Context, request *dto.CreateDocumentFieldRequest) error {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -25,7 +25,7 @@ func (_m *FieldStorage) Create(ctx context.Context, request *dto.CreateCardField
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateCardFieldRequest) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentFieldRequest) error); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Error(0)
@@ -35,7 +35,7 @@ func (_m *FieldStorage) Create(ctx context.Context, request *dto.CreateCardField
 }
 
 // Delete provides a mock function with given fields: ctx, request
-func (_m *FieldStorage) Delete(ctx context.Context, request *dto.DeleteCardFieldRequest) error {
+func (_m *FieldStorage) Delete(ctx context.Context, request *dto.DeleteDocumentFieldRequest) error {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -43,7 +43,7 @@ func (_m *FieldStorage) Delete(ctx context.Context, request *dto.DeleteCardField
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.DeleteCardFieldRequest) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.DeleteDocumentFieldRequest) error); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Error(0)
@@ -53,7 +53,7 @@ func (_m *FieldStorage) Delete(ctx context.Context, request *dto.DeleteCardField
 }
 
 // Get provides a mock function with given fields: ctx, request
-func (_m *FieldStorage) Get(ctx context.Context, request *dto.GetCardFieldRequest) (*model.Field, error) {
+func (_m *FieldStorage) Get(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -62,10 +62,10 @@ func (_m *FieldStorage) Get(ctx context.Context, request *dto.GetCardFieldReques
 
 	var r0 *model.Field
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetCardFieldRequest) (*model.Field, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentFieldRequest) (*model.Field, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetCardFieldRequest) *model.Field); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentFieldRequest) *model.Field); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
@@ -73,7 +73,7 @@ func (_m *FieldStorage) Get(ctx context.Context, request *dto.GetCardFieldReques
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetCardFieldRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetDocumentFieldRequest) error); ok {
 		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)
@@ -83,7 +83,7 @@ func (_m *FieldStorage) Get(ctx context.Context, request *dto.GetCardFieldReques
 }
 
 // ListCardFields provides a mock function with given fields: ctx, request
-func (_m *FieldStorage) ListCardFields(ctx context.Context, request *dto.ListCardFieldsRequest) ([]*model.Field, error) {
+func (_m *FieldStorage) ListCardFields(ctx context.Context, request *dto.ListDocumentFieldsRequest) ([]*model.Field, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -92,10 +92,10 @@ func (_m *FieldStorage) ListCardFields(ctx context.Context, request *dto.ListCar
 
 	var r0 []*model.Field
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListCardFieldsRequest) ([]*model.Field, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListDocumentFieldsRequest) ([]*model.Field, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListCardFieldsRequest) []*model.Field); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListDocumentFieldsRequest) []*model.Field); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
@@ -103,7 +103,7 @@ func (_m *FieldStorage) ListCardFields(ctx context.Context, request *dto.ListCar
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *dto.ListCardFieldsRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.ListDocumentFieldsRequest) error); ok {
 		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)

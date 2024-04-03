@@ -7,7 +7,7 @@ import (
 	"course/internal/service/dto"
 )
 
-type PhotoKeyStorage interface {
+type PhotoMetaStorage interface {
 	SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) error
 	GetKey(ctx context.Context, request *dto.GetPhotoRequest) (*model.PhotoMeta, error)
 	UpdateKey(ctx context.Context, request *dto.UpdatePhotoKeyRequest) error
@@ -24,5 +24,5 @@ type PhotoDataStorage interface {
 //go:generate mockery --name=PhotoStorage
 type PhotoStorage interface {
 	PhotoDataStorage
-	PhotoKeyStorage
+	PhotoMetaStorage
 }

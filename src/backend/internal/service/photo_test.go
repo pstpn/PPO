@@ -434,7 +434,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 						err  error
 					}{
 						meta: &model.PhotoMeta{
-							PhotoID:  model.ToPhotoID(-1),
+							ID:       model.ToPhotoID(-1),
 							PhotoKey: model.ToPhotoKey("gogo"),
 						},
 						err: nil,
@@ -481,7 +481,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 			},
 			want: &model.Photo{
 				Meta: &model.PhotoMeta{
-					PhotoID:  model.ToPhotoID(1),
+					ID:       model.ToPhotoID(1),
 					PhotoKey: model.ToPhotoKey("okok"),
 				},
 				Data: []byte{'a'},
@@ -513,7 +513,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 						err  error
 					}{
 						meta: &model.PhotoMeta{
-							PhotoID:  model.ToPhotoID(1),
+							ID:       model.ToPhotoID(1),
 							PhotoKey: model.ToPhotoKey("okok"),
 						},
 						err: nil,
@@ -731,7 +731,7 @@ func Test_photoServiceImpl_UpdatePhoto(t *testing.T) {
 						err  error
 					}{
 						meta: &model.PhotoMeta{
-							PhotoID:  model.ToPhotoID(-1),
+							ID:       model.ToPhotoID(-1),
 							PhotoKey: model.ToPhotoKey("fofo"),
 						},
 						err: nil,
@@ -804,7 +804,7 @@ func Test_photoServiceImpl_UpdatePhoto(t *testing.T) {
 						err  error
 					}{
 						meta: &model.PhotoMeta{
-							PhotoID:  model.ToPhotoID(1),
+							ID:       model.ToPhotoID(1),
 							PhotoKey: model.ToPhotoKey("fofo"),
 						},
 						err: nil,
@@ -1089,7 +1089,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 							err  error
 						}{
 							meta: &model.PhotoMeta{
-								PhotoID:  model.ToPhotoID(1),
+								ID:       model.ToPhotoID(1),
 								PhotoKey: model.ToPhotoKey("gg"),
 							},
 							err: nil,
@@ -1204,7 +1204,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 							err  error
 						}{
 							meta: &model.PhotoMeta{
-								PhotoID:  model.ToPhotoID(2),
+								ID:       model.ToPhotoID(2),
 								PhotoKey: model.ToPhotoKey("ggg"),
 							},
 							err: nil,
@@ -1319,7 +1319,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 							err  error
 						}{
 							meta: &model.PhotoMeta{
-								PhotoID:  model.ToPhotoID(3),
+								ID:       model.ToPhotoID(3),
 								PhotoKey: model.ToPhotoKey("okok"),
 							},
 							err: nil,

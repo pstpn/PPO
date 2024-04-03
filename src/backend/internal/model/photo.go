@@ -15,8 +15,9 @@ func ToPhotoKey(key string) *PhotoKey {
 }
 
 type PhotoMeta struct {
-	PhotoID  *PhotoID
-	PhotoKey *PhotoKey
+	ID         *PhotoID
+	DocumentID *DocumentID
+	PhotoKey   *PhotoKey
 }
 
 type Photo struct {

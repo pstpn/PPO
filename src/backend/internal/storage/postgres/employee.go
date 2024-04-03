@@ -19,7 +19,7 @@ func NewEmployeeStorage(db *postgres.Postgres) storage.EmployeeStorage {
 	return &employeeStorageImpl{db}
 }
 
-func (e employeeStorageImpl) Register(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
+func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
 	query := e.Builder.
 		Insert(employeeTable).
 		Columns(
@@ -51,7 +51,7 @@ func (e employeeStorageImpl) Register(ctx context.Context, request *dto.Register
 	return nil
 }
 
-func (e employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
+func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
 	query := e.Builder.
 		Select(
 			idField,
@@ -94,7 +94,7 @@ func (e employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEmp
 	return &employee, nil
 }
 
-func (e employeeStorageImpl) Delete(ctx context.Context, request *dto.DeleteEmployeeRequest) error {
+func (e *employeeStorageImpl) Delete(ctx context.Context, request *dto.DeleteEmployeeRequest) error {
 	query := e.Builder.
 		Delete(employeeTable).
 		Where(squirrel.Eq{idField: request.EmployeeID})

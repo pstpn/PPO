@@ -32,6 +32,7 @@ const (
 	createdDateField       = "created_date"
 	checkpointIdField      = "checkpoint_id"
 	timeField              = "time"
+	keyField               = "key"
 )
 
 func fullColName(tableName, columnName string) string {

@@ -19,7 +19,7 @@ func NewDocumentStorage(db *postgres.Postgres) storage.DocumentStorage {
 	return &documentStorageImpl{db}
 }
 
-func (d documentStorageImpl) Create(ctx context.Context, request *dto.CreateDocumentRequest) error {
+func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDocumentRequest) error {
 	query := d.Builder.
 		Insert(documentTable).
 		Columns(
@@ -43,7 +43,7 @@ func (d documentStorageImpl) Create(ctx context.Context, request *dto.CreateDocu
 	return nil
 }
 
-func (d documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
+func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
 	query := d.Builder.
 		Select(
 			idField,
@@ -68,7 +68,7 @@ func (d documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocume
 	return &document, nil
 }
 
-func (d documentStorageImpl) List(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
+func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
 	query := d.Builder.
 		Select(
 			fullColName(documentTable, idField),
@@ -111,7 +111,7 @@ func (d documentStorageImpl) List(ctx context.Context, request *dto.ListEmployee
 	return documents, nil
 }
 
-func (d documentStorageImpl) Delete(ctx context.Context, request *dto.DeleteDocumentRequest) error {
+func (d *documentStorageImpl) Delete(ctx context.Context, request *dto.DeleteDocumentRequest) error {
 	query := d.Builder.
 		Delete(documentTable).
 		Where(squirrel.Eq{idField: request.DocumentID})
