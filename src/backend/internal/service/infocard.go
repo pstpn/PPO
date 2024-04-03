@@ -11,7 +11,7 @@ import (
 )
 
 type InfoCardService interface {
-	CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) error
+	CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error)
 	ValidateInfoCard(ctx context.Context, request *dto.ValidateInfoCardRequest) error
 	GetInfoCard(ctx context.Context, request *dto.GetInfoCardRequest) (*model.InfoCard, error)
 	ListInfoCards(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error)
@@ -23,13 +23,13 @@ type infoCardServiceImpl struct {
 	infoCardStorage storage.InfoCardStorage
 }
 
-func (i *infoCardServiceImpl) CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) error {
-	err := i.infoCardStorage.Create(ctx, request)
+func (i *infoCardServiceImpl) CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error) {
+	infoCard, err := i.infoCardStorage.Create(ctx, request)
 	if err != nil {
-		return fmt.Errorf("create info card: %w", err)
+		return nil, fmt.Errorf("create info card: %w", err)
 	}
 
-	return nil
+	return infoCard, nil
 }
 
 func (i *infoCardServiceImpl) ValidateInfoCard(ctx context.Context, request *dto.ValidateInfoCardRequest) error {

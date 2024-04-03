@@ -11,7 +11,7 @@ import (
 )
 
 type FieldService interface {
-	CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) error
+	CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) (*model.Field, error)
 	GetCardField(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error)
 	ListCardFields(ctx context.Context, request *dto.ListDocumentFieldsRequest) ([]*model.Field, error)
 	DeleteCardField(ctx context.Context, request *dto.DeleteDocumentFieldRequest) error
@@ -22,13 +22,13 @@ type fieldServiceImpl struct {
 	fieldStorage storage.FieldStorage
 }
 
-func (f *fieldServiceImpl) CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) error {
-	err := f.fieldStorage.Create(ctx, request)
+func (f *fieldServiceImpl) CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) (*model.Field, error) {
+	field, err := f.fieldStorage.Create(ctx, request)
 	if err != nil {
-		return fmt.Errorf("create info card field: %w", err)
+		return nil, fmt.Errorf("create info card field: %w", err)
 	}
 
-	return nil
+	return field, nil
 }
 
 func (f *fieldServiceImpl) GetCardField(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error) {

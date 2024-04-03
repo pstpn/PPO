@@ -11,7 +11,7 @@ import (
 )
 
 type CheckpointService interface {
-	CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) error
+	CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error)
 	ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error)
 }
 
@@ -20,13 +20,13 @@ type checkpointServiceImpl struct {
 	checkpointStorage storage.CheckpointStorage
 }
 
-func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) error {
-	err := c.checkpointStorage.CreatePassage(ctx, request)
+func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error) {
+	passage, err := c.checkpointStorage.CreatePassage(ctx, request)
 	if err != nil {
-		return fmt.Errorf("create passage: %w", err)
+		return nil, fmt.Errorf("create passage: %w", err)
 	}
 
-	return nil
+	return passage, nil
 }
 
 func (c *checkpointServiceImpl) ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error) {

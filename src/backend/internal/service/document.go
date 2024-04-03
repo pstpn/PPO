@@ -11,7 +11,7 @@ import (
 )
 
 type DocumentService interface {
-	CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) error
+	CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error)
 	GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error)
 	ListEmployeeDocuments(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error)
 	DeleteDocument(ctx context.Context, request *dto.DeleteDocumentRequest) error
@@ -22,13 +22,13 @@ type documentServiceImpl struct {
 	documentStorage storage.DocumentStorage
 }
 
-func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) error {
-	err := d.documentStorage.Create(ctx, request)
+func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error) {
+	document, err := d.documentStorage.Create(ctx, request)
 	if err != nil {
-		return fmt.Errorf("create document: %w", err)
+		return nil, fmt.Errorf("create document: %w", err)
 	}
 
-	return nil
+	return document, nil
 }
 
 func (d *documentServiceImpl) GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
