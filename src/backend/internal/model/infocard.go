@@ -9,6 +9,10 @@ func ToInfoCardID(id int64) *InfoCardID {
 	return &infoCardID
 }
 
+func (i *InfoCardID) Int() int64 {
+	return int64(*i)
+}
+
 type InfoCard struct {
 	ID                *InfoCardID
 	CreatedEmployeeID *EmployeeID

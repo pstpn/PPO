@@ -7,6 +7,10 @@ func ToPhotoID(id int64) *PhotoID {
 	return &photoID
 }
 
+func (p *PhotoID) Int() int64 {
+	return int64(*p)
+}
+
 type PhotoKey string
 
 func ToPhotoKey(key string) *PhotoKey {

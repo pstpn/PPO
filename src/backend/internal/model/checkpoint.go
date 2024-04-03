@@ -9,6 +9,10 @@ func ToCheckpointID(id int64) *CheckpointID {
 	return &checkpointID
 }
 
+func (c *CheckpointID) Int() int64 {
+	return int64(*c)
+}
+
 type Checkpoint struct {
 	ID          *CheckpointID
 	PhoneNumber string

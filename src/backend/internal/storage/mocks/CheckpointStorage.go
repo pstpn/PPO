@@ -76,6 +76,24 @@ func (_m *CheckpointStorage) CreatePassage(ctx context.Context, request *dto.Cre
 	return r0, r1
 }
 
+// DeleteCheckpoint provides a mock function with given fields: ctx, request
+func (_m *CheckpointStorage) DeleteCheckpoint(ctx context.Context, request *dto.DeleteCheckpointRequest) error {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteCheckpoint")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.DeleteCheckpointRequest) error); ok {
+		r0 = rf(ctx, request)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeletePassage provides a mock function with given fields: ctx, request
 func (_m *CheckpointStorage) DeletePassage(ctx context.Context, request *dto.DeletePassageRequest) error {
 	ret := _m.Called(ctx, request)

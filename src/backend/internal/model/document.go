@@ -45,6 +45,10 @@ func ToDocumentID(id int64) *DocumentID {
 	return &documentID
 }
 
+func (d *DocumentID) Int() int64 {
+	return int64(*d)
+}
+
 type Document struct {
 	ID         *DocumentID
 	InfoCardID *InfoCardID

@@ -51,6 +51,10 @@ func ToEmployeeID(id int64) *EmployeeID {
 	return &employeeID
 }
 
+func (e *EmployeeID) Int() int64 {
+	return int64(*e)
+}
+
 type Password struct {
 	Value    string
 	IsHashed bool

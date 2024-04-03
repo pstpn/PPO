@@ -94,7 +94,7 @@ func initTestFieldStorage(storage storage.FieldStorage) {
 }
 
 func initTestCheckpointStorage(storage storage.CheckpointStorage) {
-	tm, _ := time.Parse(time.RFC3339, "2006-01-02T15:04:05Z")
+	//tm, _ := time.Parse(time.RFC3339, "2006-01-02T15:04:05Z")
 
 	_, err := storage.CreateCheckpoint(context.TODO(), &dto.CreateCheckpointRequest{
 		PhoneNumber: "123123",
@@ -102,15 +102,15 @@ func initTestCheckpointStorage(storage storage.CheckpointStorage) {
 	if err != nil && !strings.Contains(err.Error(), "constraint") {
 		panic(err)
 	}
-	_, err = storage.CreatePassage(context.TODO(), &dto.CreatePassageRequest{
-		CheckpointID: 1,
-		DocumentID:   1,
-		Type:         1,
-		Time:         &tm,
-	})
-	if err != nil && !strings.Contains(err.Error(), "constraint") {
-		panic(err)
-	}
+	//_, err = storage.CreatePassage(context.TODO(), &dto.CreatePassageRequest{
+	//	CheckpointID: 1,
+	//	DocumentID:   1,
+	//	Type:         1,
+	//	Time:         &tm,
+	//})
+	//if err != nil && !strings.Contains(err.Error(), "constraint") {
+	//	panic(err)
+	//}
 }
 
 func initTestPhotoMetaStorage(storage storage.PhotoMetaStorage) {

@@ -87,6 +87,24 @@ func (c *checkpointStorageImpl) GetPassage(ctx context.Context, request *dto.Get
 	return c.rowToPassageModel(row)
 }
 
+func (c *checkpointStorageImpl) GetCheckpoint(ctx context.Context, request *dto.GetCheckpointRequest) (*model.Checkpoint, error) {
+	query := c.Builder.
+		Select(
+			idField,
+			phoneNumberField,
+		).
+		From(checkpointTable).
+		Where(squirrel.Eq{idField: request.CheckpointID})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	row := c.Pool.QueryRow(ctx, sql, args...)
+
+	return c.rowToCheckpointModel(row)
+}
+
 func (c *checkpointStorageImpl) ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error) {
 	query := c.Builder.
 		Select(
@@ -131,6 +149,23 @@ func (c *checkpointStorageImpl) DeletePassage(ctx context.Context, request *dto.
 	query := c.Builder.
 		Delete(passageTable).
 		Where(squirrel.Eq{idField: request.PassageID})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = c.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *checkpointStorageImpl) DeleteCheckpoint(ctx context.Context, request *dto.DeleteCheckpointRequest) error {
+	query := c.Builder.
+		Delete(checkpointTable).
+		Where(squirrel.Eq{idField: request.CheckpointID})
 
 	sql, args, err := query.ToSql()
 	if err != nil {

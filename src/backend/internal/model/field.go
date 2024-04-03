@@ -7,6 +7,10 @@ func ToFieldID(id int64) *FieldID {
 	return &fieldID
 }
 
+func (f *FieldID) Int() int64 {
+	return int64(*f)
+}
+
 type FieldType int64
 
 const (
