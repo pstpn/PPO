@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	"course/internal/model"
 	"course/internal/service/dto"
@@ -19,7 +20,7 @@ func NewDocumentStorage(db *postgres.Postgres) storage.DocumentStorage {
 	return &documentStorageImpl{db}
 }
 
-func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDocumentRequest) error {
+func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error) {
 	query := d.Builder.
 		Insert(documentTable).
 		Columns(
@@ -29,18 +30,16 @@ func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDoc
 		Values(
 			request.InfoCardID,
 			request.DocumentType,
-		)
+		).
+		Suffix(returningDocumentColumns())
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = d.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
+	row := d.Pool.QueryRow(ctx, sql, args...)
 
-	return nil
+	return d.rowToModel(row)
 }
 
 func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
@@ -59,13 +58,7 @@ func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocum
 	}
 	row := d.Pool.QueryRow(ctx, sql, args...)
 
-	var document model.Document
-	err = row.Scan(&document.ID, &document.InfoCardID, &document.Type)
-	if err != nil {
-		return nil, err
-	}
-
-	return &document, nil
+	return d.rowToModel(row)
 }
 
 func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
@@ -95,17 +88,12 @@ func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmploye
 
 	var documents []*model.Document
 	for rows.Next() {
-		var document model.Document
-		err = rows.Scan(
-			&document.ID,
-			&document.InfoCardID,
-			&document.Type,
-		)
+		document, err := d.rowToModel(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		documents = append(documents, &document)
+		documents = append(documents, document)
 	}
 
 	return documents, nil
@@ -126,4 +114,18 @@ func (d *documentStorageImpl) Delete(ctx context.Context, request *dto.DeleteDoc
 	}
 
 	return nil
+}
+
+func (d *documentStorageImpl) rowToModel(row pgx.Row) (*model.Document, error) {
+	var document model.Document
+	err := row.Scan(
+		&document.ID,
+		&document.InfoCardID,
+		&document.Type,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &document, nil
 }

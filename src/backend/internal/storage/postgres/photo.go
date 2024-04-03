@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	"course/internal/model"
 	"course/internal/service/dto"
@@ -19,7 +20,7 @@ func NewPhotoMetaStorage(db *postgres.Postgres) storage.PhotoMetaStorage {
 	return &photoMetaStorageImpl{db}
 }
 
-func (p *photoMetaStorageImpl) SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) error {
+func (p *photoMetaStorageImpl) SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) (*model.PhotoMeta, error) {
 	query := p.Builder.
 		Insert(photoTable).
 		Columns(
@@ -29,18 +30,16 @@ func (p *photoMetaStorageImpl) SaveKey(ctx context.Context, request *dto.CreateP
 		Values(
 			request.DocumentID,
 			request.Key,
-		)
+		).
+		Suffix(returningPhotoMetaColumns())
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = p.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
+	row := p.Pool.QueryRow(ctx, sql, args...)
 
-	return nil
+	return p.rowToModel(row)
 }
 
 func (p *photoMetaStorageImpl) GetKey(ctx context.Context, request *dto.GetPhotoRequest) (*model.PhotoMeta, error) {
@@ -59,17 +58,7 @@ func (p *photoMetaStorageImpl) GetKey(ctx context.Context, request *dto.GetPhoto
 	}
 	row := p.Pool.QueryRow(ctx, sql, args...)
 
-	var photoMeta model.PhotoMeta
-	err = row.Scan(
-		&photoMeta.ID,
-		&photoMeta.DocumentID,
-		&photoMeta.PhotoKey,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return &photoMeta, nil
+	return p.rowToModel(row)
 }
 
 func (p *photoMetaStorageImpl) DeleteKey(ctx context.Context, request *dto.DeletePhotoRequest) error {
@@ -87,4 +76,18 @@ func (p *photoMetaStorageImpl) DeleteKey(ctx context.Context, request *dto.Delet
 	}
 
 	return nil
+}
+
+func (p *photoMetaStorageImpl) rowToModel(row pgx.Row) (*model.PhotoMeta, error) {
+	var photoMeta model.PhotoMeta
+	err := row.Scan(
+		&photoMeta.ID,
+		&photoMeta.DocumentID,
+		&photoMeta.PhotoKey,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &photoMeta, nil
 }

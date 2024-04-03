@@ -17,21 +17,81 @@ type CheckpointStorage struct {
 }
 
 // CreatePassage provides a mock function with given fields: ctx, request
-func (_m *CheckpointStorage) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) error {
+func (_m *CheckpointStorage) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreatePassage")
 	}
 
+	var r0 *model.Passage
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePassageRequest) (*model.Passage, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePassageRequest) *model.Passage); ok {
+		r0 = rf(ctx, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Passage)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.CreatePassageRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// DeletePassage provides a mock function with given fields: ctx, request
+func (_m *CheckpointStorage) DeletePassage(ctx context.Context, request *dto.DeletePassageRequest) error {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeletePassage")
+	}
+
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePassageRequest) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.DeletePassageRequest) error); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
+}
+
+// GetPassage provides a mock function with given fields: ctx, request
+func (_m *CheckpointStorage) GetPassage(ctx context.Context, request *dto.GetPassageRequest) (*model.Passage, error) {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetPassage")
+	}
+
+	var r0 *model.Passage
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetPassageRequest) (*model.Passage, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetPassageRequest) *model.Passage); ok {
+		r0 = rf(ctx, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Passage)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetPassageRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // ListPassages provides a mock function with given fields: ctx, request

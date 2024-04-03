@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	"course/internal/model"
 	"course/internal/service/dto"
@@ -19,7 +20,7 @@ func NewEmployeeStorage(db *postgres.Postgres) storage.EmployeeStorage {
 	return &employeeStorageImpl{db}
 }
 
-func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
+func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.RegisterEmployeeRequest) (*model.Employee, error) {
 	query := e.Builder.
 		Insert(employeeTable).
 		Columns(
@@ -37,18 +38,16 @@ func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.Registe
 			request.Post,
 			request.Password,
 			request.DateOfBirth,
-		)
+		).
+		Suffix(returningEmployeeColumns())
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = e.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
+	row := e.Pool.QueryRow(ctx, sql, args...)
 
-	return nil
+	return e.rowToModel(row)
 }
 
 func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
@@ -71,9 +70,31 @@ func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEm
 	}
 	row := e.Pool.QueryRow(ctx, sql, args...)
 
+	return e.rowToModel(row)
+}
+
+func (e *employeeStorageImpl) Delete(ctx context.Context, request *dto.DeleteEmployeeRequest) error {
+	query := e.Builder.
+		Delete(employeeTable).
+		Where(squirrel.Eq{idField: request.EmployeeID})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = e.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *employeeStorageImpl) rowToModel(row pgx.Row) (*model.Employee, error) {
 	var employee model.Employee
 	var hashedPassword string
-	err = row.Scan(
+
+	err := row.Scan(
 		&employee.ID,
 		&employee.PhoneNumber,
 		&employee.FullName,
@@ -92,21 +113,4 @@ func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEm
 	}
 
 	return &employee, nil
-}
-
-func (e *employeeStorageImpl) Delete(ctx context.Context, request *dto.DeleteEmployeeRequest) error {
-	query := e.Builder.
-		Delete(employeeTable).
-		Where(squirrel.Eq{idField: request.EmployeeID})
-
-	sql, args, err := query.ToSql()
-	if err != nil {
-		return err
-	}
-	_, err = e.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

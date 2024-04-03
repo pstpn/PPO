@@ -1,6 +1,9 @@
 package postgres
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	checkpointTable = "checkpoint"
@@ -47,4 +50,68 @@ func on(baseTable, targetTable, baseColumn, targetColumn string) string {
 		targetTable,
 		targetColumn,
 	)
+}
+
+func returningCompanyColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		nameField,
+		cityField,
+	}, ","))
+}
+
+func returningDocumentColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		infoCardIdField,
+		typeField,
+	}, ","))
+}
+
+func returningEmployeeColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		phoneNumberField,
+		fullNameField,
+		companyIdField,
+		postField,
+		passwordField,
+		dateOfBirthField,
+	}, ","))
+}
+
+func returningFieldColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		documentIdField,
+		typeField,
+		valueField,
+	}, ","))
+}
+
+func returningInfoCardColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		createdEmployeeIdField,
+		isConfirmedField,
+		createdDateField,
+	}, ","))
+}
+
+func returningPassageColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		checkpointIdField,
+		documentIdField,
+		typeField,
+		timeField,
+	}, ","))
+}
+
+func returningPhotoMetaColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		documentIdField,
+		keyField,
+	}, ","))
 }

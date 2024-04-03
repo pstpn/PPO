@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	"course/internal/model"
 	"course/internal/service/dto"
@@ -19,7 +20,7 @@ func NewCheckpointStorage(db *postgres.Postgres) storage.CheckpointStorage {
 	return &checkpointStorageImpl{db}
 }
 
-func (c *checkpointStorageImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) error {
+func (c *checkpointStorageImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error) {
 	query := c.Builder.
 		Insert(passageTable).
 		Columns(
@@ -33,18 +34,16 @@ func (c *checkpointStorageImpl) CreatePassage(ctx context.Context, request *dto.
 			request.DocumentID,
 			model.ToPassageType(request.Type).String(),
 			request.Time,
-		)
+		).
+		Suffix(returningPassageColumns())
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = c.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
+	row := c.Pool.QueryRow(ctx, sql, args...)
 
-	return nil
+	return c.rowToModel(row)
 }
 
 func (c *checkpointStorageImpl) GetPassage(ctx context.Context, request *dto.GetPassageRequest) (*model.Passage, error) {
@@ -65,19 +64,7 @@ func (c *checkpointStorageImpl) GetPassage(ctx context.Context, request *dto.Get
 	}
 	row := c.Pool.QueryRow(ctx, sql, args...)
 
-	var passage model.Passage
-	err = row.Scan(
-		&passage.ID,
-		&passage.CheckpointID,
-		&passage.DocumentID,
-		&passage.Type,
-		&passage.Time,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return &passage, nil
+	return c.rowToModel(row)
 }
 
 func (c *checkpointStorageImpl) ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error) {
@@ -109,19 +96,12 @@ func (c *checkpointStorageImpl) ListPassages(ctx context.Context, request *dto.L
 
 	var passages []*model.Passage
 	for rows.Next() {
-		var passage model.Passage
-		err = rows.Scan(
-			&passage.ID,
-			&passage.CheckpointID,
-			&passage.DocumentID,
-			&passage.Type,
-			&passage.Time,
-		)
+		passage, err := c.rowToModel(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		passages = append(passages, &passage)
+		passages = append(passages, passage)
 	}
 
 	return passages, nil
@@ -142,4 +122,20 @@ func (c *checkpointStorageImpl) DeletePassage(ctx context.Context, request *dto.
 	}
 
 	return nil
+}
+
+func (c *checkpointStorageImpl) rowToModel(row pgx.Row) (*model.Passage, error) {
+	var passage model.Passage
+	err := row.Scan(
+		&passage.ID,
+		&passage.CheckpointID,
+		&passage.DocumentID,
+		&passage.Type,
+		&passage.Time,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &passage, nil
 }

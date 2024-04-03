@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	"course/internal/model"
 	"course/internal/service/dto"
@@ -19,7 +20,7 @@ func NewFieldStorage(db *postgres.Postgres) storage.FieldStorage {
 	return &fieldStorageImpl{db}
 }
 
-func (f *fieldStorageImpl) Create(ctx context.Context, request *dto.CreateDocumentFieldRequest) error {
+func (f *fieldStorageImpl) Create(ctx context.Context, request *dto.CreateDocumentFieldRequest) (*model.Field, error) {
 	query := f.Builder.
 		Insert(fieldTable).
 		Columns(
@@ -31,18 +32,16 @@ func (f *fieldStorageImpl) Create(ctx context.Context, request *dto.CreateDocume
 			request.DocumentID,
 			request.Type,
 			request.Value,
-		)
+		).
+		Suffix(returningFieldColumns())
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = f.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
+	row := f.Pool.QueryRow(ctx, sql, args...)
 
-	return nil
+	return f.rowToModel(row)
 }
 
 func (f *fieldStorageImpl) Get(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error) {
@@ -67,18 +66,7 @@ func (f *fieldStorageImpl) Get(ctx context.Context, request *dto.GetDocumentFiel
 	}
 	row := f.Pool.QueryRow(ctx, sql, args...)
 
-	var field model.Field
-	err = row.Scan(
-		&field.ID,
-		&field.DocumentID,
-		&field.Type,
-		&field.Value,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return &field, nil
+	return f.rowToModel(row)
 }
 
 func (f *fieldStorageImpl) ListCardFields(ctx context.Context, request *dto.ListDocumentFieldsRequest) ([]*model.Field, error) {
@@ -103,18 +91,12 @@ func (f *fieldStorageImpl) ListCardFields(ctx context.Context, request *dto.List
 
 	var fields []*model.Field
 	for rows.Next() {
-		var field model.Field
-		err = rows.Scan(
-			&field.ID,
-			&field.DocumentID,
-			&field.Type,
-			&field.Value,
-		)
+		field, err := f.rowToModel(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		fields = append(fields, &field)
+		fields = append(fields, field)
 	}
 
 	return fields, nil
@@ -135,4 +117,19 @@ func (f *fieldStorageImpl) Delete(ctx context.Context, request *dto.DeleteDocume
 	}
 
 	return nil
+}
+
+func (f *fieldStorageImpl) rowToModel(row pgx.Row) (*model.Field, error) {
+	var field model.Field
+	err := row.Scan(
+		&field.ID,
+		&field.DocumentID,
+		&field.Type,
+		&field.Value,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &field, nil
 }

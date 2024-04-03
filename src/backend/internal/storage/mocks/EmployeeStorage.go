@@ -65,21 +65,33 @@ func (_m *EmployeeStorage) GetByPhone(ctx context.Context, request *dto.GetEmplo
 }
 
 // Register provides a mock function with given fields: ctx, request
-func (_m *EmployeeStorage) Register(ctx context.Context, request *dto.RegisterEmployeeRequest) error {
+func (_m *EmployeeStorage) Register(ctx context.Context, request *dto.RegisterEmployeeRequest) (*model.Employee, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Register")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.RegisterEmployeeRequest) error); ok {
+	var r0 *model.Employee
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.RegisterEmployeeRequest) (*model.Employee, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.RegisterEmployeeRequest) *model.Employee); ok {
 		r0 = rf(ctx, request)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Employee)
+		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.RegisterEmployeeRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewEmployeeStorage creates a new instance of EmployeeStorage. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

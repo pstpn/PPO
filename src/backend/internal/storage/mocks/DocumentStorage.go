@@ -17,21 +17,33 @@ type DocumentStorage struct {
 }
 
 // Create provides a mock function with given fields: ctx, request
-func (_m *DocumentStorage) Create(ctx context.Context, request *dto.CreateDocumentRequest) error {
+func (_m *DocumentStorage) Create(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentRequest) error); ok {
+	var r0 *model.Document
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentRequest) (*model.Document, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentRequest) *model.Document); ok {
 		r0 = rf(ctx, request)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Document)
+		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.CreateDocumentRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Delete provides a mock function with given fields: ctx, request

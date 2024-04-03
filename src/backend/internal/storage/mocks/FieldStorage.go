@@ -17,21 +17,33 @@ type FieldStorage struct {
 }
 
 // Create provides a mock function with given fields: ctx, request
-func (_m *FieldStorage) Create(ctx context.Context, request *dto.CreateDocumentFieldRequest) error {
+func (_m *FieldStorage) Create(ctx context.Context, request *dto.CreateDocumentFieldRequest) (*model.Field, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentFieldRequest) error); ok {
+	var r0 *model.Field
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentFieldRequest) (*model.Field, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateDocumentFieldRequest) *model.Field); ok {
 		r0 = rf(ctx, request)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Field)
+		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.CreateDocumentFieldRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Delete provides a mock function with given fields: ctx, request

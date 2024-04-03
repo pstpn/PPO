@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 
 	"course/internal/model"
 	"course/internal/service/dto"
@@ -19,7 +20,7 @@ func NewInfoCardStorage(db *postgres.Postgres) storage.InfoCardStorage {
 	return &infoCardStorageImpl{db}
 }
 
-func (i *infoCardStorageImpl) Create(ctx context.Context, request *dto.CreateInfoCardRequest) error {
+func (i *infoCardStorageImpl) Create(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error) {
 	query := i.Builder.
 		Insert(infoCardTable).
 		Columns(
@@ -31,18 +32,16 @@ func (i *infoCardStorageImpl) Create(ctx context.Context, request *dto.CreateInf
 			request.EmployeeID,
 			request.IsConfirmed,
 			request.CreatedDate,
-		)
+		).
+		Suffix(returningInfoCardColumns())
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = i.Pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
+	row := i.Pool.QueryRow(ctx, sql, args...)
 
-	return nil
+	return i.rowToModel(row)
 }
 
 func (i *infoCardStorageImpl) Validate(ctx context.Context, request *dto.ValidateInfoCardRequest) error {
@@ -80,18 +79,7 @@ func (i *infoCardStorageImpl) GetByID(ctx context.Context, request *dto.GetInfoC
 	}
 	row := i.Pool.QueryRow(ctx, sql, args...)
 
-	var infoCard model.InfoCard
-	err = row.Scan(
-		&infoCard.ID,
-		&infoCard.CreatedEmployeeID,
-		&infoCard.IsConfirmed,
-		&infoCard.CreatedDate,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return &infoCard, nil
+	return i.rowToModel(row)
 }
 
 func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
@@ -117,18 +105,12 @@ func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCar
 
 	var infoCards []*model.InfoCard
 	for rows.Next() {
-		var infoCard model.InfoCard
-		err = rows.Scan(
-			&infoCard.ID,
-			&infoCard.CreatedEmployeeID,
-			&infoCard.IsConfirmed,
-			&infoCard.CreatedDate,
-		)
+		infoCard, err := i.rowToModel(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		infoCards = append(infoCards, &infoCard)
+		infoCards = append(infoCards, infoCard)
 	}
 
 	return infoCards, nil
@@ -149,4 +131,19 @@ func (i *infoCardStorageImpl) Delete(ctx context.Context, request *dto.DeleteInf
 	}
 
 	return nil
+}
+
+func (i *infoCardStorageImpl) rowToModel(row pgx.Row) (*model.InfoCard, error) {
+	var infoCard model.InfoCard
+	err := row.Scan(
+		&infoCard.ID,
+		&infoCard.CreatedEmployeeID,
+		&infoCard.IsConfirmed,
+		&infoCard.CreatedDate,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &infoCard, nil
 }

@@ -143,21 +143,33 @@ func (_m *PhotoStorage) Save(ctx context.Context, request *dto.CreatePhotoReques
 }
 
 // SaveKey provides a mock function with given fields: ctx, request
-func (_m *PhotoStorage) SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) error {
+func (_m *PhotoStorage) SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) (*model.PhotoMeta, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SaveKey")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoKeyRequest) error); ok {
+	var r0 *model.PhotoMeta
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoKeyRequest) (*model.PhotoMeta, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreatePhotoKeyRequest) *model.PhotoMeta); ok {
 		r0 = rf(ctx, request)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.PhotoMeta)
+		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.CreatePhotoKeyRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewPhotoStorage creates a new instance of PhotoStorage. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

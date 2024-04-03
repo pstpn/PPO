@@ -8,7 +8,7 @@ import (
 )
 
 type PhotoMetaStorage interface {
-	SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) error
+	SaveKey(ctx context.Context, request *dto.CreatePhotoKeyRequest) (*model.PhotoMeta, error)
 	GetKey(ctx context.Context, request *dto.GetPhotoRequest) (*model.PhotoMeta, error)
 	DeleteKey(ctx context.Context, request *dto.DeletePhotoRequest) error
 }
