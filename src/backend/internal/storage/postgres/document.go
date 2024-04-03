@@ -29,7 +29,7 @@ func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDoc
 		).
 		Values(
 			request.InfoCardID,
-			request.DocumentType,
+			model.ToDocumentTypeFromInt(request.DocumentType).String(),
 		).
 		Suffix(returningDocumentColumns())
 
@@ -118,14 +118,16 @@ func (d *documentStorageImpl) Delete(ctx context.Context, request *dto.DeleteDoc
 
 func (d *documentStorageImpl) rowToModel(row pgx.Row) (*model.Document, error) {
 	var document model.Document
+	var documentType string
 	err := row.Scan(
 		&document.ID,
 		&document.InfoCardID,
-		&document.Type,
+		&documentType,
 	)
 	if err != nil {
 		return nil, err
 	}
+	document.Type = model.ToDocumentTypeFromString(documentType)
 
 	return &document, nil
 }

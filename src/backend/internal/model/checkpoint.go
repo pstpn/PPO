@@ -9,6 +9,11 @@ func ToCheckpointID(id int64) *CheckpointID {
 	return &checkpointID
 }
 
+type Checkpoint struct {
+	ID          *CheckpointID
+	PhoneNumber string
+}
+
 type PassageID int64
 
 func ToPassageID(id int64) *PassageID {
@@ -16,15 +21,34 @@ func ToPassageID(id int64) *PassageID {
 	return &passageID
 }
 
+func (p *PassageID) Int() int64 {
+	return int64(*p)
+}
+
 type PassageType int64
 
 const (
 	Entrance PassageType = iota
 	Exit
+	UnknownPassageType
 )
 
-func ToPassageType(passage int64) *PassageType {
+func ToPassageTypeFromInt(passage int64) *PassageType {
 	passageType := PassageType(passage)
+	return &passageType
+}
+
+func ToPassageTypeFromString(passage string) *PassageType {
+	var passageType PassageType
+	switch passage {
+	case "Вход":
+		passageType = Entrance
+	case "Выход":
+		passageType = Exit
+	default:
+		passageType = UnknownPassageType
+	}
+
 	return &passageType
 }
 

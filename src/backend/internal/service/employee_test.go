@@ -89,7 +89,7 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 				FullName:    "Stepa Stepan Stepanovich",
 				PhoneNumber: "123",
 				CompanyID:   model.ToCompanyID(1),
-				Post:        model.ToPostType(1),
+				Post:        model.ToPostTypeFromInt(1),
 				Password: &model.Password{
 					Value:    "OHiuoup98u",
 					IsHashed: true,
@@ -119,7 +119,7 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 							FullName:    "Stepa Stepan Stepanovich",
 							PhoneNumber: "123",
 							CompanyID:   model.ToCompanyID(1),
-							Post:        model.ToPostType(1),
+							Post:        model.ToPostTypeFromInt(1),
 							Password: &model.Password{
 								Value:    "OHiuoup98u",
 								IsHashed: true,

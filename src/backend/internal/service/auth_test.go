@@ -118,7 +118,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 				FullName:    "Stepa Stepan Stepanovich",
 				PhoneNumber: "3123124",
 				CompanyID:   model.ToCompanyID(1),
-				Post:        model.ToPostType(1),
+				Post:        model.ToPostTypeFromInt(1),
 				Password: &model.Password{
 					Value:    "123",
 					IsHashed: true,
@@ -151,7 +151,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 							FullName:    "Stepa Stepan Stepanovich",
 							PhoneNumber: "3123124",
 							CompanyID:   model.ToCompanyID(1),
-							Post:        model.ToPostType(1),
+							Post:        model.ToPostTypeFromInt(1),
 							Password: &model.Password{
 								Value:    "123",
 								IsHashed: true,

@@ -99,7 +99,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 			want: &model.Field{
 				ID:         model.ToFieldID(1),
 				DocumentID: model.ToDocumentID(1),
-				Type:       model.ToFieldType(1),
+				Type:       model.ToFieldTypeFromInt(1),
 				Value:      "ok",
 			},
 			wantErr: false,
@@ -127,7 +127,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 						field: &model.Field{
 							ID:         model.ToFieldID(1),
 							DocumentID: model.ToDocumentID(1),
-							Type:       model.ToFieldType(1),
+							Type:       model.ToFieldTypeFromInt(1),
 							Value:      "ok",
 						},
 						err: nil,
@@ -246,7 +246,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 			want: &model.Field{
 				ID:         model.ToFieldID(1),
 				DocumentID: model.ToDocumentID(1),
-				Type:       model.ToFieldType(1),
+				Type:       model.ToFieldTypeFromInt(1),
 				Value:      "ok",
 			},
 			wantErr: false,
@@ -273,7 +273,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 						field: &model.Field{
 							ID:         model.ToFieldID(1),
 							DocumentID: model.ToDocumentID(1),
-							Type:       model.ToFieldType(1),
+							Type:       model.ToFieldTypeFromInt(1),
 							Value:      "ok",
 						},
 						err: nil,
@@ -384,7 +384,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 				{
 					ID:         model.ToFieldID(1),
 					DocumentID: model.ToDocumentID(1),
-					Type:       model.ToFieldType(1),
+					Type:       model.ToFieldTypeFromInt(1),
 					Value:      "ok",
 				},
 			},
@@ -410,7 +410,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 							{
 								ID:         model.ToFieldID(1),
 								DocumentID: model.ToDocumentID(1),
-								Type:       model.ToFieldType(1),
+								Type:       model.ToFieldTypeFromInt(1),
 								Value:      "ok",
 							},
 						},

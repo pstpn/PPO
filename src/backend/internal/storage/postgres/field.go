@@ -30,7 +30,7 @@ func (f *fieldStorageImpl) Create(ctx context.Context, request *dto.CreateDocume
 		).
 		Values(
 			request.DocumentID,
-			request.Type,
+			model.ToFieldTypeFromInt(request.Type).String(),
 			request.Value,
 		).
 		Suffix(returningFieldColumns())
@@ -121,15 +121,17 @@ func (f *fieldStorageImpl) Delete(ctx context.Context, request *dto.DeleteDocume
 
 func (f *fieldStorageImpl) rowToModel(row pgx.Row) (*model.Field, error) {
 	var field model.Field
+	var fieldType string
 	err := row.Scan(
 		&field.ID,
 		&field.DocumentID,
-		&field.Type,
+		&fieldType,
 		&field.Value,
 	)
 	if err != nil {
 		return nil, err
 	}
+	field.Type = model.ToFieldTypeFromString(fieldType)
 
 	return &field, nil
 }

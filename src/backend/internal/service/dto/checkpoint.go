@@ -4,6 +4,10 @@ import (
 	"time"
 )
 
+type CreateCheckpointRequest struct {
+	PhoneNumber string
+}
+
 type CreatePassageRequest struct {
 	CheckpointID int64
 	DocumentID   int64

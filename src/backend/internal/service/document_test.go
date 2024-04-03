@@ -96,7 +96,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 			want: &model.Document{
 				ID:         model.ToDocumentID(1),
 				InfoCardID: model.ToInfoCardID(1),
-				Type:       model.ToDocumentType(1),
+				Type:       model.ToDocumentTypeFromInt(1),
 			},
 			wantErr: false,
 
@@ -122,7 +122,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 						document: &model.Document{
 							ID:         model.ToDocumentID(1),
 							InfoCardID: model.ToInfoCardID(1),
-							Type:       model.ToDocumentType(1),
+							Type:       model.ToDocumentTypeFromInt(1),
 						},
 						err: nil,
 					},
@@ -231,7 +231,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 			want: &model.Document{
 				ID:         model.ToDocumentID(1),
 				InfoCardID: model.ToInfoCardID(1),
-				Type:       model.ToDocumentType(1),
+				Type:       model.ToDocumentTypeFromInt(1),
 			},
 			wantErr: false,
 
@@ -254,7 +254,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 						document: &model.Document{
 							ID:         model.ToDocumentID(1),
 							InfoCardID: model.ToInfoCardID(1),
-							Type:       model.ToDocumentType(1),
+							Type:       model.ToDocumentTypeFromInt(1),
 						},
 						err: nil,
 					},
@@ -364,7 +364,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 				{
 					ID:         model.ToDocumentID(1),
 					InfoCardID: model.ToInfoCardID(1),
-					Type:       model.ToDocumentType(1),
+					Type:       model.ToDocumentTypeFromInt(1),
 				},
 			},
 			wantErr: false,
@@ -389,7 +389,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 							{
 								ID:         model.ToDocumentID(1),
 								InfoCardID: model.ToInfoCardID(1),
-								Type:       model.ToDocumentType(1),
+								Type:       model.ToDocumentTypeFromInt(1),
 							},
 						},
 						err: nil,

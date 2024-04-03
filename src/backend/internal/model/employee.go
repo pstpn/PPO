@@ -7,10 +7,25 @@ type PostType int64
 const (
 	SecurityEmployee PostType = iota
 	DefaultEmployee
+	UnknownEmployee
 )
 
-func ToPostType(post int64) *PostType {
+func ToPostTypeFromInt(post int64) *PostType {
 	postType := PostType(post)
+	return &postType
+}
+
+func ToPostTypeFromString(post string) *PostType {
+	var postType PostType
+	switch post {
+	case "Сотрудник СБ":
+		postType = SecurityEmployee
+	case "Сотрудник":
+		postType = DefaultEmployee
+	default:
+		postType = UnknownEmployee
+	}
+
 	return &postType
 }
 
@@ -26,7 +41,7 @@ func (p *PostType) String() string {
 }
 
 func (p *PostType) IsAdmin() bool {
-	return *p == 1
+	return *p == SecurityEmployee
 }
 
 type EmployeeID int64

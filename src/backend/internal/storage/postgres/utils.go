@@ -108,6 +108,13 @@ func returningPassageColumns() string {
 	}, ","))
 }
 
+func returningCheckpointColumns() string {
+	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
+		idField,
+		phoneNumberField,
+	}, ","))
+}
+
 func returningPhotoMetaColumns() string {
 	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
 		idField,

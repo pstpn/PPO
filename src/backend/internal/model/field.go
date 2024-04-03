@@ -11,10 +11,23 @@ type FieldType int64
 
 const (
 	DateOfRelease FieldType = iota
+	UnknownFieldType
 )
 
-func ToFieldType(field int64) *FieldType {
+func ToFieldTypeFromInt(field int64) *FieldType {
 	fieldType := FieldType(field)
+	return &fieldType
+}
+
+func ToFieldTypeFromString(field string) *FieldType {
+	var fieldType FieldType
+	switch field {
+	case "Дата выпуска":
+		fieldType = DateOfRelease
+	default:
+		fieldType = UnknownFieldType
+	}
+
 	return &fieldType
 }
 

@@ -35,8 +35,8 @@ func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.Registe
 			request.PhoneNumber,
 			request.FullName,
 			request.CompanyID,
-			request.Post,
-			request.Password,
+			model.ToPostTypeFromInt(request.Post).String(),
+			request.Password.Value,
 			request.DateOfBirth,
 		).
 		Suffix(returningEmployeeColumns())
@@ -92,14 +92,14 @@ func (e *employeeStorageImpl) Delete(ctx context.Context, request *dto.DeleteEmp
 
 func (e *employeeStorageImpl) rowToModel(row pgx.Row) (*model.Employee, error) {
 	var employee model.Employee
-	var hashedPassword string
+	var hashedPassword, post string
 
 	err := row.Scan(
 		&employee.ID,
 		&employee.PhoneNumber,
 		&employee.FullName,
 		&employee.CompanyID,
-		&employee.Post,
+		&post,
 		&hashedPassword,
 		&employee.DateOfBirth,
 	)
@@ -107,6 +107,7 @@ func (e *employeeStorageImpl) rowToModel(row pgx.Row) (*model.Employee, error) {
 		return nil, err
 	}
 
+	employee.Post = model.ToPostTypeFromString(post)
 	employee.Password = &model.Password{
 		Value:    hashedPassword,
 		IsHashed: true,
