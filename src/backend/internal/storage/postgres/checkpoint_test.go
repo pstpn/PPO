@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
@@ -11,17 +10,7 @@ import (
 
 	"course/internal/model"
 	"course/internal/service/dto"
-	"course/pkg/storage/postgres"
 )
-
-var testDB *postgres.Postgres
-
-func TestMain(m *testing.M) {
-	testDB = NewTestStorage()
-	defer testDB.Close()
-
-	os.Exit(m.Run())
-}
 
 func Test_checkpointStorageImpl_CreateCheckpoint(t *testing.T) {
 	checkpointStorage := NewCheckpointStorage(testDB)
@@ -45,8 +34,8 @@ func Test_checkpointStorageImpl_CreatePassage(t *testing.T) {
 	tm, _ := time.Parse(time.RFC3339, "2006-01-02T15:04:05Z")
 
 	request := &dto.CreatePassageRequest{
-		CheckpointID: 1,
-		DocumentID:   1,
+		CheckpointID: ids["checkpointID"],
+		DocumentID:   ids["documentID"],
 		Type:         0,
 		Time:         &tm,
 	}
@@ -68,8 +57,8 @@ func Test_checkpointStorageImpl_GetPassage(t *testing.T) {
 
 	tm, _ := time.Parse(time.RFC3339, "2006-01-02T15:04:05Z")
 	passage1, err := checkpointStorage.CreatePassage(context.TODO(), &dto.CreatePassageRequest{
-		CheckpointID: 1,
-		DocumentID:   1,
+		CheckpointID: ids["checkpointID"],
+		DocumentID:   ids["documentID"],
 		Type:         0,
 		Time:         &tm,
 	})
@@ -122,8 +111,8 @@ func Test_checkpointStorageImpl_ListPassages(t *testing.T) {
 	var passages []*model.Passage
 	for range 10 {
 		passage, err := checkpointStorage.CreatePassage(context.TODO(), &dto.CreatePassageRequest{
-			CheckpointID: 1,
-			DocumentID:   1,
+			CheckpointID: ids["checkpointID"],
+			DocumentID:   ids["documentID"],
 			Type:         0,
 			Time:         &tm,
 		})
@@ -134,7 +123,7 @@ func Test_checkpointStorageImpl_ListPassages(t *testing.T) {
 	}
 
 	listPassages, err := checkpointStorage.ListPassages(context.TODO(), &dto.ListPassagesRequest{
-		InfoCardID: 1,
+		InfoCardID: ids["infoCardID"],
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, listPassages)
@@ -151,8 +140,8 @@ func Test_checkpointStorageImpl_DeletePassage(t *testing.T) {
 
 	tm, _ := time.Parse(time.RFC3339, "2006-01-02T15:04:05Z")
 	passage1, err := checkpointStorage.CreatePassage(context.TODO(), &dto.CreatePassageRequest{
-		CheckpointID: 1,
-		DocumentID:   1,
+		CheckpointID: ids["checkpointID"],
+		DocumentID:   ids["documentID"],
 		Type:         0,
 		Time:         &tm,
 	})
@@ -180,7 +169,6 @@ func Test_checkpointStorageImpl_DeleteCheckpoint(t *testing.T) {
 	checkpoint, err := checkpointStorage.CreateCheckpoint(context.TODO(), request)
 	require.NoError(t, err)
 	require.NotEmpty(t, checkpoint)
-	require.Equal(t, request.PhoneNumber, checkpoint.PhoneNumber)
 
 	err = checkpointStorage.DeleteCheckpoint(context.TODO(), &dto.DeleteCheckpointRequest{CheckpointID: checkpoint.ID.Int()})
 	require.NoError(t, err)

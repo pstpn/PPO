@@ -56,7 +56,7 @@ func (f *fieldStorageImpl) Get(ctx context.Context, request *dto.GetDocumentFiel
 		Where(
 			squirrel.And{
 				squirrel.Eq{documentIdField: request.DocumentID},
-				squirrel.Eq{typeField: request.FieldType},
+				squirrel.Eq{typeField: model.ToFieldTypeFromInt(request.FieldType).String()},
 			},
 		)
 
