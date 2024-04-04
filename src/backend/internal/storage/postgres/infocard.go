@@ -85,12 +85,18 @@ func (i *infoCardStorageImpl) GetByID(ctx context.Context, request *dto.GetInfoC
 func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
 	query := i.Builder.
 		Select(
-			idField,
+			fullColName(infoCardTable, idField),
 			createdEmployeeIdField,
 			isConfirmedField,
 			createdDateField,
 		).
-		From(infoCardTable)
+		From(infoCardTable).
+		Join(on(
+			infoCardTable,
+			employeeTable,
+			createdEmployeeIdField,
+			idField,
+		))
 
 	query = request.Pagination.ToSQL(query)
 

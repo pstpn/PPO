@@ -157,6 +157,9 @@ func Test_checkpointStorageImpl_DeletePassage(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, passage2)
+
+	err = checkpointStorage.DeletePassage(context.TODO(), &dto.DeletePassageRequest{PassageID: passage1.ID.Int()})
+	require.NoError(t, err)
 }
 
 func Test_checkpointStorageImpl_DeleteCheckpoint(t *testing.T) {
@@ -179,4 +182,7 @@ func Test_checkpointStorageImpl_DeleteCheckpoint(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, checkpoint2)
+
+	err = checkpointStorage.DeleteCheckpoint(context.TODO(), &dto.DeleteCheckpointRequest{CheckpointID: checkpoint.ID.Int()})
+	require.NoError(t, err)
 }

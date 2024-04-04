@@ -35,7 +35,7 @@ func (p *photoDataStorageImpl) Save(ctx context.Context, request *dto.CreatePhot
 		return nil, err
 	}
 
-	return model.ToPhotoKey(objectID.String()), nil
+	return model.ToPhotoKey(objectID.Hex()), nil
 }
 
 func (p *photoDataStorageImpl) Get(ctx context.Context, key *model.PhotoKey) ([]byte, error) {

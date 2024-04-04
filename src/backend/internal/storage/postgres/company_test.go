@@ -66,4 +66,7 @@ func Test_companyStorageImpl_Delete(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, company2)
+
+	err = companyStorage.Delete(context.TODO(), &dto.DeleteCompanyRequest{CompanyID: company1.ID.Int()})
+	require.NoError(t, err)
 }

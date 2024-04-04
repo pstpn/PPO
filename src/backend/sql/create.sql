@@ -27,7 +27,7 @@ create table if not exists info_card
 create table if not exists document
 (
     id serial primary key,
-    info_card_id int references info_card(id),
+    info_card_id int references info_card(id) on delete cascade,
     type text
 );
 
@@ -57,8 +57,8 @@ create table if not exists checkpoint
 create table if not exists passage
 (
     id serial primary key,
-    checkpoint_id int references checkpoint(id),
-    document_id int references document(id),
+    checkpoint_id int references checkpoint(id) on delete cascade,
+    document_id int references document(id) on delete cascade,
     type text,
     time timestamp
 );

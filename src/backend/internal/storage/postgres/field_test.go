@@ -109,4 +109,6 @@ func Test_fieldStorageImpl_Delete(t *testing.T) {
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, field2)
 
+	err = fieldStorage.Delete(context.TODO(), &dto.DeleteDocumentFieldRequest{FieldID: field1.ID.Int()})
+	require.NoError(t, err)
 }

@@ -98,4 +98,7 @@ func Test_documentStorageImpl_Delete(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, document2)
+
+	err = documentStorage.Delete(context.TODO(), &dto.DeleteDocumentRequest{DocumentID: document1.ID.Int()})
+	require.NoError(t, err)
 }

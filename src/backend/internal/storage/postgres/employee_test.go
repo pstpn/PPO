@@ -108,4 +108,7 @@ func Test_employeeStorageImpl_Delete(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, employee2)
+
+	err = employeeStorage.Delete(context.TODO(), &dto.DeleteEmployeeRequest{EmployeeID: employee1.ID.Int()})
+	require.NoError(t, err)
 }
