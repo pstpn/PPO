@@ -27,6 +27,7 @@ create table if not exists info_card
 create table if not exists document
 (
     id serial primary key,
+    serial_number text unique,
     info_card_id int references info_card(id) on delete cascade,
     type text
 );
