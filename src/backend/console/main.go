@@ -1,9 +1,12 @@
 package main
 
 import (
-	"github.com/rivo/tview"
-	"github.com/rs/zerolog"
+	"log"
+	"os"
 
+	"github.com/rivo/tview"
+
+	"course/config"
 	"course/console/handler"
 	"course/pkg/logger"
 	"course/pkg/storage/postgres"
@@ -17,11 +20,30 @@ var (
 )
 
 func main() {
-	l := logger.New(zerolog.ErrorFieldName)
+	c, err := config.NewConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	loggerFile, err := os.OpenFile(
+		c.Logger.File,
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		0664,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(loggerFile *os.File) {
+		err := loggerFile.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(loggerFile)
+	l := logger.New(c.Logger.Level, loggerFile)
 
 	db, err := postgres.New("postgresql://postgres:admin@localhost:5432/course")
 	if err != nil {
-		l.Fatal(err)
+		log.Fatal(err)
 	}
 
 	h := handler.CreateHandler(l, db)
@@ -40,6 +62,6 @@ func main() {
 	pages.SwitchToPage("Menu (guest)")
 
 	if err = app.SetRoot(pages, true).EnableMouse(true).Run(); err != nil {
-		l.Fatal(err)
+		log.Fatal(err)
 	}
 }

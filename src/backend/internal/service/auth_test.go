@@ -48,7 +48,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		{
 			name: "incorrect company ID",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -96,7 +96,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		{
 			name: "success",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -221,7 +221,7 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		{
 			name: "incorrect phone number",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -264,7 +264,7 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		{
 			name: "incorrect password",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -318,7 +318,7 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		{
 			name: "success",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{

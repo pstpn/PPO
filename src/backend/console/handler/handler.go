@@ -25,7 +25,6 @@ var (
 )
 
 type Handler struct {
-	logger          logger.Interface
 	authService     service.AuthService
 	employeeService service.EmployeeService
 	infoCardService service.InfoCardService
@@ -37,7 +36,6 @@ func CreateHandler(l logger.Interface, db *postgres.Postgres) *Handler {
 	infoCardStorage := storage.NewInfoCardStorage(db)
 	documentStorage := storage.NewDocumentStorage(db)
 	return &Handler{
-		logger:          l,
 		authService:     service.NewAuthService(l, employeeStorage),
 		employeeService: service.NewEmployeeService(l, employeeStorage),
 		infoCardService: service.NewInfoCardService(l, infoCardStorage),

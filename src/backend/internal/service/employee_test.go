@@ -42,7 +42,7 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 		{
 			name: "incorrect phone number",
 			e: &employeeServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -77,7 +77,7 @@ func Test_employeeServiceImpl_GetEmployee(t *testing.T) {
 		{
 			name: "success",
 			e: &employeeServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -186,7 +186,7 @@ func Test_employeeServiceImpl_DeleteEmployee(t *testing.T) {
 		{
 			name: "incorrect employee ID",
 			e: &employeeServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -217,7 +217,7 @@ func Test_employeeServiceImpl_DeleteEmployee(t *testing.T) {
 		{
 			name: "success",
 			e: &employeeServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{

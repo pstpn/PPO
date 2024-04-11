@@ -1,0 +1,15 @@
+logger:
+  level: 'info'
+  file: 'out.log'
+
+database:
+  postgres:
+    host: 'localhost'
+    port: 5432
+    user: 'postgres'
+    password: 'admin'
+    database: 'course'
+  mongodb:
+    uri: 'mongodb://localhost:27017'
+    database: 'course'
+    bucket: 'photos'

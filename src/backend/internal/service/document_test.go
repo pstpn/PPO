@@ -42,7 +42,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 		{
 			name: "incorrect info card ID",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -85,7 +85,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 		{
 			name: "success",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -190,7 +190,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -225,7 +225,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 		{
 			name: "success",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -322,7 +322,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 		{
 			name: "incorrect employee ID",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -357,7 +357,7 @@ func Test_documentServiceImpl_ListEmployeeDocuments(t *testing.T) {
 		{
 			name: "success",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -456,7 +456,7 @@ func Test_documentServiceImpl_DeleteDocument(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{
@@ -487,7 +487,7 @@ func Test_documentServiceImpl_DeleteDocument(t *testing.T) {
 		{
 			name: "success",
 			d: &documentServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				documentStorage: documentMockStorage,
 			},
 			args: args{

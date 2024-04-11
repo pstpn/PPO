@@ -42,7 +42,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -85,7 +85,7 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 		{
 			name: "success",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -192,7 +192,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -233,7 +233,7 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 		{
 			name: "success",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -338,7 +338,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -373,7 +373,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 		{
 			name: "success",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -474,7 +474,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 		{
 			name: "incorrect field ID",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
@@ -505,7 +505,7 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 		{
 			name: "success",
 			f: &fieldServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				fieldStorage: fieldMockStorage,
 			},
 			args: args{
