@@ -14,6 +14,7 @@ func Test_documentStorageImpl_Create(t *testing.T) {
 	documentStorage := NewDocumentStorage(testDB)
 
 	request := &dto.CreateDocumentRequest{
+		SerialNumber: "123",
 		InfoCardID:   ids["infoCardID"],
 		DocumentType: 1,
 	}
@@ -32,6 +33,7 @@ func Test_documentStorageImpl_GetByID(t *testing.T) {
 	documentStorage := NewDocumentStorage(testDB)
 
 	document1, err := documentStorage.Create(context.TODO(), &dto.CreateDocumentRequest{
+		SerialNumber: "123",
 		InfoCardID:   ids["infoCardID"],
 		DocumentType: 1,
 	})
@@ -57,6 +59,7 @@ func Test_documentStorageImpl_List(t *testing.T) {
 	var documents []*model.Document
 	for range 10 {
 		document, err := documentStorage.Create(context.TODO(), &dto.CreateDocumentRequest{
+			SerialNumber: "123",
 			InfoCardID:   ids["infoCardID"],
 			DocumentType: 1,
 		})
@@ -83,6 +86,7 @@ func Test_documentStorageImpl_Delete(t *testing.T) {
 	documentStorage := NewDocumentStorage(testDB)
 
 	document1, err := documentStorage.Create(context.TODO(), &dto.CreateDocumentRequest{
+		SerialNumber: "123",
 		InfoCardID:   ids["infoCardID"],
 		DocumentType: 1,
 	})

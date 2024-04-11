@@ -48,6 +48,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 			args: args{
 				ctx: ctx,
 				request: &dto.CreateDocumentRequest{
+					SerialNumber: "123",
 					InfoCardID:   -1,
 					DocumentType: 1,
 				},
@@ -66,6 +67,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 					storageArgs: args{
 						ctx: ctx,
 						request: &dto.CreateDocumentRequest{
+							SerialNumber: "123",
 							InfoCardID:   -1,
 							DocumentType: 1,
 						},
@@ -89,6 +91,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 			args: args{
 				ctx: ctx,
 				request: &dto.CreateDocumentRequest{
+					SerialNumber: "123",
 					InfoCardID:   1,
 					DocumentType: 1,
 				},
@@ -111,6 +114,7 @@ func Test_documentServiceImpl_CreateDocument(t *testing.T) {
 					storageArgs: args{
 						ctx: ctx,
 						request: &dto.CreateDocumentRequest{
+							SerialNumber: "123",
 							InfoCardID:   1,
 							DocumentType: 1,
 						},

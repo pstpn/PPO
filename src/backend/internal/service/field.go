@@ -22,6 +22,13 @@ type fieldServiceImpl struct {
 	fieldStorage storage.FieldStorage
 }
 
+func NewFieldService(logger logger.Interface, fieldStorage storage.FieldStorage) FieldService {
+	return &fieldServiceImpl{
+		logger:       logger,
+		fieldStorage: fieldStorage,
+	}
+}
+
 func (f *fieldServiceImpl) CreateCardField(ctx context.Context, request *dto.CreateDocumentFieldRequest) (*model.Field, error) {
 	field, err := f.fieldStorage.Create(ctx, request)
 	if err != nil {

@@ -68,6 +68,7 @@ func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmploye
 	query := d.Builder.
 		Select(
 			fullColName(documentTable, idField),
+			serialNumberField,
 			infoCardIdField,
 			fullColName(documentTable, typeField),
 		).
