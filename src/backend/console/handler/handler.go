@@ -135,7 +135,7 @@ func (h *Handler) LoginEmployeeForm(form *tview.Form, pages *tview.Pages) *tview
 	return form
 }
 
-func (h *Handler) CreateGuestMenu(form *tview.Form, pages *tview.Pages) *tview.List {
+func (h *Handler) CreateGuestMenu(form *tview.Form, pages *tview.Pages, exitFunc *tview.Application) *tview.List {
 	return tview.NewList().
 		AddItem("Register", "", '1', func() {
 			form.Clear(true)
@@ -146,6 +146,9 @@ func (h *Handler) CreateGuestMenu(form *tview.Form, pages *tview.Pages) *tview.L
 			form.Clear(true)
 			h.LoginEmployeeForm(form, pages)
 			pages.SwitchToPage("Login")
+		}).
+		AddItem("Exit", "", '3', func() {
+			exitFunc.Stop()
 		})
 }
 
@@ -192,7 +195,11 @@ func (h *Handler) CreateInfoCardForm(form *tview.Form, pages *tview.Pages) *tvie
 
 func (h *Handler) ShowInfoCard(form *tview.Form, pages *tview.Pages) *tview.Form {
 	if infoCardID == 0 {
+		form.Clear(true)
 		form.AddTextView("", "Create info card before show!\n", 100, 10, true, false)
+		form.AddButton("Back", func() {
+			pages.SwitchToPage("Menu (employee)")
+		})
 		return form
 	}
 
@@ -243,6 +250,10 @@ func (h *Handler) CreateEmployeeMenu(form *tview.Form, pages *tview.Pages) *tvie
 			form.Clear(true)
 			h.ShowInfoCard(form, pages)
 			pages.SwitchToPage("Show info card")
+		}).
+		AddItem("Exit", "", '3', func() {
+			form.Clear(true)
+			pages.SwitchToPage("Menu (guest)")
 		})
 }
 
@@ -291,18 +302,52 @@ func (h *Handler) ShowInfoCards(form *tview.Form, pages *tview.Pages, list *tvie
 	return form
 }
 
+func (h *Handler) ValidateInfoCard(form *tview.Form, pages *tview.Pages) *tview.Form {
+	validateInfoCardRequest := &dto.ValidateInfoCardRequest{
+		IsConfirmed: false,
+	}
+
+	form.AddInputField("Info card ID", "", 20, nil, func(infoCardID string) {
+		id, err := strconv.Atoi(infoCardID)
+		if err != nil {
+			form.AddTextView("", err.Error(), 100, 10, true, false)
+			return
+		}
+		validateInfoCardRequest.InfoCardID = int64(id)
+	})
+	form.AddCheckbox("Is confirmed", false, func(isConfirmed bool) {
+		validateInfoCardRequest.IsConfirmed = isConfirmed
+	})
+
+	form.AddButton("Validate", func() {
+		err := h.infoCardService.ValidateInfoCard(context.TODO(), validateInfoCardRequest)
+		if err != nil {
+			return
+		}
+	})
+	form.AddButton("Back", func() {
+		pages.SwitchToPage("Menu (admin)")
+	})
+
+	return form
+}
+
 func (h *Handler) CreateAdminMenu(form *tview.Form, pages *tview.Pages, list *tview.List) *tview.List {
 	return tview.NewList().
 		AddItem("Show info cards", "", '1', func() {
 			form.Clear(true)
 			h.ShowInfoCards(form, pages, list)
 			pages.SwitchToPage("Show info cards")
+		}).
+		AddItem("Validate info card", "", '2', func() {
+			form.Clear(true)
+			h.ValidateInfoCard(form, pages)
+			pages.SwitchToPage("Validate info card")
+		}).
+		AddItem("Exit", "", '3', func() {
+			form.Clear(true)
+			pages.SwitchToPage("Menu (guest)")
 		})
-	//AddItem("Show info cards", "", '1', func() {
-	//	form.Clear(true)
-	//	h.ShowInfoCards(form, pages, list)
-	//	pages.SwitchToPage("Show info cards")
-	//})
 }
 
 func (h *Handler) appendToInfoCardList(list *tview.List, pages *tview.Pages, infoCards []*model.InfoCard) {
