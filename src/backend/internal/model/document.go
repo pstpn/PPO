@@ -38,6 +38,10 @@ func (d *DocumentType) String() string {
 	}
 }
 
+func (d *DocumentType) Int() int64 {
+	return int64(*d)
+}
+
 type DocumentID int64
 
 func ToDocumentID(id int64) *DocumentID {
@@ -50,7 +54,8 @@ func (d *DocumentID) Int() int64 {
 }
 
 type Document struct {
-	ID         *DocumentID
-	InfoCardID *InfoCardID
-	Type       *DocumentType
+	ID           *DocumentID
+	SerialNumber string
+	InfoCardID   *InfoCardID
+	Type         *DocumentType
 }

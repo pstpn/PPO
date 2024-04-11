@@ -40,6 +40,10 @@ func (p *PostType) String() string {
 	}
 }
 
+func (p *PostType) Int() int64 {
+	return int64(*p)
+}
+
 func (p *PostType) IsAdmin() bool {
 	return *p == SecurityEmployee
 }

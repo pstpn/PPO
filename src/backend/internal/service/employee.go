@@ -20,6 +20,13 @@ type employeeServiceImpl struct {
 	employeeStorage storage.EmployeeStorage
 }
 
+func NewEmployeeService(logger logger.Interface, employeeStorage storage.EmployeeStorage) EmployeeService {
+	return &employeeServiceImpl{
+		logger:          logger,
+		employeeStorage: employeeStorage,
+	}
+}
+
 func (e *employeeServiceImpl) GetEmployee(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
 	employee, err := e.employeeStorage.GetByPhone(ctx, request)
 	if err != nil {

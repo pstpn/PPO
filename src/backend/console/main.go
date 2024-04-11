@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog"
 
@@ -11,15 +10,10 @@ import (
 )
 
 var (
-	employeeMenuList = tview.NewList().ShowSecondaryText(false)
-	adminMenuList    = tview.NewList().ShowSecondaryText(false)
-
 	pages = tview.NewPages()
 	app   = tview.NewApplication()
 	form  = tview.NewForm()
-	flex  = tview.NewFlex()
-	text  = tview.NewTextView().
-		SetTextColor(tcell.ColorGreen)
+	list  = tview.NewList().ShowSecondaryText(true)
 )
 
 func main() {
@@ -32,22 +26,16 @@ func main() {
 
 	h := handler.CreateHandler(l, db)
 
-	//employeeMenuList.
-	//	AddItem("Create info card", "", '1', nil).
-	//	AddItem("Show info card", "", '2', nil).
-	//	AddItem("Change info card data", "", '3', nil)
-	adminMenuList.
-		AddItem("Create info card", "", '1', nil).
-		AddItem("Show info cards", "", '2', nil).
-		AddItem("Confirm info card", "", '3', nil)
-
 	pages.AddPage("Menu (guest)", h.CreateGuestMenu(form, pages), true, true).
 		AddPage("Register", form, true, true).
 		AddPage("Login", form, true, true)
 	pages.AddPage("Menu (employee)", h.CreateEmployeeMenu(form, pages), true, true).
 		AddPage("Create info card", form, true, true).
-		AddPage("Show info card", form, true, true).
-		AddPage("Change info card data", form, true, true)
+		AddPage("Show info card", form, true, true)
+	pages.AddPage("Menu (admin)", h.CreateAdminMenu(form, pages, list), true, true).
+		AddPage("Show info cards", form, true, true).
+		AddPage("Cards", list, true, true).
+		AddPage("Confirm info card", form, true, true)
 
 	pages.SwitchToPage("Menu (guest)")
 

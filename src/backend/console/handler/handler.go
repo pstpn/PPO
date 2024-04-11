@@ -30,8 +30,6 @@ type Handler struct {
 	employeeService service.EmployeeService
 	infoCardService service.InfoCardService
 	documentService service.DocumentService
-
-	employees []*model.Employee
 }
 
 func CreateHandler(l logger.Interface, db *postgres.Postgres) *Handler {
@@ -40,7 +38,6 @@ func CreateHandler(l logger.Interface, db *postgres.Postgres) *Handler {
 	documentStorage := storage.NewDocumentStorage(db)
 	return &Handler{
 		logger:          l,
-		employees:       make([]*model.Employee, 0),
 		authService:     service.NewAuthService(l, employeeStorage),
 		employeeService: service.NewEmployeeService(l, employeeStorage),
 		infoCardService: service.NewInfoCardService(l, infoCardStorage),
@@ -49,10 +46,6 @@ func CreateHandler(l logger.Interface, db *postgres.Postgres) *Handler {
 }
 
 func (h *Handler) RegisterEmployeeForm(form *tview.Form, pages *tview.Pages) *tview.Form {
-	form.AddButton("Back", func() {
-		pages.SwitchToPage("Menu (guest)")
-	})
-
 	registerEmployeeRequest := &dto.RegisterEmployeeRequest{}
 
 	form.AddInputField("Phone number", "", 20, nil, func(phoneNumber string) {
@@ -96,15 +89,14 @@ func (h *Handler) RegisterEmployeeForm(form *tview.Form, pages *tview.Pages) *tv
 		phoneNumber = employee.PhoneNumber
 		pages.SwitchToPage("Menu (employee)")
 	})
+	form.AddButton("Back", func() {
+		pages.SwitchToPage("Menu (guest)")
+	})
 
 	return form
 }
 
 func (h *Handler) LoginEmployeeForm(form *tview.Form, pages *tview.Pages) *tview.Form {
-	form.AddButton("Back", func() {
-		pages.SwitchToPage("Menu (guest)")
-	})
-
 	loginEmployeeRequest := &dto.LoginEmployeeRequest{}
 
 	form.AddInputField("Phone number", "", 20, nil, func(phoneNumber string) {
@@ -136,6 +128,9 @@ func (h *Handler) LoginEmployeeForm(form *tview.Form, pages *tview.Pages) *tview
 			pages.SwitchToPage("Menu (employee)")
 		}
 	})
+	form.AddButton("Back", func() {
+		pages.SwitchToPage("Menu (guest)")
+	})
 
 	return form
 }
@@ -155,10 +150,6 @@ func (h *Handler) CreateGuestMenu(form *tview.Form, pages *tview.Pages) *tview.L
 }
 
 func (h *Handler) CreateInfoCardForm(form *tview.Form, pages *tview.Pages) *tview.Form {
-	form.AddButton("Back", func() {
-		pages.SwitchToPage("Menu (employee)")
-	})
-
 	now := time.Now()
 
 	createInfoCardRequest := &dto.CreateInfoCardRequest{
@@ -192,15 +183,14 @@ func (h *Handler) CreateInfoCardForm(form *tview.Form, pages *tview.Pages) *tvie
 		documentID = document.ID.Int()
 		pages.SwitchToPage("Menu (employee)")
 	})
+	form.AddButton("Back", func() {
+		pages.SwitchToPage("Menu (employee)")
+	})
 
 	return form
 }
 
 func (h *Handler) ShowInfoCard(form *tview.Form, pages *tview.Pages) *tview.Form {
-	form.AddButton("Back", func() {
-		pages.SwitchToPage("Menu (employee)")
-	})
-
 	if infoCardID == 0 {
 		form.AddTextView("", "Create info card before show!\n", 100, 10, true, false)
 		return form
@@ -235,6 +225,9 @@ func (h *Handler) ShowInfoCard(form *tview.Form, pages *tview.Pages) *tview.Form
 		document.SerialNumber,
 		infoCard.CreatedDate,
 	), 100, 10, true, false)
+	form.AddButton("Back", func() {
+		pages.SwitchToPage("Menu (employee)")
+	})
 
 	return form
 }
@@ -253,28 +246,93 @@ func (h *Handler) CreateEmployeeMenu(form *tview.Form, pages *tview.Pages) *tvie
 		})
 }
 
-func (h *Handler) CreateAdminMenu(form *tview.Form, pages *tview.Pages) *tview.List {
-	return tview.NewList().
-		AddItem("Create info card", "", '1', func() {
-			form.Clear(true)
-			h.CreateInfoCardForm(form, pages)
-			pages.SwitchToPage("Create info card")
-		}).
-		AddItem("Show info card", "", '2', func() {
-			form.Clear(true)
-			h.ShowInfoCard(form, pages)
-			pages.SwitchToPage("Show info card")
-		})
+func (h *Handler) ShowInfoCards(form *tview.Form, pages *tview.Pages, list *tview.List) *tview.Form {
+	pagination := &postgres.Pagination{
+		PageNumber: 0,
+	}
+
+	form.AddInputField("Count", "", 20, nil, func(count string) {
+		size, err := strconv.Atoi(count)
+		if err != nil || size < 0 {
+			return
+		}
+		pagination.PageSize = uint64(size)
+	})
+	form.AddInputField("Filter column", "", 20, nil, func(column string) {
+		pagination.Filter.Column = column
+	})
+	form.AddInputField("Filter pattern", "", 20, nil, func(pattern string) {
+		pagination.Filter.Pattern = pattern
+	})
+	form.AddInputField("Sort direction (asc/desc; default: asc)", "", 20, nil, func(dir string) {
+		sortDir := postgres.ASC
+		if dir == "desc" {
+			sortDir = postgres.DESC
+		}
+		pagination.Sort.Direction = sortDir
+	})
+	form.AddInputField("Sort column", "", 20, nil, func(column string) {
+		pagination.Sort.Columns = []string{column}
+	})
+
+	form.AddButton("Show", func() {
+		infoCards, err := h.infoCardService.ListInfoCards(context.TODO(), &dto.ListInfoCardsRequest{Pagination: pagination})
+		if err != nil {
+			form.AddTextView("", err.Error(), 100, 10, true, false)
+			return
+		}
+		h.appendToInfoCardList(list, pages, infoCards)
+		pages.SwitchToPage("Cards")
+	})
+	form.AddButton("Back", func() {
+		pages.SwitchToPage("Menu (admin)")
+	})
+
+	return form
 }
 
-//func (h *Handler) appendToEmployeeList() {
-//	employeesList.Clear()
-//	for index, employee := range h.employees {
-//		employeesList.AddItem(employee.FullName, " ", rune('1'+index), nil)
-//	}
-//}
+func (h *Handler) CreateAdminMenu(form *tview.Form, pages *tview.Pages, list *tview.List) *tview.List {
+	return tview.NewList().
+		AddItem("Show info cards", "", '1', func() {
+			form.Clear(true)
+			h.ShowInfoCards(form, pages, list)
+			pages.SwitchToPage("Show info cards")
+		})
+	//AddItem("Show info cards", "", '1', func() {
+	//	form.Clear(true)
+	//	h.ShowInfoCards(form, pages, list)
+	//	pages.SwitchToPage("Show info cards")
+	//})
+}
 
-//func (h *Handler) printEmployee(employee *model.Employee) {
-//	text.Clear()
-//	text.SetText(employee.PhoneNumber)
-//}
+func (h *Handler) appendToInfoCardList(list *tview.List, pages *tview.Pages, infoCards []*model.InfoCard) {
+	list.Clear()
+	for _, infoCard := range infoCards {
+		list.AddItem(
+			strconv.Itoa(int(infoCard.ID.Int())),
+			fmt.Sprintf("Is confirmed: %v; Created employee ID: %d; Created date: %v",
+				infoCard.IsConfirmed,
+				infoCard.CreatedEmployeeID.Int(),
+				infoCard.CreatedDate,
+			),
+			'*',
+			nil)
+	}
+	list.AddItem(
+		"Back",
+		"",
+		'b',
+		func() {
+			pages.SwitchToPage("Show info cards")
+		},
+	)
+}
+
+func (h *Handler) printInfoCard(infoCard *model.InfoCard) {
+	text.Clear()
+	text.SetText(fmt.Sprintf("Is confirmed: %v\nCreated employee ID: %d\nCreated date: %v",
+		infoCard.IsConfirmed,
+		infoCard.CreatedEmployeeID.Int(),
+		infoCard.CreatedDate,
+	))
+}

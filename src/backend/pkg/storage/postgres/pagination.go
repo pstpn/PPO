@@ -48,7 +48,7 @@ type Pagination struct {
 
 func (p *Pagination) ToSQL(s squirrel.SelectBuilder) squirrel.SelectBuilder {
 	return s.
-		Where(squirrel.ILike{p.Filter.Column: fmt.Sprintf("%%%s%%", p.Filter.Pattern)}).
+		Where(squirrel.ILike{p.Filter.Column + "::text": fmt.Sprintf("%%%s%%", p.Filter.Pattern)}).
 		OrderBy(p.Sort.Format()).
 		Limit(p.PageSize).
 		Offset(p.PageNumber * p.PageSize)

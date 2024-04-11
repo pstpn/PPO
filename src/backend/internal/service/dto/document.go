@@ -1,6 +1,7 @@
 package dto
 
 type CreateDocumentRequest struct {
+	SerialNumber string
 	InfoCardID   int64
 	DocumentType int64
 }
