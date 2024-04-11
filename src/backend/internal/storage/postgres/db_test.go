@@ -122,6 +122,7 @@ func initTestInfoCardStorage(storage storage.InfoCardStorage) int64 {
 
 func initTestDocumentStorage(storage storage.DocumentStorage) int64 {
 	document, err := storage.Create(context.TODO(), &dto.CreateDocumentRequest{
+		SerialNumber: "123",
 		InfoCardID:   ids["infoCardID"],
 		DocumentType: 1,
 	})

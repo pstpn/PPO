@@ -23,6 +23,13 @@ type infoCardServiceImpl struct {
 	infoCardStorage storage.InfoCardStorage
 }
 
+func NewInfoCardService(logger logger.Interface, infoCardStorage storage.InfoCardStorage) InfoCardService {
+	return &infoCardServiceImpl{
+		logger:          logger,
+		infoCardStorage: infoCardStorage,
+	}
+}
+
 func (i *infoCardServiceImpl) CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error) {
 	infoCard, err := i.infoCardStorage.Create(ctx, request)
 	if err != nil {

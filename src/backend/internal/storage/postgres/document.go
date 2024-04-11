@@ -24,10 +24,12 @@ func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDoc
 	query := d.Builder.
 		Insert(documentTable).
 		Columns(
+			serialNumberField,
 			infoCardIdField,
 			typeField,
 		).
 		Values(
+			request.SerialNumber,
 			request.InfoCardID,
 			model.ToDocumentTypeFromInt(request.DocumentType).String(),
 		).
@@ -46,6 +48,7 @@ func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocum
 	query := d.Builder.
 		Select(
 			idField,
+			serialNumberField,
 			infoCardIdField,
 			typeField,
 		).
@@ -65,6 +68,7 @@ func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmploye
 	query := d.Builder.
 		Select(
 			fullColName(documentTable, idField),
+			serialNumberField,
 			infoCardIdField,
 			fullColName(documentTable, typeField),
 		).
@@ -121,6 +125,7 @@ func (d *documentStorageImpl) rowToModel(row pgx.Row) (*model.Document, error) {
 	var documentType string
 	err := row.Scan(
 		&document.ID,
+		&document.SerialNumber,
 		&document.InfoCardID,
 		&documentType,
 	)

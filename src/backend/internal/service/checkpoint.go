@@ -20,6 +20,13 @@ type checkpointServiceImpl struct {
 	checkpointStorage storage.CheckpointStorage
 }
 
+func NewCheckpointService(logger logger.Interface, checkpointStorage storage.CheckpointStorage) CheckpointService {
+	return &checkpointServiceImpl{
+		logger:            logger,
+		checkpointStorage: checkpointStorage,
+	}
+}
+
 func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error) {
 	passage, err := c.checkpointStorage.CreatePassage(ctx, request)
 	if err != nil {

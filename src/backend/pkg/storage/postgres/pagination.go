@@ -16,12 +16,10 @@ const (
 
 func (s SortDirection) String() string {
 	switch s {
-	case ASC:
-		return "ASC"
 	case DESC:
 		return "DESC"
 	default:
-		return ""
+		return "ASC"
 	}
 }
 
@@ -47,8 +45,10 @@ type Pagination struct {
 }
 
 func (p *Pagination) ToSQL(s squirrel.SelectBuilder) squirrel.SelectBuilder {
+	if p.Filter.Column != "" {
+		s.Where(squirrel.ILike{p.Filter.Column + "::text": fmt.Sprintf("%%%s%%", p.Filter.Pattern)})
+	}
 	return s.
-		Where(squirrel.ILike{p.Filter.Column: fmt.Sprintf("%%%s%%", p.Filter.Pattern)}).
 		OrderBy(p.Sort.Format()).
 		Limit(p.PageSize).
 		Offset(p.PageNumber * p.PageSize)

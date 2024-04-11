@@ -22,6 +22,13 @@ type documentServiceImpl struct {
 	documentStorage storage.DocumentStorage
 }
 
+func NewDocumentService(logger logger.Interface, documentStorage storage.DocumentStorage) DocumentService {
+	return &documentServiceImpl{
+		logger:          logger,
+		documentStorage: documentStorage,
+	}
+}
+
 func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error) {
 	document, err := d.documentStorage.Create(ctx, request)
 	if err != nil {

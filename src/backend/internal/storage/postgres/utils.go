@@ -21,6 +21,7 @@ const (
 	phoneNumberField       = "phone_number"
 	nameField              = "name"
 	cityField              = "city"
+	serialNumberField      = "serial_number"
 	infoCardIdField        = "info_card_id"
 	fullNameField          = "full_name"
 	companyIdField         = "company_id"
@@ -63,6 +64,7 @@ func returningCompanyColumns() string {
 func returningDocumentColumns() string {
 	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
 		idField,
+		serialNumberField,
 		infoCardIdField,
 		typeField,
 	}, ","))

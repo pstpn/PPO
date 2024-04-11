@@ -21,6 +21,13 @@ type photoServiceImpl struct {
 	photoStorage storage.PhotoStorage
 }
 
+func NewPhotoService(logger logger.Interface, photoStorage storage.PhotoStorage) PhotoService {
+	return &photoServiceImpl{
+		logger:       logger,
+		photoStorage: photoStorage,
+	}
+}
+
 func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) (*model.PhotoMeta, error) {
 	// TODO: Crop face from document
 

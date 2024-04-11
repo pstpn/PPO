@@ -21,6 +21,13 @@ type authServiceImpl struct {
 	employeeStorage storage.EmployeeStorage
 }
 
+func NewAuthService(logger logger.Interface, employeeStorage storage.EmployeeStorage) AuthService {
+	return &authServiceImpl{
+		logger:          logger,
+		employeeStorage: employeeStorage,
+	}
+}
+
 func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) (*model.Employee, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password.Value), bcrypt.DefaultCost)
 	if err != nil {
