@@ -6,20 +6,20 @@ import (
 	"github.com/rs/zerolog"
 
 	"course/console/handler"
-	"course/internal/service"
-	company "course/internal/storage/postgres"
 	"course/pkg/logger"
 	"course/pkg/storage/postgres"
 )
 
 var (
+	employeeMenuList = tview.NewList().ShowSecondaryText(false)
+	adminMenuList    = tview.NewList().ShowSecondaryText(false)
+
 	pages = tview.NewPages()
 	app   = tview.NewApplication()
 	form  = tview.NewForm()
 	flex  = tview.NewFlex()
 	text  = tview.NewTextView().
-		SetTextColor(tcell.ColorGreen).
-		SetText("(c) to create a new company \n(q) to quit")
+		SetTextColor(tcell.ColorGreen)
 )
 
 func main() {
@@ -30,27 +30,26 @@ func main() {
 		l.Fatal(err)
 	}
 
-	companyHandler := handler.CreateCompanyHandler(
-		l,
-		service.NewCompanyService(l, company.NewCompanyStorage(db)),
-		flex,
-		text,
-	)
+	h := handler.CreateHandler(l, db)
 
-	flex.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Rune() == 'q' {
-			app.Stop()
-		} else if event.Rune() == 'c' {
-			form.Clear(true)
-			companyHandler.CreateCompanyForm(form, pages)
-			pages.SwitchToPage("Create company")
-		}
+	//employeeMenuList.
+	//	AddItem("Create info card", "", '1', nil).
+	//	AddItem("Show info card", "", '2', nil).
+	//	AddItem("Change info card data", "", '3', nil)
+	adminMenuList.
+		AddItem("Create info card", "", '1', nil).
+		AddItem("Show info cards", "", '2', nil).
+		AddItem("Confirm info card", "", '3', nil)
 
-		return event
-	})
+	pages.AddPage("Menu (guest)", h.CreateGuestMenu(form, pages), true, true).
+		AddPage("Register", form, true, true).
+		AddPage("Login", form, true, true)
+	pages.AddPage("Menu (employee)", h.CreateEmployeeMenu(form, pages), true, true).
+		AddPage("Create info card", form, true, true).
+		AddPage("Show info card", form, true, true).
+		AddPage("Change info card data", form, true, true)
 
-	pages.AddPage("Menu", flex, true, true)
-	pages.AddPage("Create company", form, true, false)
+	pages.SwitchToPage("Menu (guest)")
 
 	if err = app.SetRoot(pages, true).EnableMouse(true).Run(); err != nil {
 		l.Fatal(err)
