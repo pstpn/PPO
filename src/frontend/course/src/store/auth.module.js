@@ -1,13 +1,10 @@
 import AuthService from '../services/auth.service';
-import axios from "axios";
 
 const user = JSON.parse(localStorage.getItem('user'));
 const initialState = user
     ? { status: { loggedIn: true }, user }
     : { status: { loggedIn: false }, user: null };
 
-// FIXME
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 export const auth = {
     namespaced: true,
     state: initialState,

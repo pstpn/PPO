@@ -9,9 +9,39 @@
       <Form @submit="handleRegister" :validation-schema="schema">
         <div v-if="!successful">
           <div class="form-group">
-            <label for="username">Номер телефона</label>
-            <Field name="username" type="text" class="form-control" />
-            <ErrorMessage name="username" class="error-feedback" />
+            <label for="phoneNumber">Номер телефона</label>
+            <Field name="phoneNumber" type="text" class="form-control" />
+            <ErrorMessage name="phoneNumber" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="name">Имя</label>
+            <Field name="name" type="text" class="form-control" />
+            <ErrorMessage name="name" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="surname">Фамилия</label>
+            <Field name="surname" type="text" class="form-control" />
+            <ErrorMessage name="surname" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="company">Компания</label>
+            <Field name="selectedCompany" as="select" class="form-control">
+              <option value="" disabled selected>Выберите компанию</option>
+              <option v-for="(company, index) in companies" :key="index" :value="index">
+                {{ company }}
+              </option>
+            </Field>
+            <ErrorMessage name="selectedCompany" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="post">Должность</label>
+            <Field name="post" type="text" class="form-control" />
+            <ErrorMessage name="post" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="dateOfBirth">Дата рождения (в формате "дд.мм.гггг")</label>
+            <Field name="dateOfBirth" type="text" class="form-control" />
+            <ErrorMessage name="dateOfBirth" class="error-feedback" />
           </div>
           <div class="form-group">
             <label for="password">Пароль</label>
@@ -25,7 +55,7 @@
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
               ></span>
-              Sign Up
+              Зарегистрироваться
             </button>
           </div>
         </div>
@@ -46,7 +76,7 @@
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
-const phoneRegExp = /^([+]?[0-9\s-\(\)]{3,25})*$/i
+const phoneRegExp = /^([+]?[0-9\s-()]{3,25})*$/i
 
 export default {
   name: "Register",
@@ -57,20 +87,34 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      username: yup
+      phoneNumber: yup
           .string()
           .required("Введите номер телефона")
           .matches(phoneRegExp, "Некорректный номер телефона")
           .min(11, "Некорректный номер телефона"),
+      name: yup
+          .string()
+          .required("Введите имя"),
+      surname: yup
+          .string()
+          .required("Введите фамилию"),
+      post: yup
+          .string()
+          .required("Введите должность"),
+      dateOfBirth: yup
+          .string()
+          .required("Введите дату рождения")
+          .matches(/^\d{2}\.\d{2}\.\d{4}$/, "Некорректный формат даты (дд.мм.гггг)"),
       password: yup
           .string()
-          .required("Введите пароль"),
+          .required("Введите пароль")
     });
 
     return {
       successful: false,
       loading: false,
       message: "",
+      companies: [ "Yandex", "Полисофт", "Ситисофт" ],
       schema,
     };
   },
@@ -79,22 +123,26 @@ export default {
       return this.$store.state.auth.status.loggedIn;
     },
   },
-  // mounted() {
-  //   if (this.loggedIn) {
-  //     this.$router.push("/profile");
-  //   }
-  // },
+  mounted() {
+    // if (this.loggedIn) {
+    //   this.$router.push('/home');
+    // }
+  },
   methods: {
     handleRegister(user) {
       this.message = "";
       this.successful = false;
       this.loading = true;
 
+      console.log(user);
+
       this.$store.dispatch("auth/register", user).then(
           (data) => {
-            this.message = data.message;
+            this.message = "Success";
             this.successful = true;
             this.loading = false;
+
+            // this.$router.push('/home')
           },
           (error) => {
             this.message =
@@ -126,8 +174,7 @@ label {
 .card {
   background-color: #f7f7f7;
   padding: 20px 25px 30px;
-  margin: 0 auto 25px;
-  margin-top: 50px;
+  margin: 50px auto 25px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;

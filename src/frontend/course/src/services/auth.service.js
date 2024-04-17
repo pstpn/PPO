@@ -1,22 +1,13 @@
-import axios, {defaults} from 'axios';
+import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/v1/';
+const API_URL = 'http://localhost:8081/';
 
-// FIXME
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 class AuthService {
     login(user) {
         return axios
-            .post(API_URL + 'signin', {
+            .post(API_URL + 'login', {
                 phoneNumber: user.phoneNumber,
                 password: user.password
-            })
-            .then(response => {
-                if (response.data.accessToken) {
-                    localStorage.setItem('user', JSON.stringify(response.data));
-                }
-
-                return response.data;
             });
     }
 
@@ -24,15 +15,22 @@ class AuthService {
         localStorage.removeItem('user');
     }
 
-    // FIXME
     register(user) {
-        return axios.post(API_URL + 'signup', {
+        return axios.post(API_URL + 'register', {
             phoneNumber: user.phoneNumber,
-            password: user.password
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
+            name: user.name,
+            surname: user.surname,
+            companyID: user.selectedCompany + 1,
+            post: user.post,
+            password: user.password,
+            dateOfBirth: user.dateOfBirth,
+        })
+        .then(response => {
+            if (response.data.accessToken) {
+                localStorage.setItem('user', JSON.stringify(response.data));
             }
+
+            return response.data;
         });
     }
 }

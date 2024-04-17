@@ -8,12 +8,12 @@
       />
       <Form @submit="handleLogin" :validation-schema="schema">
         <div class="form-group">
-          <label for="username">Username</label>
-          <Field name="username" type="text" class="form-control" />
-          <ErrorMessage name="username" class="error-feedback" />
+          <label for="phoneNumber">Телефон</label>
+          <Field name="phoneNumber" type="text" class="form-control" />
+          <ErrorMessage name="phoneNumber" class="error-feedback" />
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">Пароль</label>
           <Field name="password" type="password" class="form-control" />
           <ErrorMessage name="password" class="error-feedback" />
         </div>
@@ -24,7 +24,7 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
             ></span>
-            <span>Login</span>
+            <span>Войти</span>
           </button>
         </div>
 
@@ -51,7 +51,7 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      username: yup.string().required("Username is required!"),
+      phoneNumber: yup.string().required("Phone number is required!"),
       password: yup.string().required("Password is required!"),
     });
 
@@ -68,7 +68,7 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push("/api/test/");
+      this.$router.push("/home");
     }
   },
   methods: {
@@ -77,7 +77,7 @@ export default {
 
       this.$store.dispatch("auth/login", user).then(
           () => {
-            this.$router.push("/api/test/");
+            this.$router.push("/home");
           },
           (error) => {
             this.loading = false;
