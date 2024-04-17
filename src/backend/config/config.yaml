@@ -1,6 +1,13 @@
+app:
+  name: 'course_project'
+  version: 'v0.1'
+
 logger:
   level: 'info'
   file: 'out.log'
+
+http:
+  port: 8081
 
 database:
   postgres:

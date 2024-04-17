@@ -59,11 +59,11 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) error {
 	a.logger.Infof("login employee with phone %s", request.PhoneNumber)
 
-	user, err := a.employeeStorage.GetByPhone(ctx, &dto.GetEmployeeRequest{PhoneNumber: request.PhoneNumber})
+	employee, err := a.employeeStorage.GetByPhone(ctx, &dto.GetEmployeeRequest{PhoneNumber: request.PhoneNumber})
 	if err != nil {
 		a.logger.Errorf("get user by phone number: %s", err.Error())
 		return fmt.Errorf("get user by phone number: %w", err)
 	}
 
-	return bcrypt.CompareHashAndPassword([]byte(user.Password.Value), []byte(request.Password))
+	return bcrypt.CompareHashAndPassword([]byte(employee.Password.Value), []byte(request.Password.Value))
 }

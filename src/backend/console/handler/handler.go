@@ -101,7 +101,10 @@ func (h *Handler) LoginEmployeeForm(form *tview.Form, pages *tview.Pages) *tview
 		loginEmployeeRequest.PhoneNumber = phoneNumber
 	})
 	form.AddPasswordField("Password", "", 20, '*', func(password string) {
-		loginEmployeeRequest.Password = password
+		loginEmployeeRequest.Password = &model.Password{
+			Value:    password,
+			IsHashed: false,
+		}
 	})
 
 	form.AddButton("Login", func() {

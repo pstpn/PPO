@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -41,7 +42,13 @@ func main() {
 	}(loggerFile)
 	l := logger.New(c.Logger.Level, loggerFile)
 
-	db, err := postgres.New("postgresql://postgres:admin@localhost:5432/course")
+	db, err := postgres.New(fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+		c.Database.Postgres.User,
+		c.Database.Postgres.Password,
+		c.Database.Postgres.Host,
+		c.Database.Postgres.Port,
+		c.Database.Postgres.Database,
+	))
 	if err != nil {
 		log.Fatal(err)
 	}

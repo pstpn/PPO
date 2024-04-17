@@ -8,12 +8,17 @@ const configPath = "config/config.yaml"
 
 type Config struct {
 	Logger   LoggerConfig   `yaml:"logger"`
+	HTTP     HTTPConfig     `yaml:"http"`
 	Database DatabaseConfig `yaml:"database"`
 }
 
 type LoggerConfig struct {
 	Level string `yaml:"level"`
 	File  string `yaml:"file"`
+}
+
+type HTTPConfig struct {
+	Port int `yaml:"port"`
 }
 
 type DatabaseConfig struct {

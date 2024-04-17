@@ -16,5 +16,5 @@ type RegisterEmployeeRequest struct {
 
 type LoginEmployeeRequest struct {
 	PhoneNumber string
-	Password    string
+	Password    *model.Password
 }
