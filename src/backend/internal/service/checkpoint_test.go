@@ -42,7 +42,7 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 		{
 			name: "incorrect checkpoint ID",
 			c: &checkpointServiceImpl{
-				logger:            nil,
+				logger:            NewMockLogger(),
 				checkpointStorage: checkpointMockStorage,
 			},
 			args: args{
@@ -87,7 +87,7 @@ func Test_checkpointServiceImpl_CreatePassage(t *testing.T) {
 		{
 			name: "success",
 			c: &checkpointServiceImpl{
-				logger:            nil,
+				logger:            NewMockLogger(),
 				checkpointStorage: checkpointMockStorage,
 			},
 			args: args{
@@ -198,7 +198,7 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 		{
 			name: "incorrect checkpoint ID",
 			c: &checkpointServiceImpl{
-				logger:            nil,
+				logger:            NewMockLogger(),
 				checkpointStorage: checkpointMockStorage,
 			},
 			args: args{
@@ -232,7 +232,7 @@ func Test_checkpointServiceImpl_ListPassages(t *testing.T) {
 		{
 			name: "success",
 			c: &checkpointServiceImpl{
-				logger:            nil,
+				logger:            NewMockLogger(),
 				checkpointStorage: checkpointMockStorage,
 			},
 			args: args{

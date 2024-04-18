@@ -55,7 +55,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		{
 			name: "incorrect photo data",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -130,7 +130,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -205,7 +205,7 @@ func Test_photoServiceImpl_CreatePhoto(t *testing.T) {
 		{
 			name: "success",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -364,7 +364,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 		{
 			name: "incorrect document ID",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -434,7 +434,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 		{
 			name: "incorrect photo key",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -507,7 +507,7 @@ func Test_photoServiceImpl_GetPhoto(t *testing.T) {
 		{
 			name: "success",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -671,7 +671,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 		{
 			name: "incorrect document ID (GetKey())",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -783,7 +783,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 		{
 			name: "incorrect photo key",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -898,7 +898,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 		{
 			name: "incorrect document ID (DeleteKey())",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{
@@ -1013,7 +1013,7 @@ func Test_photoServiceImpl_DeletePhoto(t *testing.T) {
 		{
 			name: "success",
 			p: &photoServiceImpl{
-				logger:       nil,
+				logger:       NewMockLogger(),
 				photoStorage: photoMockStorage,
 			},
 			args: args{

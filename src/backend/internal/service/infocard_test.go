@@ -42,7 +42,7 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 		{
 			name: "incorrect employee ID",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -85,7 +85,7 @@ func Test_infoCardServiceImpl_CreateInfoCard(t *testing.T) {
 		{
 			name: "success",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -190,7 +190,7 @@ func Test_infoCardServiceImpl_ValidateInfoCard(t *testing.T) {
 		{
 			name: "incorrect info card ID",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -227,7 +227,7 @@ func Test_infoCardServiceImpl_ValidateInfoCard(t *testing.T) {
 		{
 			name: "success",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -312,7 +312,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 		{
 			name: "incorrect info card ID",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -347,7 +347,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 		{
 			name: "success",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -446,7 +446,7 @@ func Test_infoCardServiceImpl_ListInfoCards(t *testing.T) {
 		{
 			name: "incorrect request",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -481,7 +481,7 @@ func Test_infoCardServiceImpl_ListInfoCards(t *testing.T) {
 		{
 			name: "success",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -582,7 +582,7 @@ func Test_infoCardServiceImpl_DeleteInfoCard(t *testing.T) {
 		{
 			name: "incorrect info card ID",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{
@@ -613,7 +613,7 @@ func Test_infoCardServiceImpl_DeleteInfoCard(t *testing.T) {
 		{
 			name: "success",
 			i: &infoCardServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				infoCardStorage: infoCardMockStorage,
 			},
 			args: args{

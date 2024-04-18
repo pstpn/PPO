@@ -10,14 +10,14 @@
 import UserService from "../services/user.service";
 
 export default {
-  name: "Moderator",
+  name: "User",
   data() {
     return {
       content: "",
     };
   },
   mounted() {
-    UserService.getModeratorBoard().then(
+    UserService.getHomePage().then(
         (response) => {
           this.content = response.data;
         },
@@ -30,6 +30,11 @@ export default {
               error.toString();
         }
     );
+    UserService.getUserInfoCard().then(
+        (response) => {
+          this.content = response.data;
+        }
+    )
   },
 };
 </script>

@@ -42,7 +42,7 @@ func Test_companyServiceImpl_GetCompany(t *testing.T) {
 		{
 			name: "incorrect company ID",
 			c: &companyServiceImpl{
-				logger:         nil,
+				logger:         NewMockLogger(),
 				companyStorage: companyMockStorage,
 			},
 			args: args{
@@ -77,7 +77,7 @@ func Test_companyServiceImpl_GetCompany(t *testing.T) {
 		{
 			name: "success",
 			c: &companyServiceImpl{
-				logger:         nil,
+				logger:         NewMockLogger(),
 				companyStorage: companyMockStorage,
 			},
 			args: args{

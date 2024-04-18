@@ -1,0 +1,22 @@
+app:
+  name: 'course_project'
+  version: 'v0.1'
+
+logger:
+  level: 'info'
+  file: 'out.log'
+
+http:
+  port: 8081
+
+database:
+  postgres:
+    host: 'localhost'
+    port: 5432
+    user: 'postgres'
+    password: 'admin'
+    database: 'course'
+  mongodb:
+    uri: 'mongodb://localhost:27017'
+    database: 'course'
+    bucket: 'photos'

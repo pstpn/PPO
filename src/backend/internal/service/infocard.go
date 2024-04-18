@@ -31,8 +31,11 @@ func NewInfoCardService(logger logger.Interface, infoCardStorage storage.InfoCar
 }
 
 func (i *infoCardServiceImpl) CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error) {
+	i.logger.Infof("create info card by employee ID %d", request.EmployeeID)
+
 	infoCard, err := i.infoCardStorage.Create(ctx, request)
 	if err != nil {
+		i.logger.Errorf("create info card: %s", err.Error())
 		return nil, fmt.Errorf("create info card: %w", err)
 	}
 
@@ -40,8 +43,11 @@ func (i *infoCardServiceImpl) CreateInfoCard(ctx context.Context, request *dto.C
 }
 
 func (i *infoCardServiceImpl) ValidateInfoCard(ctx context.Context, request *dto.ValidateInfoCardRequest) error {
+	i.logger.Infof("validate info card by ID %d", request.InfoCardID)
+
 	err := i.infoCardStorage.Validate(ctx, request)
 	if err != nil {
+		i.logger.Errorf("validate info card: %s", err.Error())
 		return fmt.Errorf("validate info card: %w", err)
 	}
 
@@ -49,8 +55,11 @@ func (i *infoCardServiceImpl) ValidateInfoCard(ctx context.Context, request *dto
 }
 
 func (i *infoCardServiceImpl) GetInfoCard(ctx context.Context, request *dto.GetInfoCardRequest) (*model.InfoCard, error) {
+	i.logger.Infof("get info card by ID %d", request.InfoCardID)
+
 	infoCard, err := i.infoCardStorage.GetByID(ctx, request)
 	if err != nil {
+		i.logger.Errorf("get info card: %s", err.Error())
 		return nil, fmt.Errorf("get info card: %w", err)
 	}
 
@@ -58,8 +67,11 @@ func (i *infoCardServiceImpl) GetInfoCard(ctx context.Context, request *dto.GetI
 }
 
 func (i *infoCardServiceImpl) ListInfoCards(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
+	i.logger.Infof("list info cards with pagination")
+
 	infoCards, err := i.infoCardStorage.List(ctx, request)
 	if err != nil {
+		i.logger.Errorf("list info cards: %s", err.Error())
 		return nil, fmt.Errorf("list info cards: %w", err)
 	}
 
@@ -67,8 +79,11 @@ func (i *infoCardServiceImpl) ListInfoCards(ctx context.Context, request *dto.Li
 }
 
 func (i *infoCardServiceImpl) DeleteInfoCard(ctx context.Context, request *dto.DeleteInfoCardRequest) error {
+	i.logger.Infof("delete info card by ID %d", request.InfoCardID)
+
 	err := i.infoCardStorage.Delete(ctx, request)
 	if err != nil {
+		i.logger.Errorf("delete info card: %s", err.Error())
 		return fmt.Errorf("delete info card: %w", err)
 	}
 

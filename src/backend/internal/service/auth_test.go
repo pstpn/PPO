@@ -48,7 +48,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		{
 			name: "incorrect company ID",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -96,7 +96,7 @@ func Test_authServiceImpl_RegisterEmployee(t *testing.T) {
 		{
 			name: "success",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
@@ -221,14 +221,17 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		{
 			name: "incorrect phone number",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
 				ctx: ctx,
 				request: &dto.LoginEmployeeRequest{
 					PhoneNumber: "32423",
-					Password:    "gg",
+					Password: &model.Password{
+						Value:    "gg",
+						IsHashed: false,
+					},
 				},
 			},
 			wantErr: true,
@@ -264,14 +267,17 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		{
 			name: "incorrect password",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
 				ctx: ctx,
 				request: &dto.LoginEmployeeRequest{
 					PhoneNumber: "124",
-					Password:    "124",
+					Password: &model.Password{
+						Value:    "124",
+						IsHashed: false,
+					},
 				},
 			},
 			wantErr: true,
@@ -318,14 +324,17 @@ func Test_authServiceImpl_LoginEmployee(t *testing.T) {
 		{
 			name: "success",
 			a: &authServiceImpl{
-				logger:          nil,
+				logger:          NewMockLogger(),
 				employeeStorage: employeeMockStorage,
 			},
 			args: args{
 				ctx: ctx,
 				request: &dto.LoginEmployeeRequest{
 					PhoneNumber: "124",
-					Password:    "21e12",
+					Password: &model.Password{
+						Value:    "21e12",
+						IsHashed: false,
+					},
 				},
 			},
 			wantErr: false,
