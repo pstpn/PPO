@@ -31,7 +31,7 @@ func NewInfoCardService(logger logger.Interface, infoCardStorage storage.InfoCar
 }
 
 func (i *infoCardServiceImpl) CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error) {
-	i.logger.Infof("create info card by employee ID %d", request.EmployeeID)
+	i.logger.Infof("create info card by employee phone number %s", request.EmployeePhoneNumber)
 
 	infoCard, err := i.infoCardStorage.Create(ctx, request)
 	if err != nil {

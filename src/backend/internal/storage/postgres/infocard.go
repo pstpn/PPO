@@ -24,12 +24,12 @@ func (i *infoCardStorageImpl) Create(ctx context.Context, request *dto.CreateInf
 	query := i.Builder.
 		Insert(infoCardTable).
 		Columns(
-			createdEmployeeIdField,
+			createdEmployeePhoneNumberField,
 			isConfirmedField,
 			createdDateField,
 		).
 		Values(
-			request.EmployeeID,
+			request.EmployeePhoneNumber,
 			request.IsConfirmed,
 			request.CreatedDate,
 		).
@@ -66,7 +66,7 @@ func (i *infoCardStorageImpl) GetByID(ctx context.Context, request *dto.GetInfoC
 	query := i.Builder.
 		Select(
 			idField,
-			createdEmployeeIdField,
+			createdEmployeePhoneNumberField,
 			isConfirmedField,
 			createdDateField,
 		).
@@ -86,7 +86,7 @@ func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCar
 	query := i.Builder.
 		Select(
 			fullColName(infoCardTable, idField),
-			createdEmployeeIdField,
+			createdEmployeePhoneNumberField,
 			isConfirmedField,
 			createdDateField,
 		).
@@ -94,8 +94,8 @@ func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCar
 		Join(on(
 			infoCardTable,
 			employeeTable,
-			createdEmployeeIdField,
-			idField,
+			createdEmployeePhoneNumberField,
+			phoneNumberField,
 		))
 
 	query = request.Pagination.ToSQL(query)
@@ -143,7 +143,7 @@ func (i *infoCardStorageImpl) rowToModel(row pgx.Row) (*model.InfoCard, error) {
 	var infoCard model.InfoCard
 	err := row.Scan(
 		&infoCard.ID,
-		&infoCard.CreatedEmployeeID,
+		&infoCard.CreatedEmployeePhoneNumber,
 		&infoCard.IsConfirmed,
 		&infoCard.CreatedDate,
 	)

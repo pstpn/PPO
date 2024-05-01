@@ -94,6 +94,24 @@ func (_m *EmployeeStorage) Register(ctx context.Context, request *dto.RegisterEm
 	return r0, r1
 }
 
+// UpdateRefreshToken provides a mock function with given fields: ctx, request
+func (_m *EmployeeStorage) UpdateRefreshToken(ctx context.Context, request *dto.UpdateToken) error {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateRefreshToken")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.UpdateToken) error); ok {
+		r0 = rf(ctx, request)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // NewEmployeeStorage creates a new instance of EmployeeStorage. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewEmployeeStorage(t interface {

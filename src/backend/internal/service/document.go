@@ -54,7 +54,7 @@ func (d *documentServiceImpl) GetDocument(ctx context.Context, request *dto.GetD
 }
 
 func (d *documentServiceImpl) ListEmployeeDocuments(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
-	d.logger.Infof("list employee documents by employee ID %d", request.EmployeeID)
+	d.logger.Infof("list employee documents by employee phone number %s", request.EmployeePhoneNumber)
 
 	documents, err := d.documentStorage.List(ctx, request)
 	if err != nil {

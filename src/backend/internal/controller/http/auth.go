@@ -1,10 +1,13 @@
 package http
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 
 	"course/internal/model"
 	"course/internal/service"
@@ -18,7 +21,7 @@ type authController struct {
 }
 
 type registerRequest struct {
-	PhoneNumber string `json:"phoneNumber,omitempty"`
+	PhoneNumber string `json:"phoneNumber"`
 	Name        string `json:"name"`
 	Surname     string `json:"surname"`
 	CompanyID   int64  `json:"companyID"`
@@ -28,43 +31,44 @@ type registerRequest struct {
 }
 
 func (a *authController) Register(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "*")
-	c.Header("Access-Control-Allow-Headers", "*")
+	disableCors(c)
 
 	var req registerRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		a.l.Errorf("incorrect request body: %s", err.Error())
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect request body"})
 		return
 	}
 
 	birthDate, err := time.Parse("02.01.2006", req.DateOfBirth)
 	if err != nil {
 		a.l.Errorf("incorrect request body date of birth: %s", err.Error())
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect request body date of birth"})
 		return
 	}
 
-	employee, err := a.authService.RegisterEmployee(c.Request.Context(), &dto.RegisterEmployeeRequest{
-		PhoneNumber: req.PhoneNumber,
-		FullName:    req.Name + " " + req.Surname,
-		CompanyID:   req.CompanyID,
-		Post:        model.ToPostTypeFromString(req.Post).Int(),
-		Password: &model.Password{
-			Value:    req.Password,
-			IsHashed: false,
-		},
-		DateOfBirth: &birthDate,
+	tokens, err := a.authService.RegisterEmployee(c.Request.Context(), &dto.RegisterEmployeeRequest{
+		PhoneNumber:    req.PhoneNumber,
+		FullName:       req.Name + " " + req.Surname,
+		CompanyID:      req.CompanyID,
+		Post:           model.ToPostTypeFromString(req.Post).Int(),
+		Password:       req.Password,
+		RefreshToken:   "",
+		TokenExpiredAt: nil,
+		DateOfBirth:    &birthDate,
 	})
 	if err != nil {
-		a.l.Errorf("can`t register employee: %s", err.Error())
-		c.AbortWithStatus(http.StatusInternalServerError)
+		err = fmt.Errorf("can`t register employee: %w", err)
+		a.l.Errorf(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"accessToken": employee.Password})
+	c.JSON(http.StatusOK, gin.H{
+		"accessToken":  tokens.AccessToken,
+		"refreshToken": tokens.RefreshToken,
+	})
 }
 
 type loginRequest struct {
@@ -73,30 +77,68 @@ type loginRequest struct {
 }
 
 func (a *authController) Login(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "*")
-	c.Header("Access-Control-Allow-Headers", "*")
+	disableCors(c)
 
 	var req loginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		a.l.Errorf("incorrect request body: %s", err.Error())
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect request body"})
 		return
 	}
 
-	err := a.authService.LoginEmployee(c.Request.Context(), &dto.LoginEmployeeRequest{
+	tokens, err := a.authService.LoginEmployee(c.Request.Context(), &dto.LoginEmployeeRequest{
 		PhoneNumber: req.PhoneNumber,
-		Password: &model.Password{
-			Value:    req.Password,
-			IsHashed: false,
-		},
+		Password:    req.Password,
 	})
 	if err != nil {
 		a.l.Errorf("can`t login employee: %s", err.Error())
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Can`t login employee"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{
+		"accessToken":  tokens.AccessToken,
+		"refreshToken": tokens.RefreshToken,
+	})
+}
+
+type refreshTokensRequest struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+func (a *authController) RefreshTokens(c *gin.Context) {
+	disableCors(c)
+
+	var req refreshTokensRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		a.l.Errorf("incorrect request body: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect request body"})
+		return
+	}
+
+	phoneNumber, err := a.authService.VerifyEmployeeAccessToken(c.Request.Context(), &dto.VerifyEmployeeAccessTokenRequest{AccessToken: req.AccessToken})
+	if err != nil && !errors.Is(err, jwt.ErrTokenExpired) && !errors.Is(err, jwt.ErrTokenNotValidYet) {
+		a.l.Errorf("failed to verify token: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		return
+	}
+	fmt.Println(phoneNumber)
+
+	tokens, err := a.authService.RefreshTokens(c.Request.Context(), &dto.RefreshEmployeeTokensRequest{
+		PhoneNumber:  phoneNumber,
+		RefreshToken: req.RefreshToken,
+	})
+	if err != nil {
+		a.l.Errorf("refresh tokens for employee: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Can`t refresh tokens"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"accessToken":  tokens.AccessToken,
+		"refreshToken": tokens.RefreshToken,
+	})
 }

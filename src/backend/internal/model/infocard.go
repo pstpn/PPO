@@ -14,8 +14,8 @@ func (i *InfoCardID) Int() int64 {
 }
 
 type InfoCard struct {
-	ID                *InfoCardID
-	CreatedEmployeeID *EmployeeID
-	IsConfirmed       bool
-	CreatedDate       *time.Time
+	ID                         *InfoCardID
+	CreatedEmployeePhoneNumber string
+	IsConfirmed                bool
+	CreatedDate                *time.Time
 }

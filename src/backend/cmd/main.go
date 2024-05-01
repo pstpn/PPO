@@ -11,6 +11,7 @@ import (
 	"course/internal/controller/http"
 	"course/internal/service"
 	storage "course/internal/storage/postgres"
+	"course/pkg/jwt"
 	"course/pkg/logger"
 	httpserver "course/pkg/server/http"
 	"course/pkg/storage/postgres"
@@ -19,6 +20,12 @@ import (
 func main() {
 	// Read config
 	c, err := config.NewConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create auth token manager
+	tokenManager, err := jwt.NewManager(c.Auth.SigningKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,17 +62,31 @@ func main() {
 	//documentStorage := storage.NewDocumentStorage(db)
 	employeeStorage := storage.NewEmployeeStorage(db)
 	//fieldStorage := storage.NewFieldStorage(db)
-	//infoCardStorage := storage.NewInfoCardStorage(db)
+	infoCardStorage := storage.NewInfoCardStorage(db)
 	//photoMetaStorage := storage.NewPhotoMetaStorage(db)
 	//
 	//photoDataStorage := mdb.NewPhotoDataStorage(mongo)
+
+	// Create services
+	authService := service.NewAuthService(
+		l,
+		employeeStorage,
+		tokenManager,
+		c.Auth.AccessTokenTTL,
+		c.Auth.RefreshTokenTTL,
+	)
+	infoCardService := service.NewInfoCardService(
+		l,
+		infoCardStorage,
+	)
 
 	// Create controller
 	handler := gin.New()
 	controller := http.NewRouter(handler)
 
 	// Set routes
-	controller.SetAuthRoute(l, service.NewAuthService(l, employeeStorage))
+	controller.SetAuthRoute(l, authService)
+	controller.SetInfoCardRoute(l, infoCardService, authService)
 
 	// Create router
 	router := httpserver.New(handler, httpserver.Port(c.HTTP.Port))

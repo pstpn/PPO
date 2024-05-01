@@ -29,6 +29,8 @@ func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.Registe
 			companyIdField,
 			postField,
 			passwordField,
+			refreshTokenField,
+			tokenExpiredAtField,
 			dateOfBirthField,
 		).
 		Values(
@@ -36,7 +38,9 @@ func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.Registe
 			request.FullName,
 			request.CompanyID,
 			model.ToPostTypeFromInt(request.Post).String(),
-			request.Password.Value,
+			request.Password,
+			request.RefreshToken,
+			request.TokenExpiredAt,
 			request.DateOfBirth,
 		).
 		Suffix(returningEmployeeColumns())
@@ -50,6 +54,25 @@ func (e *employeeStorageImpl) Register(ctx context.Context, request *dto.Registe
 	return e.rowToModel(row)
 }
 
+func (e *employeeStorageImpl) UpdateRefreshToken(ctx context.Context, request *dto.UpdateToken) error {
+	query := e.Builder.
+		Update(employeeTable).
+		Set(refreshTokenField, request.RefreshToken).
+		Set(tokenExpiredAtField, request.TokenExpiredAt).
+		Where(squirrel.Eq{phoneNumberField: request.PhoneNumber})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = e.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
 	query := e.Builder.
 		Select(
@@ -59,6 +82,8 @@ func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEm
 			companyIdField,
 			postField,
 			passwordField,
+			refreshTokenField,
+			tokenExpiredAtField,
 			dateOfBirthField,
 		).
 		From(employeeTable).
@@ -92,7 +117,7 @@ func (e *employeeStorageImpl) Delete(ctx context.Context, request *dto.DeleteEmp
 
 func (e *employeeStorageImpl) rowToModel(row pgx.Row) (*model.Employee, error) {
 	var employee model.Employee
-	var hashedPassword, post string
+	var post string
 
 	err := row.Scan(
 		&employee.ID,
@@ -100,7 +125,9 @@ func (e *employeeStorageImpl) rowToModel(row pgx.Row) (*model.Employee, error) {
 		&employee.FullName,
 		&employee.CompanyID,
 		&post,
-		&hashedPassword,
+		&employee.Password,
+		&employee.RefreshToken,
+		&employee.TokenExpiredAt,
 		&employee.DateOfBirth,
 	)
 	if err != nil {
@@ -108,10 +135,6 @@ func (e *employeeStorageImpl) rowToModel(row pgx.Row) (*model.Employee, error) {
 	}
 
 	employee.Post = model.ToPostTypeFromString(post)
-	employee.Password = &model.Password{
-		Value:    hashedPassword,
-		IsHashed: true,
-	}
 
 	return &employee, nil
 }

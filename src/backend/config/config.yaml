@@ -6,6 +6,11 @@ logger:
   level: 'info'
   file: 'out.log'
 
+auth:
+  signingKey: "course"
+  accessTokenTTL: 20s
+  refreshTokenTTL: 20s
+
 http:
   port: 8081
 

@@ -11,7 +11,7 @@ type GetDocumentRequest struct {
 }
 
 type ListEmployeeDocumentsRequest struct {
-	EmployeeID int64
+	EmployeePhoneNumber string
 }
 
 type DeleteDocumentRequest struct {

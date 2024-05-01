@@ -79,7 +79,7 @@ func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmploye
 			infoCardIdField,
 			idField,
 		)).
-		Where(squirrel.Eq{createdEmployeeIdField: request.EmployeeID})
+		Where(squirrel.Eq{createdEmployeePhoneNumberField: request.EmployeePhoneNumber})
 
 	sql, args, err := query.ToSql()
 	if err != nil {

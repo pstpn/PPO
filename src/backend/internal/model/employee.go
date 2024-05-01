@@ -59,17 +59,14 @@ func (e *EmployeeID) Int() int64 {
 	return int64(*e)
 }
 
-type Password struct {
-	Value    string
-	IsHashed bool
-}
-
 type Employee struct {
-	ID          *EmployeeID
-	FullName    string
-	PhoneNumber string
-	CompanyID   *CompanyID
-	Post        *PostType
-	Password    *Password
-	DateOfBirth *time.Time
+	ID             *EmployeeID
+	FullName       string
+	PhoneNumber    string
+	CompanyID      *CompanyID
+	Post           *PostType
+	Password       string
+	RefreshToken   string
+	TokenExpiredAt *time.Time
+	DateOfBirth    *time.Time
 }

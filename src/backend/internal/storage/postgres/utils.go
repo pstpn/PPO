@@ -17,26 +17,28 @@ const (
 )
 
 const (
-	idField                = "id"
-	phoneNumberField       = "phone_number"
-	nameField              = "name"
-	cityField              = "city"
-	serialNumberField      = "serial_number"
-	infoCardIdField        = "info_card_id"
-	fullNameField          = "full_name"
-	companyIdField         = "company_id"
-	postField              = "post"
-	passwordField          = "password"
-	dateOfBirthField       = "date_of_birth"
-	documentIdField        = "document_id"
-	typeField              = "type"
-	valueField             = "value"
-	createdEmployeeIdField = "created_employee_id"
-	isConfirmedField       = "is_confirmed"
-	createdDateField       = "created_date"
-	checkpointIdField      = "checkpoint_id"
-	timeField              = "time"
-	keyField               = "key"
+	idField                         = "id"
+	phoneNumberField                = "phone_number"
+	nameField                       = "name"
+	cityField                       = "city"
+	serialNumberField               = "serial_number"
+	infoCardIdField                 = "info_card_id"
+	fullNameField                   = "full_name"
+	companyIdField                  = "company_id"
+	postField                       = "post"
+	passwordField                   = "password"
+	refreshTokenField               = "refresh_token"
+	tokenExpiredAtField             = "token_expired_at"
+	dateOfBirthField                = "date_of_birth"
+	documentIdField                 = "document_id"
+	typeField                       = "type"
+	valueField                      = "value"
+	createdEmployeePhoneNumberField = "created_employee_phone_number"
+	isConfirmedField                = "is_confirmed"
+	createdDateField                = "created_date"
+	checkpointIdField               = "checkpoint_id"
+	timeField                       = "time"
+	keyField                        = "key"
 )
 
 func fullColName(tableName, columnName string) string {
@@ -78,6 +80,8 @@ func returningEmployeeColumns() string {
 		companyIdField,
 		postField,
 		passwordField,
+		refreshTokenField,
+		tokenExpiredAtField,
 		dateOfBirthField,
 	}, ","))
 }
@@ -94,7 +98,7 @@ func returningFieldColumns() string {
 func returningInfoCardColumns() string {
 	return fmt.Sprintf("RETURNING %s", strings.Join([]string{
 		idField,
-		createdEmployeeIdField,
+		createdEmployeePhoneNumberField,
 		isConfirmedField,
 		createdDateField,
 	}, ","))
