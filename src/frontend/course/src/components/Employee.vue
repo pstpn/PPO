@@ -5,46 +5,42 @@
           id="profile-img"
           src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
           class="profile-img-card"
-       alt="Not found"/>
-      <Form @submit="handleInfoCard" :validation-schema="schema">
-        <div v-if="!created">
+          alt="Not found"
+      />
+      <div v-if="!created">
+        <Form @submit="handleInfoCard" :validation-schema="schema">
           <div class="form-group">
             <label for="phone">Номер телефона</label>
-            <Field name="phone" type="text" class="form-control" />
+            <Field name="phone" type="text" class="form-control" v-model="formData.phone" />
             <ErrorMessage name="phone" class="error-feedback" />
           </div>
           <div class="form-group">
             <label for="post">Должность</label>
-            <Field name="post" type="text" class="form-control" />
+            <Field name="post" type="text" class="form-control" v-model="formData.post" />
             <ErrorMessage name="post" class="error-feedback" />
           </div>
           <div class="form-group">
             <label for="password">Пароль</label>
-            <Field name="password" type="password" class="form-control" />
+            <Field name="password" type="password" class="form-control" v-model="formData.password" />
             <ErrorMessage name="password" class="error-feedback" />
           </div>
           <div class="form-group">
             <button class="btn btn-primary btn-block" :disabled="loading">
-              <span
-                  v-show="loading"
-                  class="spinner-border spinner-border-sm"
-              ></span>
+              <span v-show="loading" class="spinner-border spinner-border-sm"></span>
               Создать карточку
             </button>
           </div>
+        </Form>
+      </div>
+      <div v-else>
+        <div class="card-body">
+          <h5 class="card-title">Информация о пользователе</h5>
+          <p class="card-text">Номер телефона: {{ employeeInfo.phone }}</p>
+          <p class="card-text">Должность: {{ employeeInfo.post }}</p>
+          <!-- Здесь вы можете отобразить другие свойства пользователя -->
         </div>
-        <div v-else>
-          <div class="spinner-border spinner-border-sm">
-            <label for="temp">TEMP</label>
-          </div>
-        </div>
-      </Form>
-
-      <div
-          v-if="message"
-          class="alert"
-          :class="created ? 'alert-success' : 'alert-danger'"
-      >
+      </div>
+      <div v-if="message" :class="created ? 'alert-success' : 'alert-danger'" class="alert">
         {{ message }}
       </div>
     </div>
@@ -52,11 +48,8 @@
 </template>
 
 <script>
-import EmployeeService from "../services/employee.service";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
-import {Form, Field, ErrorMessage} from "vee-validate";
-
-let ok;
 
 export default {
   name: "Employee",
@@ -66,59 +59,48 @@ export default {
     ErrorMessage,
   },
   data() {
-    const schema = yup.object().shape({
-      phone: yup
-          .string()
-          .required("Введите номер телефона")
-          .min(11, "Некорректный номер телефона"),
-      post: yup
-          .string()
-          .required("Введите должность"),
-      password: yup
-          .string()
-          .required("Введите пароль")
-    });
     return {
-      created: false,
       loading: false,
       message: "",
-      schema,
+      schema: yup.object().shape({
+        phone: yup.string().required("Введите номер телефона").min(11, "Некорректный номер телефона"),
+        post: yup.string().required("Введите должность"),
+        password: yup.string().required("Введите пароль"),
+      }),
+      formData: {
+        phone: "",
+        post: "",
+        password: ""
+      }
     };
   },
-  mounted() {
-    // UserService.getHomePage().then(
-    //     (response) => {
-    //       this.content = response.data;
-    //     },
-    //     (error) => {
-    //       this.content =
-    //           (error.response &&
-    //               error.response.data &&
-    //               error.response.data.message) ||
-    //           error.message ||
-    //           error.toString();
-    //     }
-    // );
-    EmployeeService.createEmployeeInfoCard().then(
-        (response) => {
-          this.content = response.data;
-        }
-    );
-    EmployeeService.getEmployeeInfoCard().then(
-        (response) => {
-          this.content = response.data;
-        }
-    );
+  computed: {
+    created() {
+      return this.$store.state.created;
+    },
+    employeeInfo() {
+      return this.$store.state.employeeInfo;
+    },
   },
   methods: {
-    handleInfoCard(data) {
-      if (ok === "true") {
-        this.message = "OKOKOK";
+    handleInfoCard() {
+      if (!this.created) {
+        this.createEmployeeInfoCard();
       }
-      else {
-        this.message = "ERROR";
-        ok = "true";
-      }
+    },
+    createEmployeeInfoCard() {
+      this.loading = true;
+      this.$store.dispatch("employee/createEmployeeInfoCard", this.formData).then(
+          () => {
+            this.loading = false;
+            this.$store.state.created = true;
+            this.$router.push("/infoсard");
+          },
+          (error) => {
+            this.loading = false;
+            this.message = error.message || error.toString();
+          }
+      );
     },
   },
 };

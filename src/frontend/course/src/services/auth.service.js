@@ -7,7 +7,14 @@ class AuthService {
         return axios
             .post(API_URL + 'login', {
                 phoneNumber: user.phoneNumber,
-                password: user.password
+                password: user.password,
+            })
+            .then(response => {
+                if (response.data) {
+                    localStorage.setItem('user', JSON.stringify(response.data));
+                }
+
+                return response.data
             });
     }
 
@@ -26,7 +33,7 @@ class AuthService {
             dateOfBirth: user.dateOfBirth,
         })
         .then(response => {
-            if (response.data.accessToken) {
+            if (response.data) {
                 localStorage.setItem('user', JSON.stringify(response.data));
             }
 

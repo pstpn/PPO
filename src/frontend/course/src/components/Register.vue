@@ -124,9 +124,9 @@ export default {
     },
   },
   mounted() {
-    // if (this.loggedIn) {
-    //   this.$router.push('/home');
-    // }
+    if (this.loggedIn) {
+      this.$router.push('/home');
+    }
   },
   methods: {
     handleRegister(user) {
@@ -134,15 +134,13 @@ export default {
       this.successful = false;
       this.loading = true;
 
-      console.log(user);
-
       this.$store.dispatch("auth/register", user).then(
           (data) => {
             this.message = "Success";
             this.successful = true;
             this.loading = false;
 
-            // this.$router.push('/home')
+            this.$router.push('/home')
           },
           (error) => {
             this.message =

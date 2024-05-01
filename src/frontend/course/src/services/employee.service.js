@@ -4,12 +4,11 @@ import authHeader from './auth-header';
 const API_URL = 'http://localhost:8081/api/v1/';
 
 class UserService {
-    // getHomePage() {
-    //     return axios.get(API_URL + 'home');
-    // }
-
     createEmployeeInfoCard() {
-        return axios.post(API_URL + 'infoCards', { headers: authHeader() });
+        return axios.post(API_URL + 'infoCards', { headers: authHeader() })
+            .then(response => {
+                return response.data;
+            });
     }
 
     getEmployeeInfoCard() {

@@ -75,8 +75,17 @@ export default {
     handleLogin(user) {
       this.loading = true;
 
-      this.$store.dispatch("auth/login", user).then(
+      const newUser = {
+        phoneNumber: user.phoneNumber,
+        password: {
+          value: user.password,
+          isHashed: false
+        }
+      };
+
+      this.$store.dispatch("auth/login", newUser).then(
           () => {
+            this.$store.
             this.$router.push("/home");
           },
           (error) => {
