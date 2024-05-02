@@ -14,6 +14,7 @@ type TokenManager interface {
 	NewJWT(id string, createdAt time.Time) (string, error)
 	Parse(accessToken string, expiredDuration time.Duration) (string, error)
 	NewRefreshToken() (string, error)
+	RefreshTokenExpired(expiredTime *time.Time) error
 }
 
 type Manager struct {
@@ -76,4 +77,11 @@ func (m *Manager) NewRefreshToken() (string, error) {
 	}
 
 	return fmt.Sprintf("%x", b), nil
+}
+
+func (m *Manager) RefreshTokenExpired(expiredTime *time.Time) error {
+	if expiredTime.Before(time.Now().UTC()) {
+		return jwt.ErrTokenExpired
+	}
+	return nil
 }

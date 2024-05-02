@@ -125,12 +125,16 @@ func (a *authController) RefreshTokens(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
 		return
 	}
-	fmt.Println(phoneNumber)
 
 	tokens, err := a.authService.RefreshTokens(c.Request.Context(), &dto.RefreshEmployeeTokensRequest{
 		PhoneNumber:  phoneNumber,
 		RefreshToken: req.RefreshToken,
 	})
+	if errors.Is(err, jwt.ErrTokenExpired) {
+		a.l.Warnf("expired refresh token: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Expired refresh token"})
+		return
+	}
 	if err != nil {
 		a.l.Errorf("refresh tokens for employee: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Can`t refresh tokens"})

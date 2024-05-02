@@ -58,7 +58,7 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 		a.logger.Errorf("create refresh token for employee: %s", err.Error())
 		return nil, fmt.Errorf("create refresh token for employee: %w", err)
 	}
-	refreshTokenExpiredAt := time.Now().Add(a.refreshTokenTTL)
+	refreshTokenExpiredAt := time.Now().UTC().Add(a.refreshTokenTTL)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -112,7 +112,7 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 		a.logger.Errorf("create refresh token for employee: %s", err.Error())
 		return nil, fmt.Errorf("create refresh token for employee: %w", err)
 	}
-	refreshTokenExpiredAt := time.Now().Add(a.refreshTokenTTL)
+	refreshTokenExpiredAt := time.Now().UTC().Add(a.refreshTokenTTL)
 
 	err = a.employeeStorage.UpdateRefreshToken(ctx, &dto.UpdateToken{
 		PhoneNumber:    employee.PhoneNumber,
@@ -165,13 +165,19 @@ func (a *authServiceImpl) RefreshTokens(ctx context.Context, request *dto.Refres
 		a.logger.Errorf("invalid refresh token")
 		return nil, fmt.Errorf("invalid refresh token")
 	}
+	if err = a.tokenManager.RefreshTokenExpired(employee.TokenExpiredAt); err != nil {
+		a.logger.Warnf("refresh token expired")
+		// Unwrap, because we need to check `github.com/golang-jwt/jwt/v5` library errors
+		// using `errors.Is()` method
+		return nil, err
+	}
 
 	refreshToken, err := a.tokenManager.NewRefreshToken()
 	if err != nil {
 		a.logger.Errorf("create refresh token for employee: %s", err.Error())
 		return nil, fmt.Errorf("create refresh token for employee: %w", err)
 	}
-	tokenExpiredAt := time.Now().Add(a.refreshTokenTTL)
+	tokenExpiredAt := time.Now().UTC().Add(a.refreshTokenTTL)
 
 	err = a.employeeStorage.UpdateRefreshToken(ctx, &dto.UpdateToken{
 		PhoneNumber:    employee.PhoneNumber,
