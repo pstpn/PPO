@@ -73,19 +73,13 @@ export default {
   },
   methods: {
     handleLogin(user) {
+      this.message = "";
       this.loading = true;
 
-      const newUser = {
-        phoneNumber: user.phoneNumber,
-        password: {
-          value: user.password,
-          isHashed: false
-        }
-      };
-
-      this.$store.dispatch("auth/login", newUser).then(
+      this.$store.dispatch("auth/login", user).then(
           () => {
-            this.$store.
+            this.message = "Success"
+
             this.$router.push("/home");
           },
           (error) => {

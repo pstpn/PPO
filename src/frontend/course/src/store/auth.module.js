@@ -36,6 +36,18 @@ export const auth = {
                     return Promise.reject(error);
                 }
             );
+        },
+        refreshTokens({ commit }, user) {
+            return AuthService.refreshTokens(user).then(
+                response => {
+                    commit('loginSuccess', user);
+                    return Promise.resolve(response.data);
+                },
+                error => {
+                    commit('loginFailure');
+                    return Promise.reject(error);
+                }
+            )
         }
     },
     mutations: {

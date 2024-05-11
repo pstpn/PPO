@@ -40,6 +40,20 @@ class AuthService {
             return response.data;
         });
     }
+
+    refreshTokens(user) {
+        return axios.post(API_URL + 'refresh', {
+            accessToken: user.accessToken,
+            refreshToken: user.refreshToken,
+        })
+        .then(response => {
+            if (response.data) {
+                localStorage.setItem('user', JSON.stringify(response.data));
+            }
+
+            return response.data;
+        })
+    }
 }
 
 export default new AuthService();

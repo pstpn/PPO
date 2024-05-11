@@ -135,12 +135,12 @@ export default {
       this.loading = true;
 
       this.$store.dispatch("auth/register", user).then(
-          (data) => {
+          () => {
             this.message = "Success";
             this.successful = true;
             this.loading = false;
 
-            this.$router.push('/home')
+            this.$router.push("/home");
           },
           (error) => {
             this.message =
