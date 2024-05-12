@@ -34,6 +34,36 @@ func (_m *EmployeeStorage) Delete(ctx context.Context, request *dto.DeleteEmploy
 	return r0
 }
 
+// GetByInfoCardID provides a mock function with given fields: ctx, request
+func (_m *EmployeeStorage) GetByInfoCardID(ctx context.Context, request *dto.GetEmployeeByInfoCardIDRequest) (*model.Employee, error) {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByInfoCardID")
+	}
+
+	var r0 *model.Employee
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetEmployeeByInfoCardIDRequest) (*model.Employee, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetEmployeeByInfoCardIDRequest) *model.Employee); ok {
+		r0 = rf(ctx, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Employee)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetEmployeeByInfoCardIDRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByPhone provides a mock function with given fields: ctx, request
 func (_m *EmployeeStorage) GetByPhone(ctx context.Context, request *dto.GetEmployeeRequest) (*model.Employee, error) {
 	ret := _m.Called(ctx, request)

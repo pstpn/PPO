@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"strconv"
 	"time"
 
+	"course/internal/model"
 	"course/internal/service/dto"
 	"course/internal/storage"
 	"course/pkg/jwt"
@@ -15,13 +17,14 @@ import (
 type AuthService interface {
 	RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) (*tokens, error)
 	LoginEmployee(ctx context.Context, request *dto.LoginEmployeeRequest) (*tokens, error)
-	VerifyEmployeeAccessToken(ctx context.Context, request *dto.VerifyEmployeeAccessTokenRequest) (string, error)
+	VerifyEmployeeAccessToken(ctx context.Context, request *dto.VerifyEmployeeAccessTokenRequest) (*model.Payload, error)
 	RefreshTokens(ctx context.Context, request *dto.RefreshEmployeeTokensRequest) (*tokens, error)
 }
 
 type authServiceImpl struct {
 	logger          logger.Interface
 	employeeStorage storage.EmployeeStorage
+	infoCardStorage storage.InfoCardStorage
 
 	tokenManager    jwt.TokenManager
 	accessTokenTTL  time.Duration
@@ -31,6 +34,7 @@ type authServiceImpl struct {
 func NewAuthService(
 	logger logger.Interface,
 	employeeStorage storage.EmployeeStorage,
+	infoCardStorage storage.InfoCardStorage,
 	tokenManager jwt.TokenManager,
 	accessTokenTTL time.Duration,
 	refreshTokenTTL time.Duration,
@@ -38,6 +42,7 @@ func NewAuthService(
 	return &authServiceImpl{
 		logger:          logger,
 		employeeStorage: employeeStorage,
+		infoCardStorage: infoCardStorage,
 
 		tokenManager:    tokenManager,
 		accessTokenTTL:  accessTokenTTL,
@@ -81,7 +86,18 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 		return nil, fmt.Errorf("create employee: %w", err)
 	}
 
-	accessToken, err := a.tokenManager.NewJWT(employee.PhoneNumber, time.Now())
+	now := time.Now()
+	infoCard, err := a.infoCardStorage.Create(ctx, &dto.CreateInfoCardRequest{
+		EmployeeID:  employee.ID.Int(),
+		IsConfirmed: false,
+		CreatedDate: &now,
+	})
+	if err != nil {
+		a.logger.Errorf("create employee info card: %s", err.Error())
+		return nil, fmt.Errorf("create employee info card: %w", err)
+	}
+
+	accessToken, err := a.tokenManager.NewJWT(&model.Payload{InfoCardID: infoCard.ID.String()}, time.Now())
 	if err != nil {
 		a.logger.Errorf("create access token for employee: %s", err.Error())
 		return nil, fmt.Errorf("create access token for employee: %w", err)
@@ -107,6 +123,12 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 		return nil, fmt.Errorf("wrong password: %w", err)
 	}
 
+	infoCard, err := a.infoCardStorage.GetByEmployeeID(ctx, &dto.GetInfoCardByEmployeeIDRequest{EmployeeID: employee.ID.Int()})
+	if err != nil {
+		a.logger.Errorf("get info card by employee: %s", err.Error())
+		return nil, fmt.Errorf("get info card by employee: %w", err)
+	}
+
 	refreshToken, err := a.tokenManager.NewRefreshToken()
 	if err != nil {
 		a.logger.Errorf("create refresh token for employee: %s", err.Error())
@@ -115,7 +137,7 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 	refreshTokenExpiredAt := time.Now().UTC().Add(a.refreshTokenTTL)
 
 	err = a.employeeStorage.UpdateRefreshToken(ctx, &dto.UpdateToken{
-		PhoneNumber:    employee.PhoneNumber,
+		EmployeeID:     employee.ID.Int(),
 		RefreshToken:   refreshToken,
 		TokenExpiredAt: &refreshTokenExpiredAt,
 	})
@@ -124,7 +146,7 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 		return nil, fmt.Errorf("update employee refresh token: %w", err)
 	}
 
-	accessToken, err := a.tokenManager.NewJWT(employee.PhoneNumber, time.Now())
+	accessToken, err := a.tokenManager.NewJWT(&model.Payload{InfoCardID: infoCard.ID.String()}, time.Now())
 	if err != nil {
 		a.logger.Errorf("update access token for employee: %s", err.Error())
 		return nil, fmt.Errorf("update access token for employee: %w", err)
@@ -136,30 +158,27 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 	}, nil
 }
 
-func (a *authServiceImpl) VerifyEmployeeAccessToken(ctx context.Context, request *dto.VerifyEmployeeAccessTokenRequest) (string, error) {
+func (a *authServiceImpl) VerifyEmployeeAccessToken(ctx context.Context, request *dto.VerifyEmployeeAccessTokenRequest) (*model.Payload, error) {
 	a.logger.Infof("verify employee access token")
 
-	phoneNumber, err := a.tokenManager.Parse(request.AccessToken, a.accessTokenTTL)
+	payload := &model.Payload{}
+	err := a.tokenManager.Parse(request.AccessToken, a.accessTokenTTL, payload)
 	if err != nil {
 		// Unwrap, because we need to check `github.com/golang-jwt/jwt/v5` library errors
 		// using `errors.Is()` method
-		return phoneNumber, err
+		return payload, err
 	}
 
-	return phoneNumber, nil
+	return payload, nil
 }
 
 func (a *authServiceImpl) RefreshTokens(ctx context.Context, request *dto.RefreshEmployeeTokensRequest) (*tokens, error) {
-	a.logger.Infof("refresh employee tokens")
+	a.logger.Infof("refresh tokens for employee with %d infoCard id", request.InfoCardID)
 
-	employee, err := a.employeeStorage.GetByPhone(ctx, &dto.GetEmployeeRequest{PhoneNumber: request.PhoneNumber})
+	employee, err := a.employeeStorage.GetByInfoCardID(ctx, &dto.GetEmployeeByInfoCardIDRequest{InfoCardID: request.InfoCardID})
 	if err != nil {
 		a.logger.Errorf("get employee: %s", err.Error())
 		return nil, fmt.Errorf("get employee: %w", err)
-	}
-	if employee.PhoneNumber != request.PhoneNumber {
-		a.logger.Errorf("invalid phone number")
-		return nil, fmt.Errorf("invalid phone number")
 	}
 	if employee.RefreshToken != request.RefreshToken {
 		a.logger.Errorf("invalid refresh token")
@@ -180,7 +199,7 @@ func (a *authServiceImpl) RefreshTokens(ctx context.Context, request *dto.Refres
 	tokenExpiredAt := time.Now().UTC().Add(a.refreshTokenTTL)
 
 	err = a.employeeStorage.UpdateRefreshToken(ctx, &dto.UpdateToken{
-		PhoneNumber:    employee.PhoneNumber,
+		EmployeeID:     employee.ID.Int(),
 		RefreshToken:   refreshToken,
 		TokenExpiredAt: &tokenExpiredAt,
 	})
@@ -189,7 +208,7 @@ func (a *authServiceImpl) RefreshTokens(ctx context.Context, request *dto.Refres
 		return nil, fmt.Errorf("update employee refresh token: %w", err)
 	}
 
-	accessToken, err := a.tokenManager.NewJWT(employee.PhoneNumber, time.Now())
+	accessToken, err := a.tokenManager.NewJWT(&model.Payload{InfoCardID: strconv.Itoa(int(request.InfoCardID))}, time.Now())
 	if err != nil {
 		a.logger.Errorf("update access token for employee: %s", err.Error())
 		return nil, fmt.Errorf("update access token for employee: %w", err)

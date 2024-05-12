@@ -18,10 +18,10 @@ type PhotoService interface {
 
 type photoServiceImpl struct {
 	logger       logger.Interface
-	photoStorage storage.PhotoStorage
+	photoStorage storage.PhotoStorages
 }
 
-func NewPhotoService(logger logger.Interface, photoStorage storage.PhotoStorage) PhotoService {
+func NewPhotoService(logger logger.Interface, photoStorage storage.PhotoStorages) PhotoService {
 	return &photoServiceImpl{
 		logger:       logger,
 		photoStorage: photoStorage,

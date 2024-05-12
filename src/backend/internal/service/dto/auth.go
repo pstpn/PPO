@@ -16,7 +16,7 @@ type RegisterEmployeeRequest struct {
 }
 
 type UpdateToken struct {
-	PhoneNumber    string
+	EmployeeID     int64
 	RefreshToken   string
 	TokenExpiredAt *time.Time
 }
@@ -31,6 +31,6 @@ type VerifyEmployeeAccessTokenRequest struct {
 }
 
 type RefreshEmployeeTokensRequest struct {
-	PhoneNumber  string
+	InfoCardID   int64
 	RefreshToken string
 }

@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type PostType int64
 
@@ -57,6 +60,10 @@ func ToEmployeeID(id int64) *EmployeeID {
 
 func (e *EmployeeID) Int() int64 {
 	return int64(*e)
+}
+
+func (e *EmployeeID) String() string {
+	return strconv.FormatInt(e.Int(), 10)
 }
 
 type Employee struct {

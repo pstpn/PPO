@@ -13,7 +13,6 @@ import (
 type DocumentService interface {
 	CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error)
 	GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error)
-	ListEmployeeDocuments(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error)
 	DeleteDocument(ctx context.Context, request *dto.DeleteDocumentRequest) error
 }
 
@@ -51,18 +50,6 @@ func (d *documentServiceImpl) GetDocument(ctx context.Context, request *dto.GetD
 	}
 
 	return document, nil
-}
-
-func (d *documentServiceImpl) ListEmployeeDocuments(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
-	d.logger.Infof("list employee documents by employee phone number %s", request.EmployeePhoneNumber)
-
-	documents, err := d.documentStorage.List(ctx, request)
-	if err != nil {
-		d.logger.Errorf("list employee documents: %s", err.Error())
-		return nil, fmt.Errorf("list employee documents: %w", err)
-	}
-
-	return documents, nil
 }
 
 func (d *documentServiceImpl) DeleteDocument(ctx context.Context, request *dto.DeleteDocumentRequest) error {

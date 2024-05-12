@@ -149,13 +149,13 @@ func Test_fieldServiceImpl_CreateCardField(t *testing.T) {
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.f.CreateCardField(tt.args.ctx, tt.args.request)
+			got, err := tt.f.CreateDocumentField(tt.args.ctx, tt.args.request)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("fieldServiceImpl.CreateCardField() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("fieldServiceImpl.CreateDocumentField() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("fieldServiceImpl.CreateCardField() = %v, want %v", got, tt.want)
+				t.Errorf("fieldServiceImpl.CreateDocumentField() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -295,13 +295,13 @@ func Test_fieldServiceImpl_GetCardField(t *testing.T) {
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.f.GetCardField(tt.args.ctx, tt.args.request)
+			got, err := tt.f.GetDocumentField(tt.args.ctx, tt.args.request)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("fieldServiceImpl.GetCardField() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("fieldServiceImpl.GetDocumentField() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("fieldServiceImpl.GetCardField() = %v, want %v", got, tt.want)
+				t.Errorf("fieldServiceImpl.GetDocumentField() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -423,7 +423,7 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 
 	for _, tt := range tests {
 		fieldMockStorage.
-			On("ListCardFields",
+			On("ListDocumentFields",
 				tt.storages.fieldStorage.storageArgs.ctx,
 				tt.storages.fieldStorage.storageArgs.request,
 			).
@@ -433,13 +433,13 @@ func Test_fieldServiceImpl_ListCardFields(t *testing.T) {
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.f.ListCardFields(tt.args.ctx, tt.args.request)
+			got, err := tt.f.ListDocumentFields(tt.args.ctx, tt.args.request)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("fieldServiceImpl.ListCardFields() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("fieldServiceImpl.ListDocumentFields() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("fieldServiceImpl.ListCardFields() = %v, want %v", got, tt.want)
+				t.Errorf("fieldServiceImpl.ListDocumentFields() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -546,8 +546,8 @@ func Test_fieldServiceImpl_DeleteCardField(t *testing.T) {
 			).
 			Once()
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.f.DeleteCardField(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
-				t.Errorf("fieldServiceImpl.DeleteCardField() error = %v, wantErr %v", err, tt.wantErr)
+			if err := tt.f.DeleteDocumentField(tt.args.ctx, tt.args.request); (err != nil) != tt.wantErr {
+				t.Errorf("fieldServiceImpl.DeleteDocumentField() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

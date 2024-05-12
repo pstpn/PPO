@@ -9,15 +9,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 
+	httputils "course/internal/controller/http/utils"
 	"course/internal/model"
 	"course/internal/service"
 	"course/internal/service/dto"
 	"course/pkg/logger"
 )
 
-type authController struct {
+type AuthController struct {
 	l           logger.Interface
 	authService service.AuthService
+}
+
+func NewAuthController(l logger.Interface, authService service.AuthService) *AuthController {
+	return &AuthController{
+		l:           l,
+		authService: authService,
+	}
 }
 
 type registerRequest struct {
@@ -30,8 +38,8 @@ type registerRequest struct {
 	DateOfBirth string `json:"dateOfBirth"`
 }
 
-func (a *authController) Register(c *gin.Context) {
-	disableCors(c)
+func (a *AuthController) Register(c *gin.Context) {
+	httputils.DisableCors(c)
 
 	var req registerRequest
 
@@ -61,7 +69,7 @@ func (a *authController) Register(c *gin.Context) {
 	if err != nil {
 		err = fmt.Errorf("can`t register employee: %w", err)
 		a.l.Errorf(err.Error())
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to register employee"})
 		return
 	}
 
@@ -76,8 +84,8 @@ type loginRequest struct {
 	Password    string `json:"password"`
 }
 
-func (a *authController) Login(c *gin.Context) {
-	disableCors(c)
+func (a *AuthController) Login(c *gin.Context) {
+	httputils.DisableCors(c)
 
 	var req loginRequest
 
@@ -108,8 +116,8 @@ type refreshTokensRequest struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
-func (a *authController) RefreshTokens(c *gin.Context) {
-	disableCors(c)
+func (a *AuthController) RefreshTokens(c *gin.Context) {
+	httputils.DisableCors(c)
 
 	var req refreshTokensRequest
 
@@ -119,15 +127,21 @@ func (a *authController) RefreshTokens(c *gin.Context) {
 		return
 	}
 
-	phoneNumber, err := a.authService.VerifyEmployeeAccessToken(c.Request.Context(), &dto.VerifyEmployeeAccessTokenRequest{AccessToken: req.AccessToken})
+	payload, err := a.authService.VerifyEmployeeAccessToken(c.Request.Context(), &dto.VerifyEmployeeAccessTokenRequest{AccessToken: req.AccessToken})
 	if err != nil && !errors.Is(err, jwt.ErrTokenExpired) && !errors.Is(err, jwt.ErrTokenNotValidYet) {
 		a.l.Errorf("failed to verify token: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
 		return
 	}
+	infoCardID, err := payload.GetInfoCardID()
+	if err != nil {
+		a.l.Errorf("failed to parse infoCard id from payload: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		return
+	}
 
 	tokens, err := a.authService.RefreshTokens(c.Request.Context(), &dto.RefreshEmployeeTokensRequest{
-		PhoneNumber:  phoneNumber,
+		InfoCardID:   infoCardID,
 		RefreshToken: req.RefreshToken,
 	})
 	if errors.Is(err, jwt.ErrTokenExpired) {

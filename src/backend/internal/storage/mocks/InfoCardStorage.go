@@ -64,8 +64,38 @@ func (_m *InfoCardStorage) Delete(ctx context.Context, request *dto.DeleteInfoCa
 	return r0
 }
 
+// GetByEmployeeID provides a mock function with given fields: ctx, request
+func (_m *InfoCardStorage) GetByEmployeeID(ctx context.Context, request *dto.GetInfoCardByEmployeeIDRequest) (*model.InfoCard, error) {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByEmployeeID")
+	}
+
+	var r0 *model.InfoCard
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetInfoCardByEmployeeIDRequest) (*model.InfoCard, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetInfoCardByEmployeeIDRequest) *model.InfoCard); ok {
+		r0 = rf(ctx, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.InfoCard)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetInfoCardByEmployeeIDRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByID provides a mock function with given fields: ctx, request
-func (_m *InfoCardStorage) GetByID(ctx context.Context, request *dto.GetInfoCardRequest) (*model.InfoCard, error) {
+func (_m *InfoCardStorage) GetByID(ctx context.Context, request *dto.GetInfoCardByIDRequest) (*model.InfoCard, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -74,10 +104,10 @@ func (_m *InfoCardStorage) GetByID(ctx context.Context, request *dto.GetInfoCard
 
 	var r0 *model.InfoCard
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetInfoCardRequest) (*model.InfoCard, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetInfoCardByIDRequest) (*model.InfoCard, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetInfoCardRequest) *model.InfoCard); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetInfoCardByIDRequest) *model.InfoCard); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
@@ -85,7 +115,7 @@ func (_m *InfoCardStorage) GetByID(ctx context.Context, request *dto.GetInfoCard
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetInfoCardRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetInfoCardByIDRequest) error); ok {
 		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)

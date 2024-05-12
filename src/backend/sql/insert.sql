@@ -13,11 +13,11 @@ values ('123', 'aaa', 1, 'Сотрудник', '123', '24.04.2004'),
 select *
 from employee;
 
-insert into info_card(created_employee_phone_number, is_confirmed, created_date)
-values ('123', false, '21.02.2003'),
-       ('321', false, '22.02.2003'),
-       ('444', true, '11.02.2003'),
-       ('444', true, '20.02.2003');
+insert into info_card(created_employee_id, is_confirmed, created_date)
+values (1, false, '21.02.2003'),
+       (2, false, '22.02.2003'),
+       (3, true, '11.02.2003'),
+       (4, true, '20.02.2003');
 
 select *
 from info_card;

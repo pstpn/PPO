@@ -24,12 +24,12 @@ func (i *infoCardStorageImpl) Create(ctx context.Context, request *dto.CreateInf
 	query := i.Builder.
 		Insert(infoCardTable).
 		Columns(
-			createdEmployeePhoneNumberField,
+			createdEmployeeIDField,
 			isConfirmedField,
 			createdDateField,
 		).
 		Values(
-			request.EmployeePhoneNumber,
+			request.EmployeeID,
 			request.IsConfirmed,
 			request.CreatedDate,
 		).
@@ -62,11 +62,11 @@ func (i *infoCardStorageImpl) Validate(ctx context.Context, request *dto.Validat
 	return nil
 }
 
-func (i *infoCardStorageImpl) GetByID(ctx context.Context, request *dto.GetInfoCardRequest) (*model.InfoCard, error) {
+func (i *infoCardStorageImpl) GetByID(ctx context.Context, request *dto.GetInfoCardByIDRequest) (*model.InfoCard, error) {
 	query := i.Builder.
 		Select(
 			idField,
-			createdEmployeePhoneNumberField,
+			createdEmployeeIDField,
 			isConfirmedField,
 			createdDateField,
 		).
@@ -82,11 +82,31 @@ func (i *infoCardStorageImpl) GetByID(ctx context.Context, request *dto.GetInfoC
 	return i.rowToModel(row)
 }
 
+func (i *infoCardStorageImpl) GetByEmployeeID(ctx context.Context, request *dto.GetInfoCardByEmployeeIDRequest) (*model.InfoCard, error) {
+	query := i.Builder.
+		Select(
+			idField,
+			createdEmployeeIDField,
+			isConfirmedField,
+			createdDateField,
+		).
+		From(infoCardTable).
+		Where(squirrel.Eq{createdEmployeeIDField: request.EmployeeID})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	row := i.Pool.QueryRow(ctx, sql, args...)
+
+	return i.rowToModel(row)
+}
+
 func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
 	query := i.Builder.
 		Select(
 			fullColName(infoCardTable, idField),
-			createdEmployeePhoneNumberField,
+			createdEmployeeIDField,
 			isConfirmedField,
 			createdDateField,
 		).
@@ -94,8 +114,8 @@ func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCar
 		Join(on(
 			infoCardTable,
 			employeeTable,
-			createdEmployeePhoneNumberField,
-			phoneNumberField,
+			createdEmployeeIDField,
+			idField,
 		))
 
 	query = request.Pagination.ToSQL(query)
@@ -143,7 +163,7 @@ func (i *infoCardStorageImpl) rowToModel(row pgx.Row) (*model.InfoCard, error) {
 	var infoCard model.InfoCard
 	err := row.Scan(
 		&infoCard.ID,
-		&infoCard.CreatedEmployeePhoneNumber,
+		&infoCard.CreatedEmployeeID,
 		&infoCard.IsConfirmed,
 		&infoCard.CreatedDate,
 	)

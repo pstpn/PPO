@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type InfoCardID int64
 
@@ -13,9 +16,13 @@ func (i *InfoCardID) Int() int64 {
 	return int64(*i)
 }
 
+func (i *InfoCardID) String() string {
+	return strconv.FormatInt(i.Int(), 10)
+}
+
 type InfoCard struct {
-	ID                         *InfoCardID
-	CreatedEmployeePhoneNumber string
-	IsConfirmed                bool
-	CreatedDate                *time.Time
+	ID                *InfoCardID
+	CreatedEmployeeID *EmployeeID
+	IsConfirmed       bool
+	CreatedDate       *time.Time
 }

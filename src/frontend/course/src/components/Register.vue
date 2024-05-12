@@ -143,14 +143,8 @@ export default {
             this.$router.push("/home");
           },
           (error) => {
-            this.message =
-                (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                error.message ||
-                error.toString();
-            this.successful = false;
             this.loading = false;
+            this.message = error.message + ": " + error.response.data.error;
           }
       );
     },

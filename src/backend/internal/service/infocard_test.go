@@ -286,7 +286,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		request *dto.GetInfoCardRequest
+		request *dto.GetInfoCardByIDRequest
 	}
 
 	type storages struct {
@@ -317,7 +317,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.GetInfoCardRequest{InfoCardID: -1},
+				request: &dto.GetInfoCardByIDRequest{InfoCardID: -1},
 			},
 			want:    nil,
 			wantErr: true,
@@ -332,7 +332,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.GetInfoCardRequest{InfoCardID: -1},
+						request: &dto.GetInfoCardByIDRequest{InfoCardID: -1},
 					},
 					storageReturn: struct {
 						infoCard *model.InfoCard
@@ -352,7 +352,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.GetInfoCardRequest{InfoCardID: 1},
+				request: &dto.GetInfoCardByIDRequest{InfoCardID: 1},
 			},
 			want: &model.InfoCard{
 				ID:                model.ToInfoCardID(1),
@@ -372,7 +372,7 @@ func Test_infoCardServiceImpl_GetInfoCard(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.GetInfoCardRequest{InfoCardID: 1},
+						request: &dto.GetInfoCardByIDRequest{InfoCardID: 1},
 					},
 					storageReturn: struct {
 						infoCard *model.InfoCard

@@ -6,8 +6,8 @@ export const employee = {
         message: "",
     },
     actions: {
-        createEmployeeInfoCard({ commit }) {
-            return EmployeeService.createEmployeeInfoCard().then(
+        fillProfile({ commit }, formData) {
+            return EmployeeService.fillProfile(formData).then(
                 infoCard => {
                     return Promise.resolve(infoCard);
                 },
@@ -15,8 +15,8 @@ export const employee = {
                     return Promise.reject(error);
                 })
         },
-        getEmployeeInfoCard({ commit }) {
-            return EmployeeService.getEmployeeInfoCard().then(
+        getProfile({ commit }) {
+            return EmployeeService.getProfile().then(
                 infoCard => {
                     return Promise.resolve(infoCard);
                 },

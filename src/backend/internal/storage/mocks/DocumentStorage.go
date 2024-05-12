@@ -94,36 +94,6 @@ func (_m *DocumentStorage) GetByID(ctx context.Context, request *dto.GetDocument
 	return r0, r1
 }
 
-// List provides a mock function with given fields: ctx, request
-func (_m *DocumentStorage) List(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
-	ret := _m.Called(ctx, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for List")
-	}
-
-	var r0 []*model.Document
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error)); ok {
-		return rf(ctx, request)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListEmployeeDocumentsRequest) []*model.Document); ok {
-		r0 = rf(ctx, request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*model.Document)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *dto.ListEmployeeDocumentsRequest) error); ok {
-		r1 = rf(ctx, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // NewDocumentStorage creates a new instance of DocumentStorage. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewDocumentStorage(t interface {

@@ -64,45 +64,6 @@ func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocum
 	return d.rowToModel(row)
 }
 
-func (d *documentStorageImpl) List(ctx context.Context, request *dto.ListEmployeeDocumentsRequest) ([]*model.Document, error) {
-	query := d.Builder.
-		Select(
-			fullColName(documentTable, idField),
-			serialNumberField,
-			infoCardIdField,
-			fullColName(documentTable, typeField),
-		).
-		From(documentTable).
-		Join(on(
-			documentTable,
-			infoCardTable,
-			infoCardIdField,
-			idField,
-		)).
-		Where(squirrel.Eq{createdEmployeePhoneNumberField: request.EmployeePhoneNumber})
-
-	sql, args, err := query.ToSql()
-	if err != nil {
-		return nil, err
-	}
-	rows, err := d.Pool.Query(ctx, sql, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	var documents []*model.Document
-	for rows.Next() {
-		document, err := d.rowToModel(rows)
-		if err != nil {
-			return nil, err
-		}
-
-		documents = append(documents, document)
-	}
-
-	return documents, nil
-}
-
 func (d *documentStorageImpl) Delete(ctx context.Context, request *dto.DeleteDocumentRequest) error {
 	query := d.Builder.
 		Delete(documentTable).

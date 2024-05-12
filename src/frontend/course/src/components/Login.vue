@@ -65,10 +65,10 @@ export default {
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
     },
-  },
-  created() {
-    if (this.loggedIn) {
-      this.$router.push("/home");
+    created() {
+      if (this.loggedIn) {
+        this.$router.push("/home");
+      }
     }
   },
   methods: {
@@ -84,12 +84,7 @@ export default {
           },
           (error) => {
             this.loading = false;
-            this.message =
-                (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                error.message ||
-                error.toString();
+            this.message = error.message + ": " + error.response.data.error;
           }
       );
     },
@@ -111,8 +106,7 @@ label {
 .card {
   background-color: #f7f7f7;
   padding: 20px 25px 30px;
-  margin: 0 auto 25px;
-  margin-top: 50px;
+  margin: 50px auto 25px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;

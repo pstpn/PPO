@@ -59,7 +59,7 @@ func (e *employeeStorageImpl) UpdateRefreshToken(ctx context.Context, request *d
 		Update(employeeTable).
 		Set(refreshTokenField, request.RefreshToken).
 		Set(tokenExpiredAtField, request.TokenExpiredAt).
-		Where(squirrel.Eq{phoneNumberField: request.PhoneNumber})
+		Where(squirrel.Eq{idField: request.EmployeeID})
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -88,6 +88,37 @@ func (e *employeeStorageImpl) GetByPhone(ctx context.Context, request *dto.GetEm
 		).
 		From(employeeTable).
 		Where(squirrel.Eq{phoneNumberField: request.PhoneNumber})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	row := e.Pool.QueryRow(ctx, sql, args...)
+
+	return e.rowToModel(row)
+}
+
+func (e *employeeStorageImpl) GetByInfoCardID(ctx context.Context, request *dto.GetEmployeeByInfoCardIDRequest) (*model.Employee, error) {
+	query := e.Builder.
+		Select(
+			fullColName(employeeTable, idField),
+			phoneNumberField,
+			fullNameField,
+			companyIdField,
+			postField,
+			passwordField,
+			refreshTokenField,
+			tokenExpiredAtField,
+			dateOfBirthField,
+		).
+		From(employeeTable).
+		Join(on(
+			employeeTable,
+			infoCardTable,
+			idField,
+			createdEmployeeIDField,
+		)).
+		Where(squirrel.Eq{fullColName(infoCardTable, idField): request.InfoCardID})
 
 	sql, args, err := query.ToSql()
 	if err != nil {

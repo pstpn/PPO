@@ -7,9 +7,9 @@ import (
 )
 
 type CreateInfoCardRequest struct {
-	EmployeePhoneNumber string
-	IsConfirmed         bool
-	CreatedDate         *time.Time
+	EmployeeID  int64
+	IsConfirmed bool
+	CreatedDate *time.Time
 }
 
 type ValidateInfoCardRequest struct {
@@ -17,8 +17,12 @@ type ValidateInfoCardRequest struct {
 	IsConfirmed bool
 }
 
-type GetInfoCardRequest struct {
+type GetInfoCardByIDRequest struct {
 	InfoCardID int64
+}
+
+type GetInfoCardByEmployeeIDRequest struct {
+	EmployeeID int64
 }
 
 type ListInfoCardsRequest struct {

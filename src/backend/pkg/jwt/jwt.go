@@ -11,8 +11,8 @@ import (
 
 // TokenManager provides logic for JWT & Refresh tokens generation and parsing.
 type TokenManager interface {
-	NewJWT(id string, createdAt time.Time) (string, error)
-	Parse(accessToken string, expiredDuration time.Duration) (string, error)
+	NewJWT(payload Payload, createdAt time.Time) (string, error)
+	Parse(accessToken string, expiredDuration time.Duration, payload Payload) error
 	NewRefreshToken() (string, error)
 	RefreshTokenExpired(expiredTime *time.Time) error
 }
@@ -29,16 +29,21 @@ func NewManager(signingKey string) (*Manager, error) {
 	return &Manager{signingKey: signingKey}, nil
 }
 
-func (m *Manager) NewJWT(id string, createdAt time.Time) (string, error) {
+type Payload interface {
+	ToString() string
+	ParseFromString(payloadString string)
+}
+
+func (m *Manager) NewJWT(payload Payload, createdAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:  id,
+		Subject:  payload.ToString(),
 		IssuedAt: &jwt.NumericDate{Time: createdAt},
 	})
 
 	return token.SignedString([]byte(m.signingKey))
 }
 
-func (m *Manager) Parse(accessToken string, expiredDuration time.Duration) (string, error) {
+func (m *Manager) Parse(accessToken string, expiredDuration time.Duration, payload Payload) error {
 	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -47,23 +52,25 @@ func (m *Manager) Parse(accessToken string, expiredDuration time.Duration) (stri
 		return []byte(m.signingKey), nil
 	})
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", fmt.Errorf("error get claims from token")
+		return fmt.Errorf("error get claims from token")
 	}
 
 	issuedAd, err := claims.GetIssuedAt()
 	if err != nil {
-		return "", fmt.Errorf("error get issued at field from claims ")
-	}
-	if issuedAd.Add(expiredDuration).Before(time.Now()) {
-		return claims["sub"].(string), jwt.ErrTokenExpired
+		return fmt.Errorf("error get issued at field from claims ")
 	}
 
-	return claims["sub"].(string), nil
+	payload.ParseFromString(claims["sub"].(string))
+	if issuedAd.Add(expiredDuration).Before(time.Now()) {
+		return jwt.ErrTokenExpired
+	}
+
+	return nil
 }
 
 func (m *Manager) NewRefreshToken() (string, error) {

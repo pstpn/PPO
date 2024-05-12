@@ -22,12 +22,8 @@ export default {
           this.content = response.data;
         },
         (error) => {
-          this.content =
-              (error.response &&
-                  error.response.data &&
-                  error.response.data.message) ||
-              error.message ||
-              error.toString();
+          this.loading = false;
+          this.message = error.message + ": " + error.response.data.error;
         }
     );
   },

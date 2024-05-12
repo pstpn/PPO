@@ -27,7 +27,7 @@ create table if not exists employee
 create table if not exists info_card
 (
     id serial primary key,
-    created_employee_phone_number text references employee(phone_number) on delete cascade,
+    created_employee_id int references employee(id) on delete cascade,
     is_confirmed boolean,
     created_date date default now()
 );

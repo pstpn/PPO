@@ -57,7 +57,7 @@ func Test_infoCardStorageImpl_Validate(t *testing.T) {
 	err = infoCardStorage.Validate(context.TODO(), request)
 	require.NoError(t, err)
 
-	infoCard2, err := infoCardStorage.GetByID(context.TODO(), &dto.GetInfoCardRequest{InfoCardID: request.InfoCardID})
+	infoCard2, err := infoCardStorage.GetByID(context.TODO(), &dto.GetInfoCardByIDRequest{InfoCardID: request.InfoCardID})
 	require.NoError(t, err)
 	require.NotEmpty(t, infoCard2)
 	require.True(t, infoCard2.IsConfirmed)
@@ -79,7 +79,7 @@ func Test_infoCardStorageImpl_GetByID(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, infoCard1)
 
-	infoCard2, err := infoCardStorage.GetByID(context.TODO(), &dto.GetInfoCardRequest{InfoCardID: infoCard1.ID.Int()})
+	infoCard2, err := infoCardStorage.GetByID(context.TODO(), &dto.GetInfoCardByIDRequest{InfoCardID: infoCard1.ID.Int()})
 	require.NoError(t, err)
 	require.NotEmpty(t, infoCard2)
 	require.Equal(t, infoCard1.ID, infoCard2.ID)
@@ -149,7 +149,7 @@ func Test_infoCardStorageImpl_Delete(t *testing.T) {
 	err = infoCardStorage.Delete(context.TODO(), &dto.DeleteInfoCardRequest{InfoCardID: infoCard1.ID.Int()})
 	require.NoError(t, err)
 
-	infoCard2, err := infoCardStorage.GetByID(context.TODO(), &dto.GetInfoCardRequest{InfoCardID: infoCard1.ID.Int()})
+	infoCard2, err := infoCardStorage.GetByID(context.TODO(), &dto.GetInfoCardByIDRequest{InfoCardID: infoCard1.ID.Int()})
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, infoCard2)

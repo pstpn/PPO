@@ -19,8 +19,13 @@ type PhotoDataStorage interface {
 	Delete(ctx context.Context, key *model.PhotoKey) error
 }
 
-//go:generate mockery --name=PhotoStorage
-type PhotoStorage interface {
+//go:generate mockery --name=PhotoStorages
+type PhotoStorages interface {
+	PhotoDataStorage
+	PhotoMetaStorage
+}
+
+type PhotoStorage struct {
 	PhotoDataStorage
 	PhotoMetaStorage
 }

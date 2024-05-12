@@ -99,7 +99,7 @@ func (_m *FieldStorage) ListCardFields(ctx context.Context, request *dto.ListDoc
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListCardFields")
+		panic("no return value specified for ListDocumentFields")
 	}
 
 	var r0 []*model.Field

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href="/" class="navbar-brand">Идентификация на КПП</a>
+      <a href="/" class="navbar-brand"> <font-awesome-icon icon="" /> Идентификация на КПП</a>
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
@@ -31,9 +31,8 @@
 
       <div v-if="currentUser" class="navbar-nav ml-auto">
         <li class="nav-item">
-          <router-link to="/infocard" class="nav-link">
-            <font-awesome-icon icon="user" />
-            {{ currentUser.phoneNumber }}
+          <router-link to="/profile" class="nav-link">
+            <font-awesome-icon icon="user" /> Profile
           </router-link>
         </li>
         <li class="nav-item">
