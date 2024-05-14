@@ -4,12 +4,18 @@ export const employee = {
     namespaced: true,
     state: {
         message: "",
+        profile: null,
+        photoURL: "//ssl.gstatic.com/accounts/ui/avatar_2x.png",
+        status: {
+            filled: false,
+        }
     },
     actions: {
         fillProfile({ commit }, formData) {
             return EmployeeService.fillProfile(formData).then(
-                infoCard => {
-                    return Promise.resolve(infoCard);
+                response => {
+                    commit('setFilled', true);
+                    return Promise.resolve(response.data);
                 },
                 error => {
                     return Promise.reject(error);
@@ -17,20 +23,40 @@ export const employee = {
         },
         getProfile({ commit }) {
             return EmployeeService.getProfile().then(
-                infoCard => {
-                    return Promise.resolve(infoCard);
+                profile => {
+                    commit('setFilled', true);
+                    commit('setProfile', profile);
+                    return Promise.resolve(profile);
+                },
+                error => {
+                    commit('setFilled', false);
+                    commit('setProfile', null);
+                    return Promise.reject(error);
+                })
+        },
+        getEmployeePhoto({ commit }) {
+            return EmployeeService.getEmployeePhoto().then(
+                imageURL => {
+                    commit('setPhotoURL', imageURL);
+                    return Promise.resolve(imageURL);
                 },
                 error => {
                     return Promise.reject(error);
-                })
+                }
+            )
         }
     },
     mutations: {
-        setLoading(state, value) {
-            state.loading = value;
+        setFilled(state, filled) {
+            state.status.filled = filled;
         },
-        setMessage(state, message) {
-            state.message = message;
+        setProfile(state, profile) {
+            state.status.filled = true;
+            state.profile = profile;
+            state.photoURL = "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
+        },
+        setPhotoURL(state, photoURL) {
+            state.photoURL = photoURL;
         },
     },
 };

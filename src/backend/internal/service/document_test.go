@@ -164,7 +164,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 
 	type args struct {
 		ctx     context.Context
-		request *dto.GetDocumentRequest
+		request *dto.GetDocumentByIDRequest
 	}
 
 	type storages struct {
@@ -195,7 +195,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.GetDocumentRequest{DocumentID: -1},
+				request: &dto.GetDocumentByIDRequest{DocumentID: -1},
 			},
 			want:    nil,
 			wantErr: true,
@@ -210,7 +210,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.GetDocumentRequest{DocumentID: -1},
+						request: &dto.GetDocumentByIDRequest{DocumentID: -1},
 					},
 					storageReturn: struct {
 						document *model.Document
@@ -230,7 +230,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 			},
 			args: args{
 				ctx:     ctx,
-				request: &dto.GetDocumentRequest{DocumentID: 1},
+				request: &dto.GetDocumentByIDRequest{DocumentID: 1},
 			},
 			want: &model.Document{
 				ID:         model.ToDocumentID(1),
@@ -249,7 +249,7 @@ func Test_documentServiceImpl_GetDocument(t *testing.T) {
 				}{
 					storageArgs: args{
 						ctx:     ctx,
-						request: &dto.GetDocumentRequest{DocumentID: 1},
+						request: &dto.GetDocumentByIDRequest{DocumentID: 1},
 					},
 					storageReturn: struct {
 						document *model.Document

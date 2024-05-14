@@ -15,6 +15,8 @@ type FieldType int64
 
 const (
 	DateOfRelease FieldType = iota
+	IssuingAuthority
+	PlaceOfIssue
 	UnknownFieldType
 )
 
@@ -26,8 +28,12 @@ func ToFieldTypeFromInt(field int64) *FieldType {
 func ToFieldTypeFromString(field string) *FieldType {
 	var fieldType FieldType
 	switch field {
-	case "Дата выпуска":
+	case "Дата выдачи":
 		fieldType = DateOfRelease
+	case "Выдавший орган":
+		fieldType = IssuingAuthority
+	case "Место выдачи":
+		fieldType = PlaceOfIssue
 	default:
 		fieldType = UnknownFieldType
 	}
@@ -38,10 +44,18 @@ func ToFieldTypeFromString(field string) *FieldType {
 func (f *FieldType) String() string {
 	switch *f {
 	case DateOfRelease:
-		return "Дата выпуска"
+		return "Дата выдачи"
+	case IssuingAuthority:
+		return "Выдавший орган"
+	case PlaceOfIssue:
+		return "Место выдачи"
 	default:
 		return "Неизвестное поле"
 	}
+}
+
+func (f *FieldType) Int() int64 {
+	return int64(*f)
 }
 
 type Field struct {

@@ -140,7 +140,9 @@ export default {
             this.successful = true;
             this.loading = false;
 
-            this.$router.push("/home");
+            this.$router.push("/home").then(() => {
+              window.location.reload()
+            })
           },
           (error) => {
             this.loading = false;

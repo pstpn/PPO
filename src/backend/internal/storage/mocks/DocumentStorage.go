@@ -65,7 +65,7 @@ func (_m *DocumentStorage) Delete(ctx context.Context, request *dto.DeleteDocume
 }
 
 // GetByID provides a mock function with given fields: ctx, request
-func (_m *DocumentStorage) GetByID(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
+func (_m *DocumentStorage) GetByID(ctx context.Context, request *dto.GetDocumentByIDRequest) (*model.Document, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -74,10 +74,10 @@ func (_m *DocumentStorage) GetByID(ctx context.Context, request *dto.GetDocument
 
 	var r0 *model.Document
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentRequest) (*model.Document, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentByIDRequest) (*model.Document, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentRequest) *model.Document); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentByIDRequest) *model.Document); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
@@ -85,7 +85,37 @@ func (_m *DocumentStorage) GetByID(ctx context.Context, request *dto.GetDocument
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetDocumentRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetDocumentByIDRequest) error); ok {
+		r1 = rf(ctx, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByInfoCardID provides a mock function with given fields: ctx, request
+func (_m *DocumentStorage) GetByInfoCardID(ctx context.Context, request *dto.GetDocumentByInfoCardIDRequest) (*model.Document, error) {
+	ret := _m.Called(ctx, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByInfoCardID")
+	}
+
+	var r0 *model.Document
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentByInfoCardIDRequest) (*model.Document, error)); ok {
+		return rf(ctx, request)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetDocumentByInfoCardIDRequest) *model.Document); ok {
+		r0 = rf(ctx, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Document)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *dto.GetDocumentByInfoCardIDRequest) error); ok {
 		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)

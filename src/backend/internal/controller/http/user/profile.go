@@ -2,12 +2,15 @@ package user
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 
 	httputils "course/internal/controller/http/utils"
+	"course/internal/model"
 	"course/internal/service"
 	"course/internal/service/dto"
 	"course/pkg/logger"
@@ -40,12 +43,12 @@ func NewProfileController(
 }
 
 type fillProfileRequest struct {
-	DocumentSerialNumber string   `json:"serialNumber"`
-	DocumentType         string   `json:"documentType"`
-	DocumentFields       []fields `json:"documentFields"`
+	DocumentSerialNumber string  `json:"serialNumber"`
+	DocumentType         string  `json:"documentType"`
+	DocumentFields       []field `json:"documentFields"`
 }
 
-type fields struct {
+type field struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
 }
@@ -97,7 +100,7 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 	document, err := p.documentService.CreateDocument(c.Request.Context(), &dto.CreateDocumentRequest{
 		SerialNumber: req.DocumentSerialNumber,
 		InfoCardID:   infoCardID,
-		// FIXME: field
+		DocumentType: model.ToDocumentTypeFromString(req.DocumentType).Int(),
 	})
 	if err != nil {
 		p.l.Errorf("failed to create document: %s", err.Error())
@@ -109,7 +112,7 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 		_, err = p.fieldService.CreateDocumentField(c.Request.Context(), &dto.CreateDocumentFieldRequest{
 			DocumentID: document.ID.Int(),
 			Value:      newField.Value,
-			// FIXME: field
+			Type:       model.ToFieldTypeFromString(newField.Type).Int(),
 		})
 		if err != nil {
 			p.l.Errorf("failed to create document field: %s", err.Error())
@@ -132,8 +135,7 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 	}
 	defer photo.Close()
 
-	var photoData []byte
-	_, err = photo.Read(photoData)
+	photoData, err := io.ReadAll(photo)
 	if err != nil {
 		p.l.Errorf("failed to read photo data: %v", err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Can`t read photo data"})
@@ -151,4 +153,94 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
+}
+
+func (p *ProfileController) GetProfile(c *gin.Context) {
+	httputils.DisableCors(c)
+
+	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
+	if err != nil {
+		return
+	}
+	infoCardID, err := payload.GetInfoCardID()
+	if err != nil {
+		p.l.Errorf("failed to parse infoCard id from payload: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	document, err := p.documentService.GetDocumentByInfoCard(c.Request.Context(), &dto.GetDocumentByInfoCardIDRequest{
+		InfoCardID: infoCardID,
+	})
+	if err != nil {
+		p.l.Errorf("failed to get document by infoCard ID: %s", err.Error())
+
+		status := http.StatusInternalServerError
+		if errors.Is(err, pgx.ErrNoRows) {
+			status = http.StatusNotFound
+		}
+		c.AbortWithStatusJSON(status, gin.H{"error": "Failed to get info card document"})
+		return
+	}
+
+	documentFields, err := p.fieldService.ListDocumentFields(c.Request.Context(), &dto.ListDocumentFieldsRequest{
+		DocumentID: document.ID.Int(),
+	})
+	if err != nil {
+		p.l.Errorf("failed to list document fields: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to list document fields"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"documentType":   document.Type.String(),
+		"serialNumber":   document.SerialNumber,
+		"documentFields": p.modelToFields(documentFields),
+	})
+}
+
+func (p *ProfileController) GetEmployeeImage(c *gin.Context) {
+	httputils.DisableCors(c)
+
+	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
+	if err != nil {
+		return
+	}
+	infoCardID, err := payload.GetInfoCardID()
+	if err != nil {
+		p.l.Errorf("failed to parse infoCard id from payload: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	document, err := p.documentService.GetDocumentByInfoCard(c.Request.Context(), &dto.GetDocumentByInfoCardIDRequest{
+		InfoCardID: infoCardID,
+	})
+	if err != nil {
+		p.l.Errorf("failed to get document by infoCard ID: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get info card document"})
+		return
+	}
+
+	photoData, err := p.photoService.GetPhoto(c.Request.Context(), &dto.GetPhotoRequest{
+		DocumentID: document.ID.Int(),
+	})
+	if err != nil {
+		p.l.Errorf("failed to get employee photo: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get employee photo"})
+		return
+	}
+
+	c.Data(http.StatusOK, "image/jpeg", photoData.Data)
+}
+
+func (p *ProfileController) modelToFields(documentFields []*model.Field) []field {
+	fields := make([]field, 0)
+	for _, documentField := range documentFields {
+		fields = append(fields, field{
+			Type:  documentField.Type.String(),
+			Value: documentField.Value,
+		})
+	}
+	return fields
 }

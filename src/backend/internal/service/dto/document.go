@@ -6,8 +6,12 @@ type CreateDocumentRequest struct {
 	DocumentType int64
 }
 
-type GetDocumentRequest struct {
+type GetDocumentByIDRequest struct {
 	DocumentID int64
+}
+
+type GetDocumentByInfoCardIDRequest struct {
+	InfoCardID int64
 }
 
 type ListEmployeeDocumentsRequest struct {

@@ -216,7 +216,7 @@ func (h *Handler) ShowInfoCard(form *tview.Form, pages *tview.Pages) *tview.Form
 		return form
 	}
 
-	document, err := h.documentService.GetDocument(context.TODO(), &dto.GetDocumentRequest{DocumentID: documentID})
+	document, err := h.documentService.GetDocument(context.TODO(), &dto.GetDocumentByIDRequest{DocumentID: documentID})
 	if err != nil {
 		form.AddTextView("", err.Error(), 100, 10, true, false)
 		return form

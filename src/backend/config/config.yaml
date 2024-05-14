@@ -8,8 +8,8 @@ logger:
 
 auth:
   signingKey: "course"
-  accessTokenTTL: 20s
-  refreshTokenTTL: 30s
+  accessTokenTTL: 2m
+  refreshTokenTTL: 120h
 
 http:
   port: 8081

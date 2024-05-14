@@ -51,8 +51,8 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      phoneNumber: yup.string().required("Phone number is required!"),
-      password: yup.string().required("Password is required!"),
+      phoneNumber: yup.string().required("Введите номер телефона!"),
+      password: yup.string().required("Введите пароль!"),
     });
 
     return {
@@ -80,7 +80,9 @@ export default {
           () => {
             this.message = "Success"
 
-            this.$router.push("/home");
+            this.$router.push("/home").then(() => {
+              window.location.reload()
+            })
           },
           (error) => {
             this.loading = false;

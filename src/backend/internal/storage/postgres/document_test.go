@@ -40,7 +40,7 @@ func Test_documentStorageImpl_GetByID(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, document1)
 
-	document2, err := documentStorage.GetByID(context.TODO(), &dto.GetDocumentRequest{
+	document2, err := documentStorage.GetByID(context.TODO(), &dto.GetDocumentByIDRequest{
 		DocumentID: document1.ID.Int(),
 	})
 	require.NoError(t, err)
@@ -96,7 +96,7 @@ func Test_documentStorageImpl_Delete(t *testing.T) {
 	err = documentStorage.Delete(context.TODO(), &dto.DeleteDocumentRequest{DocumentID: document1.ID.Int()})
 	require.NoError(t, err)
 
-	document2, err := documentStorage.GetByID(context.TODO(), &dto.GetDocumentRequest{
+	document2, err := documentStorage.GetByID(context.TODO(), &dto.GetDocumentByIDRequest{
 		DocumentID: document1.ID.Int(),
 	})
 	require.Error(t, err)

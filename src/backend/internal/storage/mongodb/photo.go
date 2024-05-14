@@ -3,7 +3,9 @@ package mongodb
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"strconv"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,7 +32,11 @@ func (p *photoDataStorageImpl) Save(ctx context.Context, request *dto.CreatePhot
 		Value: len(request.Data)},
 	})
 
-	objectID, err := p.Bucket.UploadFromStream(documentID+".png", bytes.NewReader(request.Data), uploadOpts)
+	objectID, err := p.Bucket.UploadFromStream(
+		fmt.Sprintf("%s_%d.jpg", documentID, time.Now().Unix()),
+		bytes.NewReader(request.Data),
+		uploadOpts,
+	)
 	if err != nil {
 		return nil, err
 	}

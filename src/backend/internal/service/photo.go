@@ -29,7 +29,7 @@ func NewPhotoService(logger logger.Interface, photoStorage storage.PhotoStorages
 }
 
 func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) (*model.PhotoMeta, error) {
-	// TODO: Crop face from document
+	// FIXME: Crop face from document
 	p.logger.Infof("create photo by document ID %d", request.DocumentID)
 
 	key, err := p.photoStorage.Save(ctx, request)

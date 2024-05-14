@@ -53,4 +53,6 @@ func (c *Controller) SetProfileRoute(
 	p := user.NewProfileController(l, documentService, fieldService, authService, photoService)
 
 	c.handler.POST("/profile", p.FillProfile)
+	c.handler.GET("/profile", p.GetProfile)
+	c.handler.GET("/employee-photo", p.GetEmployeeImage)
 }

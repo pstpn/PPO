@@ -12,7 +12,8 @@ import (
 
 type DocumentService interface {
 	CreateDocument(ctx context.Context, request *dto.CreateDocumentRequest) (*model.Document, error)
-	GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error)
+	GetDocument(ctx context.Context, request *dto.GetDocumentByIDRequest) (*model.Document, error)
+	GetDocumentByInfoCard(ctx context.Context, request *dto.GetDocumentByInfoCardIDRequest) (*model.Document, error)
 	DeleteDocument(ctx context.Context, request *dto.DeleteDocumentRequest) error
 }
 
@@ -40,13 +41,25 @@ func (d *documentServiceImpl) CreateDocument(ctx context.Context, request *dto.C
 	return document, nil
 }
 
-func (d *documentServiceImpl) GetDocument(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
+func (d *documentServiceImpl) GetDocument(ctx context.Context, request *dto.GetDocumentByIDRequest) (*model.Document, error) {
 	d.logger.Infof("get document by ID %d", request.DocumentID)
 
 	document, err := d.documentStorage.GetByID(ctx, request)
 	if err != nil {
 		d.logger.Errorf("get document: %s", err.Error())
 		return nil, fmt.Errorf("get document: %w", err)
+	}
+
+	return document, nil
+}
+
+func (d *documentServiceImpl) GetDocumentByInfoCard(ctx context.Context, request *dto.GetDocumentByInfoCardIDRequest) (*model.Document, error) {
+	d.logger.Infof("get document by infoCard ID %d", request.InfoCardID)
+
+	document, err := d.documentStorage.GetByInfoCardID(ctx, request)
+	if err != nil {
+		d.logger.Errorf("get document by infoCard ID: %s", err.Error())
+		return nil, fmt.Errorf("get document by infoCard ID: %w", err)
 	}
 
 	return document, nil

@@ -44,7 +44,7 @@ func (d *documentStorageImpl) Create(ctx context.Context, request *dto.CreateDoc
 	return d.rowToModel(row)
 }
 
-func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocumentRequest) (*model.Document, error) {
+func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocumentByIDRequest) (*model.Document, error) {
 	query := d.Builder.
 		Select(
 			idField,
@@ -54,6 +54,26 @@ func (d *documentStorageImpl) GetByID(ctx context.Context, request *dto.GetDocum
 		).
 		From(documentTable).
 		Where(squirrel.Eq{idField: request.DocumentID})
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	row := d.Pool.QueryRow(ctx, sql, args...)
+
+	return d.rowToModel(row)
+}
+
+func (d *documentStorageImpl) GetByInfoCardID(ctx context.Context, request *dto.GetDocumentByInfoCardIDRequest) (*model.Document, error) {
+	query := d.Builder.
+		Select(
+			idField,
+			serialNumberField,
+			infoCardIdField,
+			typeField,
+		).
+		From(documentTable).
+		Where(squirrel.Eq{infoCardIdField: request.InfoCardID})
 
 	sql, args, err := query.ToSql()
 	if err != nil {

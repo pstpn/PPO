@@ -3,7 +3,7 @@
     <div class="card card-container">
       <img
           id="profile-img"
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          :src="employeePhotoURL"
           sizes="(max-width:100px) 20px, 5vw"
           class="profile-img-card"
           alt="Not found"
@@ -11,14 +11,14 @@
       <div v-if="!created">
         <Form ref="form" @submit="handleProfile" :validation-schema="schema">
           <div class="form-group">
-            <Field type="file" name="image" class="form-control-file" accept="image/jpeg, image/png, image/gif" @change="handleImageUpload" />
+            <Field type="file" name="image" class="form-control-file" accept="image/jpeg" @change="handleImageUpload" />
             <ErrorMessage name="image" class="text-danger" />
           </div>
           <div class="form-group">
             <label for="documentType">Тип документа, удостоверяющего личность</label>
             <Field name="selectedType" as="select" class="form-control">
               <option value="" disabled selected>Выберите тип документа</option>
-              <option v-for="(documentType, index) in documentTypes" :key="index" :value="index">
+              <option v-for="(documentType, index) in documentTypes" :key="index" :value="documentType">
                 {{ documentType }}
               </option>
             </Field>
@@ -39,20 +39,28 @@
               </div>
             </div>
           </div>
-          <button @click="addField" class="btn btn-primary btn-dark mb-1">Добавить поле</button>
           <div class="form-group">
             <button class="btn btn-primary btn-block" :disabled="loading">
               <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-              Создать карточку
+                Создать карточку
             </button>
           </div>
         </Form>
+        <button @click="addField" class="btn btn-primary btn-dark mb-1">Добавить поле</button>
       </div>
       <div v-else>
         <div class="card-body">
-          <h5 class="card-title">Информация о пользователе</h5>
-          <p class="card-text">Номер телефона: {{ profileInfo.phone }}</p>
-          <p class="card-text">Должность: {{ profileInfo.post }}</p>
+          <h5 class="card-title">Личная информация</h5>
+          <p class="card-text">Тип документа: {{ profileInfo.documentType }}</p>
+          <p class="card-text">Серийный номер документа: {{ profileInfo.serialNumber }}</p>
+          <table class="table">
+            <tbody>
+            <tr v-for="(pair, index) in profileInfo.documentFields" :key="index">
+              <td>{{ pair.type }}</td>
+              <td>{{ pair.value }}</td>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </div>
       <div v-if="message" :class="created ? 'alert-success' : 'alert-danger'" class="alert">
@@ -74,15 +82,17 @@ export default {
     ErrorMessage,
   },
   data() {
+    const schema = yup.object().shape({
+      image: yup.mixed().required("Загрузите ваше фото или изображение документа, содержащего фото"),
+      serialNumber: yup.string().required("Введите серийный номер документа!"),
+    });
     return {
       loading: false,
       message: "",
-      schema: yup.object().shape({
-        image: yup.mixed().required("Загрузите ваше фото или изображение документа, содержащего фото"),
-      }),
+      schema,
       documentTypes: [ "Паспорт", "Водительские права" ],
       documentFieldTypes: [ "Дата выдачи", "Выдавший орган" ],
-      documentFields: [{ type: "", value: "" }],
+      documentFields: [],
     };
   },
   computed: {
@@ -90,11 +100,26 @@ export default {
       return this.$store.state.auth.status.loggedIn
     },
     created() {
-      return this.$store.state.created;
+      if (!this.profileInfo) {
+        this.$store.dispatch("employee/getProfile").then(
+            () => {
+              this.$store.dispatch("employee/getEmployeePhoto");
+            },
+            (error) => {
+              if (error.response && error.response.status === 404) {
+                this.$store.state.employee.profile = null;
+              }
+            }
+        )
+      }
+      return this.profileInfo;
     },
     profileInfo() {
-      return this.$store.state.profile;
+      return this.$store.state.employee.profile;
     },
+    employeePhotoURL() {
+      return this.$store.state.employee.photoURL;
+    }
   },
   methods: {
     addField() {
@@ -109,11 +134,11 @@ export default {
         this.image = file;
       }
     },
-    handleProfile() {
+    handleProfile(profile) {
       if (!this.created) {
         this.$refs.form.validate().then(success => {
           if (success) {
-            this.fillProfile();
+            this.fillProfile(profile);
           }
         });
       }
@@ -121,22 +146,12 @@ export default {
     fillProfile(profile) {
       let user = JSON.parse(localStorage.getItem('user'));
 
-      // FIXME: test data
       const formData = new FormData();
       formData.append('image', this.image);
       formData.append('profileData', new Blob([JSON.stringify({
-        serialNumber: "test1",
-        documentType: "Паспорт",
-        documentFields: [
-          {
-            "type": "Дата выдачи",
-            "value": "OKOK",
-          },
-          {
-            "type": "tetsРПГ",
-            "value": "щушс"
-          }
-        ]
+        serialNumber: profile.serialNumber,
+        documentType: profile.selectedType,
+        documentFields: this.documentFields,
       })], { type: 'application/json' }));
 
       this.loading = true;
@@ -144,15 +159,14 @@ export default {
       this.$store.dispatch("employee/fillProfile", formData).then(
           () => {
             this.loading = false;
-            this.$store.state.created = true;
-            this.$router.push("/profile");
+            window.location.reload();
           },
           (error) => {
             this.loading = false;
             if (error.response && error.response.status === 401) {
               this.$store.dispatch('auth/refreshTokens', user).then(
                   response => {
-                    this.fillProfile();
+                    this.fillProfile(profile);
                   },
                   (error) => {
                     if (error.response && error.response.status === 401) {
@@ -169,9 +183,6 @@ export default {
           }
       );
     },
-    getProfile() {
-
-    }
   },
 };
 </script>
@@ -191,10 +202,12 @@ export default {
 }
 
 .profile-img-card {
-  width: 250px;
-  height: 250px;
-  margin: auto;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 10px;
   display: block;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
   border-radius: 50%;
 }
 
