@@ -102,13 +102,17 @@ func (i *infoCardStorageImpl) GetByEmployeeID(ctx context.Context, request *dto.
 	return i.rowToModel(row)
 }
 
-func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
+func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.FullInfoCard, error) {
 	query := i.Builder.
 		Select(
 			fullColName(infoCardTable, idField),
 			createdEmployeeIDField,
 			isConfirmedField,
 			createdDateField,
+			fullNameField,
+			phoneNumberField,
+			postField,
+			dateOfBirthField,
 		).
 		From(infoCardTable).
 		Join(on(
@@ -129,17 +133,17 @@ func (i *infoCardStorageImpl) List(ctx context.Context, request *dto.ListInfoCar
 		return nil, err
 	}
 
-	var infoCards []*model.InfoCard
+	var fullInfoCards []*model.FullInfoCard
 	for rows.Next() {
-		infoCard, err := i.rowToModel(rows)
+		fullInfoCard, err := i.rowToFullModel(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		infoCards = append(infoCards, infoCard)
+		fullInfoCards = append(fullInfoCards, fullInfoCard)
 	}
 
-	return infoCards, nil
+	return fullInfoCards, nil
 }
 
 func (i *infoCardStorageImpl) Delete(ctx context.Context, request *dto.DeleteInfoCardRequest) error {
@@ -172,4 +176,27 @@ func (i *infoCardStorageImpl) rowToModel(row pgx.Row) (*model.InfoCard, error) {
 	}
 
 	return &infoCard, nil
+}
+
+func (i *infoCardStorageImpl) rowToFullModel(row pgx.Row) (*model.FullInfoCard, error) {
+	var fullInfoCard model.FullInfoCard
+	var post string
+
+	err := row.Scan(
+		&fullInfoCard.ID,
+		&fullInfoCard.CreatedEmployeeID,
+		&fullInfoCard.IsConfirmed,
+		&fullInfoCard.CreatedDate,
+		&fullInfoCard.FullName,
+		&fullInfoCard.PhoneNumber,
+		&post,
+		&fullInfoCard.DateOfBirth,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	fullInfoCard.Post = model.ToPostTypeFromString(post)
+
+	return &fullInfoCard, nil
 }

@@ -28,24 +28,10 @@ const routes = [
         path: "/profile",
         component: Employee,
     },
-    // {
-    //     path: "/admin",
-    //     name: "admin",
-    //     // lazy-loaded
-    //     component: BoardAdmin,
-    // },
-    // {
-    //     path: "/mod",
-    //     name: "moderator",
-    //     // lazy-loaded
-    //     component: BoardModerator,
-    // },
-    // {
-    //     path: "/user",
-    //     name: "user",
-    //     // lazy-loaded
-    //     component: BoardUser,
-    // },
+    {
+        path: "/find-employees",
+        component: Admin,
+    }
 ];
 
 const router = createRouter({

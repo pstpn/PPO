@@ -24,6 +24,20 @@ class EmployeeService {
                 return URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
             });
     }
+
+    getEmployees(searchQuery, searchBy, sortDirection) {
+        return axios.get(API_URL + 'infocards', {
+            headers: authHeader(),
+            params: {
+                pattern: searchQuery,
+                field: searchBy,
+                sort: sortDirection,
+            }
+        }).then(response => {
+            console.log(response.data.infoCards)
+            return response.data.infoCards;
+        });
+    }
 }
 
 export default new EmployeeService();

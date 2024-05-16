@@ -26,3 +26,16 @@ type InfoCard struct {
 	IsConfirmed       bool
 	CreatedDate       *time.Time
 }
+
+type FullInfoCard struct {
+	ID                *InfoCardID
+	CreatedEmployeeID *EmployeeID
+	IsConfirmed       bool
+	CreatedDate       *time.Time
+
+	FullName    string
+	PhoneNumber string
+	CompanyID   *CompanyID
+	Post        *PostType
+	DateOfBirth *time.Time
+}

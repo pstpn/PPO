@@ -44,6 +44,16 @@ export const employee = {
                     return Promise.reject(error);
                 }
             )
+        },
+        getEmployees({ commit }, { searchQuery, searchBy, sortDirection }) {
+            return EmployeeService.getEmployees(searchQuery, searchBy, sortDirection).then(
+                employees => {
+                    return Promise.resolve(employees);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
         }
     },
     mutations: {

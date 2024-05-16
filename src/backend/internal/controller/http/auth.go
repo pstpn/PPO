@@ -76,6 +76,7 @@ func (a *AuthController) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"accessToken":  tokens.AccessToken,
 		"refreshToken": tokens.RefreshToken,
+		"isAdmin":      tokens.IsAdmin,
 	})
 }
 
@@ -108,6 +109,7 @@ func (a *AuthController) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"accessToken":  tokens.AccessToken,
 		"refreshToken": tokens.RefreshToken,
+		"isAdmin":      tokens.IsAdmin,
 	})
 }
 
@@ -158,5 +160,6 @@ func (a *AuthController) RefreshTokens(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"accessToken":  tokens.AccessToken,
 		"refreshToken": tokens.RefreshToken,
+		"isAdmin":      tokens.IsAdmin,
 	})
 }

@@ -53,6 +53,7 @@ func NewAuthService(
 type tokens struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
+	IsAdmin      bool
 }
 
 func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.RegisterEmployeeRequest) (*tokens, error) {
@@ -106,6 +107,7 @@ func (a *authServiceImpl) RegisterEmployee(ctx context.Context, request *dto.Reg
 	return &tokens{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		IsAdmin:      employee.Post.IsAdmin(),
 	}, nil
 }
 
@@ -155,6 +157,7 @@ func (a *authServiceImpl) LoginEmployee(ctx context.Context, request *dto.LoginE
 	return &tokens{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		IsAdmin:      employee.Post.IsAdmin(),
 	}, nil
 }
 
@@ -217,5 +220,6 @@ func (a *authServiceImpl) RefreshTokens(ctx context.Context, request *dto.Refres
 	return &tokens{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		IsAdmin:      employee.Post.IsAdmin(),
 	}, nil
 }

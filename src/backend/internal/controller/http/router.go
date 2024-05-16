@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"course/internal/controller/http/admin"
 	"course/internal/controller/http/user"
 	httputils "course/internal/controller/http/utils"
 	"course/internal/service"
@@ -36,11 +37,10 @@ func (c *Controller) SetAuthRoute(l logger.Interface, authService service.AuthSe
 	c.handler.POST("/refresh", a.RefreshTokens)
 }
 
-// SetInfoCardRoute TODO: this is admin route
 func (c *Controller) SetInfoCardRoute(l logger.Interface, infoCardService service.InfoCardService, authService service.AuthService) {
-	//i := admin.NewInfoCardController(l, infoCardService, authService)
+	i := admin.NewInfoCardController(l, infoCardService, authService)
 
-	//c.handler.POST("/infocards", i.CreateInfoCard)
+	c.handler.GET("/infocards", i.ListInfoCards)
 }
 
 func (c *Controller) SetProfileRoute(

@@ -125,23 +125,23 @@ func (_m *InfoCardStorage) GetByID(ctx context.Context, request *dto.GetInfoCard
 }
 
 // List provides a mock function with given fields: ctx, request
-func (_m *InfoCardStorage) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
+func (_m *InfoCardStorage) List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.FullInfoCard, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []*model.InfoCard
+	var r0 []*model.FullInfoCard
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListInfoCardsRequest) ([]*model.InfoCard, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListInfoCardsRequest) ([]*model.FullInfoCard, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListInfoCardsRequest) []*model.InfoCard); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.ListInfoCardsRequest) []*model.FullInfoCard); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*model.InfoCard)
+			r0 = ret.Get(0).([]*model.FullInfoCard)
 		}
 	}
 

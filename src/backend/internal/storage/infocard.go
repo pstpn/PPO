@@ -13,6 +13,6 @@ type InfoCardStorage interface {
 	Validate(ctx context.Context, request *dto.ValidateInfoCardRequest) error
 	GetByID(ctx context.Context, request *dto.GetInfoCardByIDRequest) (*model.InfoCard, error)
 	GetByEmployeeID(ctx context.Context, request *dto.GetInfoCardByEmployeeIDRequest) (*model.InfoCard, error)
-	List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error)
+	List(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.FullInfoCard, error)
 	Delete(ctx context.Context, request *dto.DeleteInfoCardRequest) error
 }

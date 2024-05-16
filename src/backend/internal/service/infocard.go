@@ -14,7 +14,7 @@ type InfoCardService interface {
 	CreateInfoCard(ctx context.Context, request *dto.CreateInfoCardRequest) (*model.InfoCard, error)
 	ValidateInfoCard(ctx context.Context, request *dto.ValidateInfoCardRequest) error
 	GetInfoCard(ctx context.Context, request *dto.GetInfoCardByIDRequest) (*model.InfoCard, error)
-	ListInfoCards(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error)
+	ListInfoCards(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.FullInfoCard, error)
 	DeleteInfoCard(ctx context.Context, request *dto.DeleteInfoCardRequest) error
 }
 
@@ -66,16 +66,16 @@ func (i *infoCardServiceImpl) GetInfoCard(ctx context.Context, request *dto.GetI
 	return infoCard, nil
 }
 
-func (i *infoCardServiceImpl) ListInfoCards(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.InfoCard, error) {
-	i.logger.Infof("list info cards with pagination")
+func (i *infoCardServiceImpl) ListInfoCards(ctx context.Context, request *dto.ListInfoCardsRequest) ([]*model.FullInfoCard, error) {
+	i.logger.Infof("list full info cards with pagination")
 
-	infoCards, err := i.infoCardStorage.List(ctx, request)
+	fullInfoCards, err := i.infoCardStorage.List(ctx, request)
 	if err != nil {
-		i.logger.Errorf("list info cards: %s", err.Error())
-		return nil, fmt.Errorf("list info cards: %w", err)
+		i.logger.Errorf("list full info cards: %s", err.Error())
+		return nil, fmt.Errorf("list full info cards: %w", err)
 	}
 
-	return infoCards, nil
+	return fullInfoCards, nil
 }
 
 func (i *infoCardServiceImpl) DeleteInfoCard(ctx context.Context, request *dto.DeleteInfoCardRequest) error {
