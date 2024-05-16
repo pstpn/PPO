@@ -36,6 +36,6 @@ type FullInfoCard struct {
 	FullName    string
 	PhoneNumber string
 	CompanyID   *CompanyID
-	Post        *PostType
+	Post        string
 	DateOfBirth *time.Time
 }

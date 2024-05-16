@@ -38,6 +38,29 @@ class EmployeeService {
             return response.data.infoCards;
         });
     }
+
+    getEmployee(id) {
+        return axios.get(API_URL + `infocards/${id}` , {
+            headers: authHeader()
+        }).then(response => {
+            console.log(response.data.document)
+            return response.data.document;
+        });
+    }
+
+    getEmployeeInfoCardPhoto(id) {
+        return axios.get(API_URL + `infocard-photos/${id}`, { headers: authHeader(), responseType: "arraybuffer" })
+            .then(response => {
+                return URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
+            });
+    }
+
+    getEmployeePassages(id) {
+        return axios.get(API_URL + "passages", { headers: authHeader() })
+            .then(response => {
+                return URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
+            });
+    }
 }
 
 export default new EmployeeService();

@@ -60,3 +60,19 @@ func parseAuthHeader(c *gin.Context) (string, error) {
 
 	return headerParts[1], nil
 }
+
+type Field struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+func ModelToFields(documentFields []*model.Field) []Field {
+	fields := make([]Field, 0)
+	for _, documentField := range documentFields {
+		fields = append(fields, Field{
+			Type:  documentField.Type.String(),
+			Value: documentField.Value,
+		})
+	}
+	return fields
+}

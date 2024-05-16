@@ -60,7 +60,7 @@ func main() {
 	)
 
 	// Create storages
-	//checkpointStorage := storage.NewCheckpointStorage(db)
+	checkpointStorage := storage.NewCheckpointStorage(db)
 	//companyStorage := storage.NewCompanyStorage(db)
 	documentStorage := storage.NewDocumentStorage(db)
 	employeeStorage := storage.NewEmployeeStorage(db)
@@ -85,6 +85,7 @@ func main() {
 		PhotoDataStorage: photoDataStorage,
 		PhotoMetaStorage: photoMetaStorage,
 	})
+	checkpointService := service.NewCheckpointService(l, checkpointStorage)
 
 	// Create controller
 	handler := gin.New()
@@ -92,7 +93,7 @@ func main() {
 
 	// Set routes
 	controller.SetAuthRoute(l, authService)
-	controller.SetInfoCardRoute(l, infoCardService, authService)
+	controller.SetInfoCardRoute(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
 	controller.SetProfileRoute(l, documentService, fieldService, authService, photoService)
 
 	// Create router

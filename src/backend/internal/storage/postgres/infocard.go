@@ -180,8 +180,6 @@ func (i *infoCardStorageImpl) rowToModel(row pgx.Row) (*model.InfoCard, error) {
 
 func (i *infoCardStorageImpl) rowToFullModel(row pgx.Row) (*model.FullInfoCard, error) {
 	var fullInfoCard model.FullInfoCard
-	var post string
-
 	err := row.Scan(
 		&fullInfoCard.ID,
 		&fullInfoCard.CreatedEmployeeID,
@@ -189,14 +187,12 @@ func (i *infoCardStorageImpl) rowToFullModel(row pgx.Row) (*model.FullInfoCard, 
 		&fullInfoCard.CreatedDate,
 		&fullInfoCard.FullName,
 		&fullInfoCard.PhoneNumber,
-		&post,
+		&fullInfoCard.Post,
 		&fullInfoCard.DateOfBirth,
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	fullInfoCard.Post = model.ToPostTypeFromString(post)
 
 	return &fullInfoCard, nil
 }

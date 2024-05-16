@@ -37,10 +37,31 @@ func (c *Controller) SetAuthRoute(l logger.Interface, authService service.AuthSe
 	c.handler.POST("/refresh", a.RefreshTokens)
 }
 
-func (c *Controller) SetInfoCardRoute(l logger.Interface, infoCardService service.InfoCardService, authService service.AuthService) {
-	i := admin.NewInfoCardController(l, infoCardService, authService)
+func (c *Controller) SetInfoCardRoute(
+	l logger.Interface,
+	infoCardService service.InfoCardService,
+	documentService service.DocumentService,
+	fieldService service.FieldService,
+	checkpointService service.CheckpointService,
+	photoService service.PhotoService,
+	authService service.AuthService,
+) {
+	i := admin.NewInfoCardController(
+		l,
+		infoCardService,
+		documentService,
+		fieldService,
+		checkpointService,
+		photoService,
+		authService,
+	)
 
-	c.handler.GET("/infocards", i.ListInfoCards)
+	// Disable CORS
+	//c.handler.OPTIONS("infocards/*any", httputils.DisableCors)
+
+	c.handler.GET("/infocards", i.ListFullInfoCards)
+	c.handler.GET("/infocards/:id", i.GetFullInfoCard)
+	c.handler.GET("infocard-photos/:id", i.GetEmployeeInfoCardPhoto)
 }
 
 func (c *Controller) SetProfileRoute(
@@ -54,5 +75,5 @@ func (c *Controller) SetProfileRoute(
 
 	c.handler.POST("/profile", p.FillProfile)
 	c.handler.GET("/profile", p.GetProfile)
-	c.handler.GET("/employee-photo", p.GetEmployeeImage)
+	c.handler.GET("/employee-photo", p.GetEmployeePhoto)
 }

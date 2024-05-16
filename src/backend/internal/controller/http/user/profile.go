@@ -43,14 +43,9 @@ func NewProfileController(
 }
 
 type fillProfileRequest struct {
-	DocumentSerialNumber string  `json:"serialNumber"`
-	DocumentType         string  `json:"documentType"`
-	DocumentFields       []field `json:"documentFields"`
-}
-
-type field struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
+	DocumentSerialNumber string            `json:"serialNumber"`
+	DocumentType         string            `json:"documentType"`
+	DocumentFields       []httputils.Field `json:"documentFields"`
 }
 
 func (p *ProfileController) FillProfile(c *gin.Context) {
@@ -195,11 +190,11 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"documentType":   document.Type.String(),
 		"serialNumber":   document.SerialNumber,
-		"documentFields": p.modelToFields(documentFields),
+		"documentFields": httputils.ModelToFields(documentFields),
 	})
 }
 
-func (p *ProfileController) GetEmployeeImage(c *gin.Context) {
+func (p *ProfileController) GetEmployeePhoto(c *gin.Context) {
 	httputils.DisableCors(c)
 
 	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
@@ -232,15 +227,4 @@ func (p *ProfileController) GetEmployeeImage(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "image/jpeg", photoData.Data)
-}
-
-func (p *ProfileController) modelToFields(documentFields []*model.Field) []field {
-	fields := make([]field, 0)
-	for _, documentField := range documentFields {
-		fields = append(fields, field{
-			Type:  documentField.Type.String(),
-			Value: documentField.Value,
-		})
-	}
-	return fields
 }

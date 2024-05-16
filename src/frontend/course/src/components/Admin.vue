@@ -9,7 +9,7 @@
       </div>
       <div class="filter-dropdown" @mouseover="isDropdownVisible = true" @mouseleave="isDropdownVisible = false">
         <div class="dropdown-trigger">
-          Поиск по полю
+          <font-awesome-icon icon="fa-filter"/> Поиск по полю
         </div>
         <transition name="fade">
           <div v-if="isDropdownVisible" class="dropdown-content">
@@ -22,7 +22,7 @@
       </div>
       <div class="filter-dropdown" @mouseover="isSortDropdownVisible = true" @mouseleave="isSortDropdownVisible = false">
         <div class="dropdown-trigger">
-          Направление сортировки
+          <font-awesome-icon icon="fa-sort"/> Направление сортировки
         </div>
         <transition name="fade">
           <div v-if="isSortDropdownVisible" class="dropdown-content">
@@ -35,11 +35,11 @@
       </div>
     </div>
     <div v-if="showSearchResults" class="search-results">
-      <div v-for="employee in searchResults" :key="employee.ID" @click="viewEmployeeCard(employee.ID)" class="search-item">
+      <div v-for="infoCard in searchResults" :key="infoCard.ID" @click="viewEmployeeCard(infoCard.ID)" class="search-item">
         <div class="employee-info">
           <div class="employee-details">
-            <div class="employee-fullName">{{ employee.FullName }}</div>
-            <div class="employee-phoneNumber">{{ employee.PhoneNumber }}</div>
+            <div class="employee-fullName">{{ infoCard.FullName }}</div>
+            <div class="employee-phoneNumber">{{ infoCard.PhoneNumber }}</div>
           </div>
         </div>
       </div>
@@ -49,13 +49,33 @@
         <img
             id="profile-img"
             :src="employeePhotoURL"
-            sizes="(max-width:100px) 20px, 5vw"
+            sizes="(max-width:50px) 10px, 5vw"
             class="profile-img-card"
             alt="Not found"
         />
         <div class="card-body">
-          <h5 class="card-title">{{ selectedEmployee.FullName }}</h5>
-          <p class="card-text">{{ selectedEmployee.PhoneNumber }}</p>
+          <h5 class="card-title">{{ selectedEmployee.FullName }} ({{ selectedEmployee.PhoneNumber }})</h5>
+          <p class="card-text">Номер телефона: {{ selectedEmployee.PhoneNumber }}</p>
+          <p class="card-text">Должность: {{ selectedEmployee.Post }}</p>
+          <p v-if="selectedEmployeeDocument === null" class="card-subtitle" style="color: red; font-weight: bold;">Документ, удостоверяющий личность не найден</p>
+          <p v-else class="card-subtitle" style="font-weight: bold;">Документ, удостоверяющий личность</p>
+          <p v-if="selectedEmployeeDocument != null" class="card-text">Тип документа: {{ selectedEmployeeDocument.data.documentType }}</p>
+          <p v-if="selectedEmployeeDocument != null" class="card-text">Серийный номер документа: {{ selectedEmployeeDocument.data.serialNumber }}</p>
+          <p v-if="selectedEmployeeDocument != null" class="card-subtitle" style="font-weight: bold;">Поля документа</p>
+          <table v-if="selectedEmployeeDocument != null" class="table">
+            <tbody>
+            <tr v-for="(pair, index) in selectedEmployeeDocument.fields" :key="index">
+              <td>{{ pair.type }}</td>
+              <td>{{ pair.value }}</td>
+            </tr>
+            </tbody>
+          </table>
+          <button @click="addPassage('Вход')" class="btn btn-primary btn-dark col-md-6">Зафиксировать вход</button>
+          <button @click="addPassage('Выход')" class="btn btn-primary btn-dark col-md-6">Зафиксировать выход</button>
+          <button @click="TODO" class="btn btn-primary btn-dark col-md-12">Подтвердить данные карточки</button>
+          <div v-for="(passage, index) in passages[this.selectedEmployee.ID]" :key="index">
+            {{ passage.type }} - {{ passage.time }}
+          </div>
         </div>
       </div>
     </div>
@@ -80,14 +100,20 @@ export default {
       searchResults: [],
       showSearchResults: false,
       selectedEmployee: null,
+      selectedEmployeeDocument: null,
       showEmployeeCard: false,
       isDropdownVisible: false,
       isSortDropdownVisible: false,
+      isPassageDropdownVisible: false,
+      passages: {},
+      passageType: null,
     };
   },
   computed: {
     employeePhotoURL() {
-      return this.selectedEmployee ? this.selectedEmployee.photoURL : null;
+      return (this.selectedEmployee &&  this.selectedEmployee.photoURL)
+          ? this.selectedEmployee.photoURL
+          : "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
     }
   },
   methods: {
@@ -130,13 +156,57 @@ export default {
         this.searchResults = [];
       }
     },
-    viewEmployeeCard(employeeId) {
-      // Call backend API to fetch employee details by ID
-      // Example: axios.get('/infocards/' + employeeId)
-      // In this example, I'm just using the selected employee from search results
-      this.selectedEmployee = this.searchResults.find(employee => employee.id === employeeId);
-      this.showEmployeeCard = true; // Show employee card
+    viewEmployeeCard(infoCardID) {
+      this.selectedEmployee = this.searchResults.at(infoCardID);
+      this.showEmployeeCard = true;
+      this.$store.dispatch('employee/getEmployee', infoCardID).then(
+        (document) => {
+          console.log(document);
+          this.selectedEmployeeDocument = document;
+          this.$store.dispatch('employee/getEmployeeInfoCardPhoto', infoCardID).then(
+              (photoURL) => {
+                this.selectedEmployee.photoURL = photoURL;
+              }
+          )
+        },
+        (error) => {
+          if (error.response && error.response.status === 404) {
+            this.selectedEmployeeDocument = null;
+          }
+        }
+      )
     },
+    addPassage(type) {
+      const now = new Date();
+      const formattedTime = `${this.padZero(now.getHours())}:${this.padZero(now.getMinutes())}:${this.padZero(now.getSeconds())}`;
+      // this.$store.dispatch('employee/getEmployee', id).then(
+      //     (document) => {
+      //       this.selectedEmployeeDocument = document;
+      //       this.$store.dispatch('employee/getEmployeeInfoCardPhoto', infoCardID).then(
+      //           (photoURL) => {
+      //             this.selectedEmployee.photoURL = photoURL;
+      //           }
+      //       )
+      //     },
+      //     (error) => {
+      //       if (error.response && error.response.status === 404) {
+      //         this.selectedEmployeeDocument = null;
+      //       }
+      //     }
+      // )
+      this.addPassageToDictionary(type, formattedTime);
+    },
+    addPassageToDictionary(type, time) {
+      const id = this.selectedEmployee.ID;
+      console.log(this.passages);
+      if (!this.passages.hasOwnProperty(id)) {
+        this.passages[id] = [];
+      }
+      this.passages[id].push({ type: type, time: time });
+    },
+    padZero(num) {
+      return num < 10 ? '0' + num : num;
+    }
   }
 };
 </script>
@@ -248,5 +318,35 @@ export default {
 
 .employee-card {
   margin-top: 20px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input-group label {
+  display: inline-block;
+  padding: 8px 12px;
+  margin-right: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.input-group label:hover {
+  background-color: #f0f0f0;
+}
+
+.input-group input[type="radio"]:checked + label {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.input-group input[type="radio"]:checked + label:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
 }
 </style>

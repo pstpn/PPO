@@ -54,7 +54,37 @@ export const employee = {
                     return Promise.reject(error);
                 }
             );
-        }
+        },
+        getEmployee({ commit }, infoCardID) {
+            return EmployeeService.getEmployee(infoCardID).then(
+                employee => {
+                    return Promise.resolve(employee);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+        },
+        getEmployeeInfoCardPhoto({ commit }, infoCardID) {
+            return EmployeeService.getEmployeeInfoCardPhoto(infoCardID).then(
+                imageURL => {
+                    return Promise.resolve(imageURL);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            )
+        },
+        getEmployeePassages({ commit }, infoCardID) {
+            return EmployeeService.getEmployeeInfoCardPhoto(infoCardID).then(
+                passages => {
+                    return Promise.resolve(passages);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            )
+        },
     },
     mutations: {
         setFilled(state, filled) {
