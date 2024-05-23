@@ -35,7 +35,7 @@
       </div>
     </div>
     <div v-if="showSearchResults" class="search-results">
-      <div v-for="infoCard in searchResults" :key="infoCard.ID" @click="viewEmployeeCard(infoCard)" class="search-item">
+      <div v-for="infoCard in searchResults" :key="infoCard.ID" @click="infoCard.Post !== 'Сотрудник СБ' ? viewEmployeeCard(infoCard) : mock()" class="search-item">
         <div class="employee-info">
           <div class="employee-details">
             <div class="employee-fullName">{{ infoCard.FullName }}</div>
@@ -257,6 +257,9 @@ export default {
             }
           }
       )
+    },
+    mock() {
+
     }
   }
 };

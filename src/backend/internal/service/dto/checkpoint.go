@@ -9,8 +9,8 @@ type CreateCheckpointRequest struct {
 }
 
 type CreatePassageRequest struct {
-	CheckpointID int64
-	DocumentID   int64
+	CheckpointID string
+	DocumentID   string
 	Type         int64
 	Time         *time.Time
 }
@@ -24,7 +24,7 @@ type GetCheckpointRequest struct {
 }
 
 type ListPassagesRequest struct {
-	DocumentID int64
+	DocumentID string
 }
 
 type DeletePassageRequest struct {

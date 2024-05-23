@@ -94,7 +94,7 @@ func main() {
 	// Set routes
 	controller.SetAuthRoute(l, authService)
 	controller.SetInfoCardRoute(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
-	controller.SetProfileRoute(l, documentService, fieldService, authService, photoService)
+	controller.SetProfileRoute(l, infoCardService, documentService, fieldService, authService, photoService)
 	controller.SetPassageRoute(l, documentService, checkpointService, authService)
 
 	// Create router

@@ -2,15 +2,11 @@ package model
 
 import "time"
 
-type CheckpointID int64
+type CheckpointID string
 
-func ToCheckpointID(id int64) *CheckpointID {
+func ToCheckpointID(id string) *CheckpointID {
 	checkpointID := CheckpointID(id)
 	return &checkpointID
-}
-
-func (c *CheckpointID) Int() int64 {
-	return int64(*c)
 }
 
 type Checkpoint struct {
@@ -18,15 +14,11 @@ type Checkpoint struct {
 	PhoneNumber string
 }
 
-type PassageID int64
+type PassageID string
 
-func ToPassageID(id int64) *PassageID {
+func ToPassageID(id string) *PassageID {
 	passageID := PassageID(id)
 	return &passageID
-}
-
-func (p *PassageID) Int() int64 {
-	return int64(*p)
 }
 
 type PassageType int64

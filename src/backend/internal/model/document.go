@@ -42,15 +42,15 @@ func (d *DocumentType) Int() int64 {
 	return int64(*d)
 }
 
-type DocumentID int64
+type DocumentID string
 
-func ToDocumentID(id int64) *DocumentID {
+func ToDocumentID(id string) *DocumentID {
 	documentID := DocumentID(id)
 	return &documentID
 }
 
-func (d *DocumentID) Int() int64 {
-	return int64(*d)
+func (d *DocumentID) String() string {
+	return string(*d)
 }
 
 type Document struct {

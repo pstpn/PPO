@@ -73,8 +73,8 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 	}
 
 	_, err = p.checkpointService.CreatePassage(c.Request.Context(), &dto.CreatePassageRequest{
-		CheckpointID: 1,
-		DocumentID:   document.ID.Int(),
+		CheckpointID: "1",
+		DocumentID:   document.ID.String(),
 		Type:         model.ToDocumentTypeFromString(req.DocumentType).Int(),
 		Time:         &req.Time,
 	})

@@ -38,7 +38,7 @@ func New(uri, dbName, bucketName string) (*MongoDB, error) {
 	return &MongoDB{Client: client, Bucket: bucket}, nil
 }
 
-func (m *MongoDB) CLose() {
+func (m *MongoDB) Close() {
 	if m.Client != nil {
 		m.Client.Disconnect(context.TODO())
 	}

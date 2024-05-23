@@ -3,7 +3,7 @@ package dto
 import "course/internal/model"
 
 type CreatePhotoRequest struct {
-	DocumentID int64
+	DocumentID string
 	Data       []byte
 }
 
@@ -13,11 +13,11 @@ type CreatePhotoKeyRequest struct {
 }
 
 type GetPhotoRequest struct {
-	DocumentID int64
+	DocumentID string
 }
 
 type UpdatePhotoRequest struct {
-	DocumentID int64
+	DocumentID string
 	Data       []byte
 }
 
@@ -27,5 +27,5 @@ type UpdatePhotoKeyRequest struct {
 }
 
 type DeletePhotoRequest struct {
-	DocumentID int64
+	DocumentID string
 }

@@ -20,6 +20,7 @@ const multiFormSizeDefault = 10000000
 
 type ProfileController struct {
 	l               logger.Interface
+	infoCardService service.InfoCardService
 	documentService service.DocumentService
 	fieldService    service.FieldService
 	authService     service.AuthService
@@ -28,6 +29,7 @@ type ProfileController struct {
 
 func NewProfileController(
 	l logger.Interface,
+	infoCardService service.InfoCardService,
 	documentService service.DocumentService,
 	fieldService service.FieldService,
 	authService service.AuthService,
@@ -35,6 +37,7 @@ func NewProfileController(
 ) *ProfileController {
 	return &ProfileController{
 		l:               l,
+		infoCardService: infoCardService,
 		documentService: documentService,
 		fieldService:    fieldService,
 		authService:     authService,
@@ -105,7 +108,7 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 
 	for _, newField := range req.DocumentFields {
 		_, err = p.fieldService.CreateDocumentField(c.Request.Context(), &dto.CreateDocumentFieldRequest{
-			DocumentID: document.ID.Int(),
+			DocumentID: document.ID.String(),
 			Value:      newField.Value,
 			Type:       model.ToFieldTypeFromString(newField.Type).Int(),
 		})
@@ -138,7 +141,7 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 	}
 
 	_, err = p.photoService.CreatePhoto(c.Request.Context(), &dto.CreatePhotoRequest{
-		DocumentID: document.ID.Int(),
+		DocumentID: document.ID.String(),
 		Data:       photoData,
 	})
 	if err != nil {
@@ -164,6 +167,13 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 		return
 	}
 
+	infoCard, err := p.infoCardService.GetInfoCard(c.Request.Context(), &dto.GetInfoCardByIDRequest{InfoCardID: infoCardID})
+	if err != nil {
+		p.l.Errorf("failed to get infoCard: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get info card"})
+		return
+	}
+
 	document, err := p.documentService.GetDocumentByInfoCard(c.Request.Context(), &dto.GetDocumentByInfoCardIDRequest{
 		InfoCardID: infoCardID,
 	})
@@ -179,7 +189,7 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 	}
 
 	documentFields, err := p.fieldService.ListDocumentFields(c.Request.Context(), &dto.ListDocumentFieldsRequest{
-		DocumentID: document.ID.Int(),
+		DocumentID: document.ID.String(),
 	})
 	if err != nil {
 		p.l.Errorf("failed to list document fields: %s", err.Error())
@@ -188,6 +198,8 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
+		"isConfirmed":    infoCard.IsConfirmed,
+		"createdAt":      infoCard.CreatedDate,
 		"documentType":   document.Type.String(),
 		"serialNumber":   document.SerialNumber,
 		"documentFields": httputils.ModelToFields(documentFields),
@@ -218,7 +230,7 @@ func (p *ProfileController) GetEmployeePhoto(c *gin.Context) {
 	}
 
 	photoData, err := p.photoService.GetPhoto(c.Request.Context(), &dto.GetPhotoRequest{
-		DocumentID: document.ID.Int(),
+		DocumentID: document.ID.String(),
 	})
 	if err != nil {
 		p.l.Errorf("failed to get employee photo: %v", err)

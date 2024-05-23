@@ -8,7 +8,7 @@ logger:
 
 auth:
   signingKey: "course"
-  accessTokenTTL: 2m
+  accessTokenTTL: 100m
   refreshTokenTTL: 120h
 
 http:

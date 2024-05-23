@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,14 +25,13 @@ func NewPhotoDataStorage(db *mongodb.MongoDB) storage.PhotoDataStorage {
 }
 
 func (p *photoDataStorageImpl) Save(ctx context.Context, request *dto.CreatePhotoRequest) (*model.PhotoKey, error) {
-	documentID := strconv.Itoa(int(request.DocumentID))
 	uploadOpts := options.GridFSUpload().SetMetadata(bson.D{{
-		Key:   documentID,
+		Key:   request.DocumentID,
 		Value: len(request.Data)},
 	})
 
 	objectID, err := p.Bucket.UploadFromStream(
-		fmt.Sprintf("%s_%d.jpg", documentID, time.Now().Unix()),
+		fmt.Sprintf("%s_%d.jpg", request.DocumentID, time.Now().Unix()),
 		bytes.NewReader(request.Data),
 		uploadOpts,
 	)

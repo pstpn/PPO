@@ -108,7 +108,7 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 	}
 
 	documentFields, err := i.fieldService.ListDocumentFields(c.Request.Context(), &dto.ListDocumentFieldsRequest{
-		DocumentID: document.ID.Int(),
+		DocumentID: document.ID.String(),
 	})
 	if err != nil {
 		i.l.Errorf("failed to list document fields: %s", err.Error())
@@ -116,7 +116,7 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 		return
 	}
 
-	passages, err := i.checkpointService.ListPassages(c.Request.Context(), &dto.ListPassagesRequest{DocumentID: document.ID.Int()})
+	passages, err := i.checkpointService.ListPassages(c.Request.Context(), &dto.ListPassagesRequest{DocumentID: document.ID.String()})
 	if err != nil {
 		i.l.Errorf("failed to list passages: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to list passages"})
@@ -165,7 +165,7 @@ func (i *InfoCardController) GetEmployeeInfoCardPhoto(c *gin.Context) {
 	}
 
 	photoData, err := i.photoService.GetPhoto(c.Request.Context(), &dto.GetPhotoRequest{
-		DocumentID: document.ID.Int(),
+		DocumentID: document.ID.String(),
 	})
 	if err != nil {
 		i.l.Errorf("failed to get employee infoCard photo: %v", err)

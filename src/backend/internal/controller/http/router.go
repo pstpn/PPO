@@ -64,12 +64,13 @@ func (c *Controller) SetInfoCardRoute(
 
 func (c *Controller) SetProfileRoute(
 	l logger.Interface,
+	infoCardService service.InfoCardService,
 	documentService service.DocumentService,
 	fieldService service.FieldService,
 	authService service.AuthService,
 	photoService service.PhotoService,
 ) {
-	p := user.NewProfileController(l, documentService, fieldService, authService, photoService)
+	p := user.NewProfileController(l, infoCardService, documentService, fieldService, authService, photoService)
 
 	c.handler.POST("/profile", p.FillProfile)
 	c.handler.GET("/profile", p.GetProfile)

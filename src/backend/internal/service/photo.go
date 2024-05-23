@@ -30,7 +30,7 @@ func NewPhotoService(logger logger.Interface, photoStorage storage.PhotoStorages
 
 func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreatePhotoRequest) (*model.PhotoMeta, error) {
 	// FIXME: Crop face from document
-	p.logger.Infof("create photo by document ID %d", request.DocumentID)
+	p.logger.Infof("create photo by document ID %s", request.DocumentID)
 
 	key, err := p.photoStorage.Save(ctx, request)
 	if err != nil {
@@ -51,7 +51,7 @@ func (p *photoServiceImpl) CreatePhoto(ctx context.Context, request *dto.CreateP
 }
 
 func (p *photoServiceImpl) GetPhoto(ctx context.Context, request *dto.GetPhotoRequest) (*model.Photo, error) {
-	p.logger.Infof("get photo by document ID %d", request.DocumentID)
+	p.logger.Infof("get photo by document ID %s", request.DocumentID)
 
 	meta, err := p.photoStorage.GetKey(ctx, request)
 	if err != nil {
@@ -72,7 +72,7 @@ func (p *photoServiceImpl) GetPhoto(ctx context.Context, request *dto.GetPhotoRe
 }
 
 func (p *photoServiceImpl) DeletePhoto(ctx context.Context, request *dto.DeletePhotoRequest) error {
-	p.logger.Infof("delete photo by document ID %d", request.DocumentID)
+	p.logger.Infof("delete photo by document ID %s", request.DocumentID)
 
 	meta, err := p.photoStorage.GetKey(ctx, &dto.GetPhotoRequest{DocumentID: request.DocumentID})
 	if err != nil {

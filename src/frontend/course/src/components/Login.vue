@@ -145,17 +145,33 @@ export default {
 }
 
 .btn {
-  background: #2575fc;
-  color: #fff;
-  padding: 10px;
-  border: none;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 15px;
+  margin: 10px 5px;
   border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-.btn:hover {
-  background: #1a5bb8;
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.btn-dark:hover {
+  background-color: #1d2124;
 }
 
 .btn-block {

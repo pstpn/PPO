@@ -28,7 +28,7 @@ func NewCheckpointService(logger logger.Interface, checkpointStorage storage.Che
 }
 
 func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error) {
-	c.logger.Infof("create passage through %d checkpoint with %d document ID", request.CheckpointID, request.DocumentID)
+	c.logger.Infof("create passage through %s checkpoint with %s document ID", request.CheckpointID, request.DocumentID)
 
 	passage, err := c.checkpointStorage.CreatePassage(ctx, request)
 	if err != nil {
@@ -40,7 +40,7 @@ func (c *checkpointServiceImpl) CreatePassage(ctx context.Context, request *dto.
 }
 
 func (c *checkpointServiceImpl) ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error) {
-	c.logger.Infof("list passages by %d document ID", request.DocumentID)
+	c.logger.Infof("list passages by %s document ID", request.DocumentID)
 
 	passages, err := c.checkpointStorage.ListPassages(ctx, request)
 	if err != nil {

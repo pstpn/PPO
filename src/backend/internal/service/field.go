@@ -42,7 +42,7 @@ func (f *fieldServiceImpl) CreateDocumentField(ctx context.Context, request *dto
 }
 
 func (f *fieldServiceImpl) GetDocumentField(ctx context.Context, request *dto.GetDocumentFieldRequest) (*model.Field, error) {
-	f.logger.Infof("get info card field by document ID %d", request.DocumentID)
+	f.logger.Infof("get info card field by document ID %s", request.DocumentID)
 
 	field, err := f.fieldStorage.Get(ctx, request)
 	if err != nil {
@@ -54,7 +54,7 @@ func (f *fieldServiceImpl) GetDocumentField(ctx context.Context, request *dto.Ge
 }
 
 func (f *fieldServiceImpl) ListDocumentFields(ctx context.Context, request *dto.ListDocumentFieldsRequest) ([]*model.Field, error) {
-	f.logger.Infof("list info card fields by document ID %d", request.DocumentID)
+	f.logger.Infof("list info card fields by document ID %s", request.DocumentID)
 
 	fields, err := f.fieldStorage.ListCardFields(ctx, request)
 	if err != nil {
@@ -66,7 +66,7 @@ func (f *fieldServiceImpl) ListDocumentFields(ctx context.Context, request *dto.
 }
 
 func (f *fieldServiceImpl) DeleteDocumentField(ctx context.Context, request *dto.DeleteDocumentFieldRequest) error {
-	f.logger.Infof("delete info card field by ID %d", request.FieldID)
+	f.logger.Infof("delete info card field by ID %s", request.FieldID)
 
 	err := f.fieldStorage.Delete(ctx, request)
 	if err != nil {
