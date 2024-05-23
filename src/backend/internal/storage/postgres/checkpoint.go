@@ -121,7 +121,7 @@ func (c *checkpointStorageImpl) ListPassages(ctx context.Context, request *dto.L
 			documentIdField,
 			idField,
 		)).
-		Where(squirrel.Eq{infoCardIdField: request.InfoCardID})
+		Where(squirrel.Eq{documentIdField: request.DocumentID})
 
 	sql, args, err := query.ToSql()
 	if err != nil {

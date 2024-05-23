@@ -116,7 +116,7 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 		return
 	}
 
-	passages, err := i.checkpointService.ListPassages(c.Request.Context(), &dto.ListPassagesRequest{InfoCardID: infoCardID})
+	passages, err := i.checkpointService.ListPassages(c.Request.Context(), &dto.ListPassagesRequest{DocumentID: document.ID.Int()})
 	if err != nil {
 		i.l.Errorf("failed to list passages: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to list passages"})
@@ -131,7 +131,7 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 			},
 			"fields": httputils.ModelToFields(documentFields),
 		},
-		"passages": passages,
+		"passages": httputils.ModelToPassages(passages),
 	})
 }
 
@@ -174,4 +174,32 @@ func (i *InfoCardController) GetEmployeeInfoCardPhoto(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "image/jpeg", photoData.Data)
+}
+
+func (i *InfoCardController) ConfirmEmployeeInfoCard(c *gin.Context) {
+	httputils.DisableCors(c)
+
+	_, err := httputils.VerifyAccessToken(c, i.l, i.authService)
+	if err != nil {
+		return
+	}
+
+	infoCardID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		i.l.Errorf("failed to parse infoCard ID from query args: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Failed to get info card ID"})
+		return
+	}
+
+	err = i.infoCardService.ValidateInfoCard(c.Request.Context(), &dto.ValidateInfoCardRequest{
+		InfoCardID:  infoCardID,
+		IsConfirmed: true,
+	})
+	if err != nil {
+		i.l.Errorf("failed to validate infoCard: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Failed to validate info card"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
 }

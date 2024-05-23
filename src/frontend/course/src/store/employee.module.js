@@ -75,10 +75,20 @@ export const employee = {
                 }
             )
         },
-        getEmployeePassages({ commit }, infoCardID) {
-            return EmployeeService.getEmployeeInfoCardPhoto(infoCardID).then(
-                passages => {
-                    return Promise.resolve(passages);
+        confirmEmployeeCard({ commit }, infoCardID) {
+            return EmployeeService.confirmEmployeeCard(infoCardID).then(
+                response => {
+                    return Promise.resolve(response);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+        },
+        createEmployeePassage({ commit }, passageInfo) {
+            return EmployeeService.createEmployeePassage(passageInfo).then(
+                response => {
+                    return Promise.resolve(response);
                 },
                 error => {
                     return Promise.reject(error);

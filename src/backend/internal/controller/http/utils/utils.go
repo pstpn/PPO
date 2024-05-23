@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -75,4 +76,20 @@ func ModelToFields(documentFields []*model.Field) []Field {
 		})
 	}
 	return fields
+}
+
+type Passage struct {
+	Type string `json:"type"`
+	Time string `json:"time"`
+}
+
+func ModelToPassages(passages []*model.Passage) []Passage {
+	p := make([]Passage, 0)
+	for _, passage := range passages {
+		p = append(p, Passage{
+			Type: passage.Type.String(),
+			Time: passage.Time.Add(3 * time.Hour).Format("15:04:05 (02.01.2006)"),
+		})
+	}
+	return p
 }

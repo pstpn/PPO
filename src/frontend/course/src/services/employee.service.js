@@ -34,7 +34,6 @@ class EmployeeService {
                 sort: sortDirection,
             }
         }).then(response => {
-            console.log(response.data.infoCards)
             return response.data.infoCards;
         });
     }
@@ -43,8 +42,7 @@ class EmployeeService {
         return axios.get(API_URL + `infocards/${id}` , {
             headers: authHeader()
         }).then(response => {
-            console.log(response.data.document)
-            return response.data.document;
+            return response.data;
         });
     }
 
@@ -55,10 +53,17 @@ class EmployeeService {
             });
     }
 
-    getEmployeePassages(id) {
-        return axios.get(API_URL + "passages", { headers: authHeader() })
+    confirmEmployeeCard(id) {
+        return axios.put(API_URL + `infocards/${id}`, {}, { headers: authHeader() })
             .then(response => {
-                return URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
+                return response.data;
+            });
+    }
+
+    createEmployeePassage(passageInfo) {
+        return axios.post(API_URL + "passages", passageInfo, { headers: authHeader() })
+            .then(response => {
+                return response.data;
             });
     }
 }

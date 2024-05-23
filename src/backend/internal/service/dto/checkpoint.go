@@ -24,7 +24,7 @@ type GetCheckpointRequest struct {
 }
 
 type ListPassagesRequest struct {
-	InfoCardID int64
+	DocumentID int64
 }
 
 type DeletePassageRequest struct {

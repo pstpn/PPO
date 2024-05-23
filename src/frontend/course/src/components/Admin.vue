@@ -9,7 +9,7 @@
       </div>
       <div class="filter-dropdown" @mouseover="isDropdownVisible = true" @mouseleave="isDropdownVisible = false">
         <div class="dropdown-trigger">
-          <font-awesome-icon icon="fa-filter"/> Поиск по полю
+          <font-awesome-icon icon="fa-filter"/>
         </div>
         <transition name="fade">
           <div v-if="isDropdownVisible" class="dropdown-content">
@@ -22,7 +22,7 @@
       </div>
       <div class="filter-dropdown" @mouseover="isSortDropdownVisible = true" @mouseleave="isSortDropdownVisible = false">
         <div class="dropdown-trigger">
-          <font-awesome-icon icon="fa-sort"/> Направление сортировки
+          <font-awesome-icon icon="fa-sort"/>
         </div>
         <transition name="fade">
           <div v-if="isSortDropdownVisible" class="dropdown-content">
@@ -35,7 +35,7 @@
       </div>
     </div>
     <div v-if="showSearchResults" class="search-results">
-      <div v-for="infoCard in searchResults" :key="infoCard.ID" @click="viewEmployeeCard(infoCard.ID)" class="search-item">
+      <div v-for="infoCard in searchResults" :key="infoCard.ID" @click="viewEmployeeCard(infoCard)" class="search-item">
         <div class="employee-info">
           <div class="employee-details">
             <div class="employee-fullName">{{ infoCard.FullName }}</div>
@@ -44,8 +44,8 @@
         </div>
       </div>
     </div>
-    <div v-if="showEmployeeCard" class="employee-card">
-      <div class="card card-container">
+    <div v-if="showEmployeeCard" :class="['employee-card']">
+      <div :class="['card card-container', cardValidationClass]">
         <img
             id="profile-img"
             :src="employeePhotoURL"
@@ -54,7 +54,8 @@
             alt="Not found"
         />
         <div class="card-body">
-          <h5 class="card-title">{{ selectedEmployee.FullName }} ({{ selectedEmployee.PhoneNumber }})</h5>
+          <h5 class="card-title">{{ selectedEmployee.FullName }}</h5>
+          <p class="card-subtitle" style="font-weight: bold;">Основная информация</p>
           <p class="card-text">Номер телефона: {{ selectedEmployee.PhoneNumber }}</p>
           <p class="card-text">Должность: {{ selectedEmployee.Post }}</p>
           <p v-if="selectedEmployeeDocument === null" class="card-subtitle" style="color: red; font-weight: bold;">Документ, удостоверяющий личность не найден</p>
@@ -70,11 +71,19 @@
             </tr>
             </tbody>
           </table>
-          <button @click="addPassage('Вход')" class="btn btn-primary btn-dark col-md-6">Зафиксировать вход</button>
-          <button @click="addPassage('Выход')" class="btn btn-primary btn-dark col-md-6">Зафиксировать выход</button>
-          <button @click="TODO" class="btn btn-primary btn-dark col-md-12">Подтвердить данные карточки</button>
-          <div v-for="(passage, index) in passages[this.selectedEmployee.ID]" :key="index">
-            {{ passage.type }} - {{ passage.time }}
+          <button v-if="!this.selectedEmployee.IsConfirmed" @click="confirmInfoCard" class="btn btn-dark col-md-12">Подтвердить данные карточки</button>
+          <div v-if="this.selectedEmployee.IsConfirmed">
+            <p class="card-subtitle" style="font-weight: bold;">Управление проходами</p>
+            <button @click="addPassage('Вход')" class="btn btn-primary btn-dark col-md-6">Зафиксировать вход</button>
+            <button @click="addPassage('Выход')" class="btn btn-primary btn-dark col-md-6">Зафиксировать выход</button>
+            <table v-if="selectedEmployeeDocument != null" class="table">
+              <tbody>
+              <tr v-for="(passage, index) in passages[this.selectedEmployee.ID]" :key="index">
+                <td>{{ passage.type }}</td>
+                <td>{{ passage.time }}</td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -114,6 +123,9 @@ export default {
       return (this.selectedEmployee &&  this.selectedEmployee.photoURL)
           ? this.selectedEmployee.photoURL
           : "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
+    },
+    cardValidationClass() {
+      return this.selectedEmployee.IsConfirmed ? 'card-valid' : 'card-invalid';
     }
   },
   methods: {
@@ -123,7 +135,6 @@ export default {
       if (this.searchQuery.length > 0) {
         this.showSearchResults = true;
         const { searchQuery, searchBy, sortDirection } = this;
-        console.log(searchQuery, searchBy, sortDirection);
         this.$store.dispatch('employee/getEmployees', { searchQuery, searchBy, sortDirection }).then(
             (employees) => {
               this.searchResults = employees;
@@ -152,18 +163,24 @@ export default {
             }
         )
       } else {
+        this.showEmployeeCard = false;
         this.showSearchResults = false;
         this.searchResults = [];
       }
     },
-    viewEmployeeCard(infoCardID) {
-      this.selectedEmployee = this.searchResults.at(infoCardID);
+    viewEmployeeCard(infoCard) {
+      let user = JSON.parse(localStorage.getItem('user'));
+
+      const id = infoCard.ID;
+      this.selectedEmployee = infoCard;
       this.showEmployeeCard = true;
-      this.$store.dispatch('employee/getEmployee', infoCardID).then(
-        (document) => {
-          console.log(document);
-          this.selectedEmployeeDocument = document;
-          this.$store.dispatch('employee/getEmployeeInfoCardPhoto', infoCardID).then(
+      this.$store.dispatch('employee/getEmployee', id).then(
+        (employee) => {
+          this.selectedEmployeeDocument = employee.document;
+          if (employee.passages != null) {
+            this.passages[id] = employee.passages;
+          }
+          this.$store.dispatch('employee/getEmployeeInfoCardPhoto', id).then(
               (photoURL) => {
                 this.selectedEmployee.photoURL = photoURL;
               }
@@ -172,33 +189,39 @@ export default {
         (error) => {
           if (error.response && error.response.status === 404) {
             this.selectedEmployeeDocument = null;
+          } else if (error.response && error.response.status === 401) {
+            this.$store.dispatch('auth/refreshTokens', user).then(
+                response => {
+                  this.viewEmployeeCard(infoCard);
+                },
+                (error) => {
+                  if (error.response && error.response.status === 401) {
+                    this.$store.dispatch('auth/logout');
+                    this.$router.push('/login');
+                  } else {
+                    this.message = error.message + ": " + error.response.data.error;
+                  }
+                }
+            );
+          } else {
+            this.message = error.message + ": " + error.response.data.error;
           }
         }
       )
     },
     addPassage(type) {
       const now = new Date();
-      const formattedTime = `${this.padZero(now.getHours())}:${this.padZero(now.getMinutes())}:${this.padZero(now.getSeconds())}`;
-      // this.$store.dispatch('employee/getEmployee', id).then(
-      //     (document) => {
-      //       this.selectedEmployeeDocument = document;
-      //       this.$store.dispatch('employee/getEmployeeInfoCardPhoto', infoCardID).then(
-      //           (photoURL) => {
-      //             this.selectedEmployee.photoURL = photoURL;
-      //           }
-      //       )
-      //     },
-      //     (error) => {
-      //       if (error.response && error.response.status === 404) {
-      //         this.selectedEmployeeDocument = null;
-      //       }
-      //     }
-      // )
-      this.addPassageToDictionary(type, formattedTime);
+      const formattedTime = `${this.padZero(now.getHours())}:${this.padZero(now.getMinutes())}:${this.padZero(now.getSeconds())} (${now.getDate()}.${now.getDay()}.${now.getFullYear()})`;
+      this.$store.dispatch('employee/createEmployeePassage', {
+        infoCardID: this.selectedEmployee.ID,
+        documentType: this.selectedEmployeeDocument.data.documentType,
+        time: now,
+      }).then(() => {
+        this.addPassageToDictionary(type, formattedTime);
+      })
     },
     addPassageToDictionary(type, time) {
       const id = this.selectedEmployee.ID;
-      console.log(this.passages);
       if (!this.passages.hasOwnProperty(id)) {
         this.passages[id] = [];
       }
@@ -206,6 +229,34 @@ export default {
     },
     padZero(num) {
       return num < 10 ? '0' + num : num;
+    },
+    confirmInfoCard() {
+      let user = JSON.parse(localStorage.getItem('user'));
+
+      this.$store.dispatch('employee/confirmEmployeeCard', this.selectedEmployee.ID).then(
+          (response) => {
+            this.selectedEmployee.IsConfirmed = true;
+          },
+          (error) => {
+            if (error.response && error.response.status === 401) {
+              this.$store.dispatch('auth/refreshTokens', user).then(
+                  response => {
+                    this.confirmInfoCard();
+                  },
+                  (error) => {
+                    if (error.response && error.response.status === 401) {
+                      this.$store.dispatch('auth/logout');
+                      this.$router.push('/login');
+                    } else {
+                      this.message = error.message + ": " + error.response.data.error;
+                    }
+                  }
+              );
+            } else {
+              this.message = error.message + ": " + error.response.data.error;
+            }
+          }
+      )
     }
   }
 };
@@ -213,7 +264,7 @@ export default {
 
 <style scoped>
 .search-container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -253,7 +304,7 @@ export default {
 .filter-dropdown {
   position: relative;
   cursor: pointer;
-  width: 250px;
+  width: 50px;
 }
 
 .dropdown-trigger {
@@ -277,7 +328,7 @@ export default {
   z-index: 10;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0s linear 0.3s; /* Добавляем анимацию появления и исчезания */
+  transition: opacity 0.3s ease, visibility 1s linear 0.3s; /* Добавляем анимацию появления и исчезания */
 }
 
 .filter-dropdown:hover .dropdown-content {
@@ -317,36 +368,119 @@ export default {
 }
 
 .employee-card {
-  margin-top: 20px;
-}
-
-.input-group {
   display: flex;
+  justify-content: center;
   align-items: center;
+  padding: 20px;
+  background-color: #f5f5f5;
 }
 
-.input-group label {
+.card-container {
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.profile-img-card {
+  display: block;
+  margin: 20px auto;
+  border-radius: 50%;
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+.card-text {
+  font-size: 1em;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.card-subtitle {
+  font-size: 1.1em;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.card-valid {
+  border: 2px solid green;
+}
+
+.card-invalid {
+  border: 2px solid red;
+}
+
+.table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+
+.table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.btn {
   display: inline-block;
-  padding: 8px 12px;
-  margin-right: 10px;
-  font-size: 14px;
+  font-size: 1em;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 15px;
+  margin: 10px 5px;
   border-radius: 5px;
-  border: 1px solid #ccc;
-  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.input-group label:hover {
-  background-color: #f0f0f0;
-}
-
-.input-group input[type="radio"]:checked + label {
+.btn-primary {
   background-color: #007bff;
   color: #fff;
-  border-color: #007bff;
 }
 
-.input-group input[type="radio"]:checked + label:hover {
+.btn-primary:hover {
   background-color: #0056b3;
-  border-color: #0056b3;
+}
+
+.btn-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.btn-dark:hover {
+  background-color: #1d2124;
+}
+
+.col-md-6 {
+  width: 48%;
+}
+
+.col-md-12 {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

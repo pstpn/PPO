@@ -1,17 +1,10 @@
 <template>
-  <div class="col-md-12">
+  <div class="card">
     <div class="card card-container">
-      <img
-          id="profile-img"
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-          class="profile-img-card"
-      />
       <Form @submit="handleRegister" :validation-schema="schema">
         <div v-if="!successful">
-          <div class="form-group">
-            <label for="phoneNumber">Номер телефона</label>
-            <Field name="phoneNumber" type="text" class="form-control" />
-            <ErrorMessage name="phoneNumber" class="error-feedback" />
+          <div class="form-label">
+            Регистрация
           </div>
           <div class="form-group">
             <label for="name">Имя</label>
@@ -22,6 +15,11 @@
             <label for="surname">Фамилия</label>
             <Field name="surname" type="text" class="form-control" />
             <ErrorMessage name="surname" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="phoneNumber">Номер телефона</label>
+            <Field name="phoneNumber" type="text" class="form-control" />
+            <ErrorMessage name="phoneNumber" class="error-feedback" />
           </div>
           <div class="form-group">
             <label for="company">Компания</label>
@@ -155,39 +153,87 @@ export default {
 </script>
 
 <style scoped>
-label {
-  display: block;
-  margin-top: 10px;
-}
-
-.card-container.card {
-  max-width: 350px !important;
-  padding: 40px 40px;
-}
-
 .card {
-  background-color: #f7f7f7;
-  padding: 20px 25px 30px;
-  margin: 50px auto 25px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  align-items: center;
+  align-content: center;
+  vertical-align: center;
+  border-color: white;
 }
 
-.profile-img-card {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 10px;
+.card-container {
+  background: #f7f7f7;
+  padding: 20px;
+  border-radius: 100px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  width: 100%;
+  text-align: left;
+  align-items: center;
+  align-content: center;
+  vertical-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+
+.form-group label {
   display: block;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: #2575fc;
+  outline: none;
+  box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
+}
+
+.btn {
+  background: #2575fc;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #1a5bb8;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.spinner-border {
+  margin-right: 5px;
 }
 
 .error-feedback {
-  color: red;
+  color: #ff4d4d;
+  font-size: 0.875em;
+  margin-top: 5px;
+}
+
+.alert {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: left;
 }
 </style>

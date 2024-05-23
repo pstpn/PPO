@@ -95,6 +95,7 @@ func main() {
 	controller.SetAuthRoute(l, authService)
 	controller.SetInfoCardRoute(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
 	controller.SetProfileRoute(l, documentService, fieldService, authService, photoService)
+	controller.SetPassageRoute(l, documentService, checkpointService, authService)
 
 	// Create router
 	router := httpserver.New(handler, httpserver.Port(c.HTTP.Port))

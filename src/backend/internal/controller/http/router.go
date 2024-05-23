@@ -56,11 +56,9 @@ func (c *Controller) SetInfoCardRoute(
 		authService,
 	)
 
-	// Disable CORS
-	//c.handler.OPTIONS("infocards/*any", httputils.DisableCors)
-
 	c.handler.GET("/infocards", i.ListFullInfoCards)
 	c.handler.GET("/infocards/:id", i.GetFullInfoCard)
+	c.handler.PUT("/infocards/:id", i.ConfirmEmployeeInfoCard)
 	c.handler.GET("infocard-photos/:id", i.GetEmployeeInfoCardPhoto)
 }
 
@@ -76,4 +74,15 @@ func (c *Controller) SetProfileRoute(
 	c.handler.POST("/profile", p.FillProfile)
 	c.handler.GET("/profile", p.GetProfile)
 	c.handler.GET("/employee-photo", p.GetEmployeePhoto)
+}
+
+func (c *Controller) SetPassageRoute(
+	l logger.Interface,
+	documentService service.DocumentService,
+	checkpointService service.CheckpointService,
+	authService service.AuthService,
+) {
+	p := admin.NewPassageController(l, documentService, checkpointService, authService)
+
+	c.handler.POST("/passages", p.CreatePassage)
 }
