@@ -58,6 +58,7 @@ func main() {
 		c.Database.MongoDB.Database,
 		c.Database.MongoDB.Bucket,
 	)
+	defer mongo.Close()
 
 	// Create storages
 	checkpointStorage := storage.NewCheckpointStorage(db)

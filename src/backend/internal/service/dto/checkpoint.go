@@ -16,7 +16,7 @@ type CreatePassageRequest struct {
 }
 
 type GetPassageRequest struct {
-	PassageID int64
+	PassageID string
 }
 
 type GetCheckpointRequest struct {

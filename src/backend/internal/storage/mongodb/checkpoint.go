@@ -28,7 +28,7 @@ func (c *checkpointStorageImpl) CreatePassage(ctx context.Context, request *dto.
 	}
 
 	return &model.Passage{
-		ID:           model.ToPassageID(insertedID.InsertedID.(primitive.ObjectID).String()),
+		ID:           model.ToPassageID(insertedID.InsertedID.(primitive.ObjectID).Hex()),
 		CheckpointID: model.ToCheckpointID(request.CheckpointID),
 		DocumentID:   model.ToDocumentID(request.DocumentID),
 		Type:         model.ToPassageTypeFromInt(request.Type),
@@ -37,8 +37,20 @@ func (c *checkpointStorageImpl) CreatePassage(ctx context.Context, request *dto.
 }
 
 func (c *checkpointStorageImpl) GetPassage(ctx context.Context, request *dto.GetPassageRequest) (*model.Passage, error) {
-	//TODO implement me
-	panic("implement me")
+	passage := model.Passage{ID: model.ToPassageID(request.PassageID)}
+	objectID, err := primitive.ObjectIDFromHex(request.PassageID)
+	if err != nil {
+		return nil, err
+	}
+	err = c.Bucket.GetChunksCollection().FindOne(
+		ctx,
+		bson.D{{"_id", objectID}},
+	).Decode(&passage)
+	if err != nil {
+		return nil, err
+	}
+
+	return &passage, err
 }
 
 func (c *checkpointStorageImpl) ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error) {

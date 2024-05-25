@@ -1,7 +1,7 @@
-create or replace function employee_passages_for_day(passage_document_id int, check_date date)
+create or replace function employee_passages_for_day(passage_document_id text, check_date date)
     returns table
             (
-                document_id   int,
+                document_id   text,
                 entries_count bigint,
                 exits_count   bigint
             ) as $$
@@ -35,7 +35,7 @@ create or replace function log_daily_employee_passages()
     returns trigger as
 $$
 declare
-    document_id   int;
+    document_id   text;
     entries_count bigint;
     exits_count   bigint;
 begin
