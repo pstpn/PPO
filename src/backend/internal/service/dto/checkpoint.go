@@ -20,7 +20,7 @@ type GetPassageRequest struct {
 }
 
 type GetCheckpointRequest struct {
-	CheckpointID int64
+	CheckpointID string
 }
 
 type ListPassagesRequest struct {
@@ -28,9 +28,9 @@ type ListPassagesRequest struct {
 }
 
 type DeletePassageRequest struct {
-	PassageID int64
+	PassageID string
 }
 
 type DeleteCheckpointRequest struct {
-	CheckpointID int64
+	CheckpointID string
 }
